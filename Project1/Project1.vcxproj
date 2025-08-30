@@ -129,8 +129,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameState.cpp" />
     <ClCompile Include="imgui-SFML.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="StateMachine.cpp" />
+    <ClCompile Include="StateManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="MenuState.h" />
+    <ClInclude Include="StateMachine.h" />
+    <ClInclude Include="StateManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

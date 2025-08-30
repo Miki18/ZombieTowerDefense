@@ -11,6 +11,9 @@
 #include <fstream>
 #include <cmath>
 
+#include "StateMachine.h"
+#include "StateManager.h"
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode({ 1600, 900 }), "Window");
@@ -18,32 +21,9 @@ int main()
 	if (!ImGui::SFML::Init(window))
 		return -1;
 
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	StateMachine& machine = StateMachine::Get();
 
-	sf::Clock deltaClock;
-
-	while (window.isOpen())
-	{
-		while (auto event = window.pollEvent())
-		{
-			ImGui::SFML::ProcessEvent(window, *event);
-			if (event->is<sf::Event::Closed>())
-				window.close();
-		}
-
-		ImGui::SFML::Update(window, deltaClock.restart());
-
-		ImGui::Begin("Hello from ImGui!");
-		ImGui::Text("This is working!");
-		ImGui::End();
-
-		window.clear();
-
-		window.draw(shape);
-		ImGui::SFML::Render(window);
-		window.display();
-	}
+	machine.Run(window);
 
 	ImGui::SFML::Shutdown();
 }
