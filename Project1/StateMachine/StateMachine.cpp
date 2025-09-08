@@ -30,3 +30,13 @@ void StateMachine::Run(sf::RenderWindow& window)
 		State->Render(window);
 	}
 }
+
+std::string StateMachine::getSelectedProfile()
+{
+	return selected_profile;
+}
+
+void StateMachine::setSelectedProfile(std::string nick)
+{
+	selected_profile = nick;
+}

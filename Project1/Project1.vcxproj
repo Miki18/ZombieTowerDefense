@@ -129,18 +129,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="Monsters\Monster.cpp" />
+    <ClCompile Include="Monsters\MonsterActive.cpp" />
+    <ClCompile Include="Monsters\MonsterPassive.cpp" />
+    <ClCompile Include="StateMachine\GameState.cpp" />
     <ClCompile Include="imgui-SFML.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MenuState.cpp" />
-    <ClCompile Include="StateMachine.cpp" />
-    <ClCompile Include="StateManager.cpp" />
+    <ClCompile Include="StateMachine\MenuState.cpp" />
+    <ClCompile Include="StateMachine\StateMachine.cpp" />
+    <ClCompile Include="StateMachine\StateManager.cpp" />
+    <ClCompile Include="Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GameState.h" />
-    <ClInclude Include="MenuState.h" />
-    <ClInclude Include="StateMachine.h" />
-    <ClInclude Include="StateManager.h" />
+    <ClInclude Include="Monsters\Monster.h" />
+    <ClInclude Include="Monsters\MonsterActive.h" />
+    <ClInclude Include="Monsters\MonsterPassive.h" />
+    <ClInclude Include="StateMachine\GameState.h" />
+    <ClInclude Include="StateMachine\MenuState.h" />
+    <ClInclude Include="StateMachine\StateMachine.h" />
+    <ClInclude Include="StateMachine\StateManager.h" />
+    <ClInclude Include="Tower\Tower.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Content\Levels\tutorial1.json" />
+    <None Include="Resources\Content\Monsters\zombie.json" />
+    <None Include="Resources\Content\profiles.json" />
+    <None Include="Resources\Content\Towers\cannon.json" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

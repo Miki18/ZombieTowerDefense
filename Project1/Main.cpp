@@ -11,17 +11,18 @@
 #include <fstream>
 #include <cmath>
 
-#include "StateMachine.h"
-#include "StateManager.h"
+#include "StateMachine/StateMachine.h"
+#include "StateMachine/StateManager.h"
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode({ 1600, 900 }), "Window");
+	sf::RenderWindow window(sf::VideoMode({ 1600, 900 }), "Game", sf::State::Fullscreen);
 
 	if (!ImGui::SFML::Init(window))
 		return -1;
 
 	StateMachine& machine = StateMachine::Get();
+	machine.ChangeState(new MenuState());
 
 	machine.Run(window);
 
