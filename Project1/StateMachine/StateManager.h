@@ -20,8 +20,12 @@ class StateMachine;
 class StateManager
 {
 	protected:
-		//StateMachine *statemachine;
 		const float ScreenSize[2] = {1600, 900};
+
+		//UI
+		sf::Texture tex_0;
+		sf::Texture tex_1;
+		std::vector<sf::Sprite> UI_Sprite;
 
 	public:
 		StateManager();

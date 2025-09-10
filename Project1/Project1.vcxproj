@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Tower\CannonTower.cpp" />
     <ClCompile Include="Monsters\Monster.cpp" />
     <ClCompile Include="Monsters\MonsterActive.cpp" />
     <ClCompile Include="Monsters\MonsterPassive.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Tower\CannonTower.h" />
     <ClInclude Include="Monsters\Monster.h" />
     <ClInclude Include="Monsters\MonsterActive.h" />
     <ClInclude Include="Monsters\MonsterPassive.h" />

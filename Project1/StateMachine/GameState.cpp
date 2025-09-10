@@ -92,13 +92,6 @@ void GameState::Input(sf::RenderWindow& window, sf::Clock& DeltaClock)
 		{
 			window.close();
 		}
-		else if (const auto* Key = event->getIf<sf::Event::MouseButtonPressed>())
-		{
-			if (Key->button == sf::Mouse::Button::Left)
-			{
-				StateMachine::Get().ChangeState(new MenuState());
-			}
-		}
 	}
 
 	ImGui::SFML::Update(window, DeltaClock.restart());
@@ -126,12 +119,42 @@ void GameState::Update(sf::Clock& DeltaClock)
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.1f));
 		}
 
-		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)))
+		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)) and tower_tile[i].TowerID == 0)
 		{
-			//TODO
+			towers.emplace_back(std::make_unique<CannonTower>(sf::Vector2f(tower_tile[i].Position.x * TilesSize, tower_tile[i].Position.y * TilesSize), &cannon_base, &cannon_top, TowerID));
+			tower_tile[i].TowerID = TowerID;
+			TowerID++;
 		}
 
 		ImGui::PopStyleColor(1);
+		ImGui::End();
+		ImGui::PopStyleVar(1);
+	}
+
+	for (int i = 0; i < TowerTypes; i++)
+	{
+		ImGui::SetNextWindowPos(ImVec2(1600-TilesSize*TowerTypes + TilesSize*i, 850));
+		
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+		std::string name = "UI" + std::to_string(i);
+
+		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+
+		name = "buttonUI" + std::to_string(i);
+		
+		if (i == SelectedTower)
+		{
+			ImGui::ImageButton(name.c_str(), UI_Sprite[1], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
+		}
+		else
+		{
+			if (ImGui::ImageButton(name.c_str(), UI_Sprite[0], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255)))
+			{
+				SelectedTower = i;
+			}
+		}
+
 		ImGui::End();
 		ImGui::PopStyleVar(1);
 	}
@@ -147,5 +170,11 @@ void GameState::Render(sf::RenderWindow& window)
 	}
 
 	ImGui::SFML::Render(window);
+
+	for (int i = 0; i < towers.size(); i++)
+	{
+		towers[i]->draw(window);
+	}
+
 	window.display();
 }

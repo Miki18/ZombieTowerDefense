@@ -1,6 +1,8 @@
 //State "GAME"
 #pragma once
 #include "StateManager.h"
+#include "../Tower/Tower.h"
+#include "../Tower/CannonTower.h"
 
 class GameState: public StateManager
 {
@@ -11,6 +13,9 @@ class GameState: public StateManager
 		//Tower tiles - tiles on grass on which towers can stand
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
+		const int TowerTypes = 2;
+		int SelectedTower = 0;
+		int TowerID = 1;
 
 		struct TowerTile
 		{
@@ -32,7 +37,7 @@ class GameState: public StateManager
 		//Tower texture
 		sf::Texture cannon_base;
 		sf::Texture cannon_top;
-		//wektor dla klasy tower
+		std::vector<std::unique_ptr<Tower>> towers;   //check if shared would be better later
 
 		//Map has 1600 x 900 size => 32 x 18 tiles
 		const int MapSize[2] = { 32, 17 };   //last on is for UI
