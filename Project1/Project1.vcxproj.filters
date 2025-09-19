@@ -101,5 +101,8 @@
     <None Include="Resources\Content\Levels\tutorial1.json" />
     <None Include="Resources\Content\Monsters\zombie.json" />
     <None Include="Resources\Content\Towers\cannon.json" />
+    <None Include="StateMachine\LoadLevel.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

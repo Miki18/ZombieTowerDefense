@@ -8,6 +8,7 @@ class MenuState: public StateManager
 		MenuState();
 
 	private:
+		//Screens with different content
 		enum Screens{
 			SelectProfile,
 			MainMenu
@@ -25,4 +26,9 @@ class MenuState: public StateManager
 		//Screens in Menu
 		void SelectProfileScreen();
 		void MainMenuScreen();
+
+		//UI Elements
+		bool LoadProfilesUI();
+		void NewProfileUI();
+		void ButtonUI(ImVec2 Pos, ImVec2 Size, std::string name, std::function<void()> OnClick);
 };

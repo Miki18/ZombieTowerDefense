@@ -23,8 +23,8 @@ class StateManager
 		const float ScreenSize[2] = {1600, 900};
 
 		//UI
-		sf::Texture tex_0;
-		sf::Texture tex_1;
+		sf::Texture UI_Square_Tex;
+		sf::Texture UI_Marked_Tex;
 		std::vector<sf::Sprite> UI_Sprite;
 
 	public:

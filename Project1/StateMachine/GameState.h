@@ -10,20 +10,20 @@ class GameState: public StateManager
 		GameState();
 
 	private:
-		//Tower tiles - tiles on grass on which towers can stand
+		//Grass tiles - grass Tiles on which towers can stand
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
 		const int TowerTypes = 2;
 		int SelectedTower = 0;
 		int TowerID = 1;
 
-		struct TowerTile
+		struct GrassTile
 		{
 			sf::Vector2i Position;
 			int TowerID = 0;   // 0 means tile is empty
 			bool IsDarker = false;
 		};
-		std::vector<TowerTile> tower_tile;
+		std::vector<GrassTile> grass_tile;
 
 		nlohmann::json Level;
 
@@ -37,11 +37,21 @@ class GameState: public StateManager
 		//Tower texture
 		sf::Texture cannon_base;
 		sf::Texture cannon_top;
-		std::vector<std::unique_ptr<Tower>> towers;   //check if shared would be better later
+		std::vector<std::unique_ptr<Tower>> towers;
 
 		//Map has 1600 x 900 size => 32 x 18 tiles
 		const int MapSize[2] = { 32, 17 };   //last on is for UI
 		const int TilesSize = 50;
+
+		//Load functions
+		void GenerateGrassTiles();
+		void LoadRoadTiles();
+		void LoadLevelData();
+		void LoadObjects();
+		void LoadPaths();
+		void LoadMonsters();
+		void LoadTowerTextures();
+		void LoadSettings();
 
 		void Input(sf::RenderWindow& window, sf::Clock& DeltaClock);
 		void Update(sf::Clock& DeltaClock);

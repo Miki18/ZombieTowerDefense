@@ -23,6 +23,7 @@ void StateMachine::ChangeState(StateManager* newState)
 void StateMachine::Run(sf::RenderWindow& window)
 {
 	deltaClock.start();
+
 	while (window.isOpen())
 	{
 		State->Input(window, deltaClock);

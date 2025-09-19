@@ -16,15 +16,23 @@
 
 int main()
 {
+	//create render window
 	sf::RenderWindow window(sf::VideoMode({ 1600, 900 }), "Game", sf::State::Fullscreen);
 
-	if (!ImGui::SFML::Init(window))
-		return -1;
+	//Init ImGui and SFML
+	ImGui::SFML::Init(window);
 
+	//Antialliasing
+	sf::ContextSettings settings;
+	settings.antiAliasingLevel = 8;
+
+	//create state machine and set state to MenuState
 	StateMachine& machine = StateMachine::Get();
 	machine.ChangeState(new MenuState());
 
+	//Run game loop
 	machine.Run(window);
 
+	//Shut down after program goes out of game loop
 	ImGui::SFML::Shutdown();
 }

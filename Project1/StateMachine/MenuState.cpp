@@ -5,7 +5,7 @@
 
 MenuState::MenuState()
 {
-	if (StateMachine::Get().getSelectedProfile() == ".")
+	if (StateMachine::Get().getSelectedProfile().length() == 0)
 	{
 		std::ifstream file("Resources/Content/profiles.json");
 		file >> profiles;
@@ -58,38 +58,40 @@ void MenuState::Render(sf::RenderWindow& window)
 
 void MenuState::MainMenuScreen()
 {
-	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - 125 / 2, ScreenSize[1] / 2 - 100 / 2 - 100));
-	ImGui::Begin("Start", nullptr, ImGuiWindowFlags_NoMove);
-	if (ImGui::Button("StartButton", ImVec2(250, 100)))
-	{
+	//Start
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - 125 / 2, ScreenSize[1] / 2 - 100 / 2 - 100), ImVec2(250, 100), "Start", [] {
 		StateMachine::Get().ChangeState(new GameState());
-	}
-	ImGui::End();
+		});
 
-	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - 125 / 2, ScreenSize[1] / 2 - 100 / 2 + 100));
-	ImGui::Begin("Exit", nullptr, ImGuiWindowFlags_NoMove);
-	if (ImGui::Button("ExitButton", ImVec2(250, 100)))
-	{
+
+	//Back
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - 125 / 2, ScreenSize[1] / 2 - 100 / 2 + 100), ImVec2(250, 100), "Back", [this] {
+
+			std::ifstream file("Resources/Content/profiles.json");
+			file >> profiles;
+			file.close();
+
+			current_screen = SelectProfile;
+		});
+
+
+	//Exit
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - 125 / 2, ScreenSize[1] / 2 - 100 / 2 + 300), ImVec2(250, 100), "Exit", [] {
 		exit(0);
-	}
-	ImGui::End();
-
-	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - 125 / 2, ScreenSize[1] / 2 - 100 / 2 + 300));
-	ImGui::Begin("Back", nullptr, ImGuiWindowFlags_NoMove);
-	if (ImGui::Button("BackButton", ImVec2(250, 100)))
-	{
-		std::ifstream file("Resources/Content/profiles.json");
-		file >> profiles;
-		file.close();
-
-		current_screen = SelectProfile;
-	}
-	ImGui::End();
+		});
 }
 
 void MenuState::SelectProfileScreen()
 {
-	bool IsSlotEmpty = false;
+	//Load profiles and check if there is a space to add a new profile
+	bool IsSlotEmpty = LoadProfilesUI();
+	
+	if (IsSlotEmpty == true) { NewProfileUI(); }
+}
+
+bool MenuState::LoadProfilesUI()
+{
+	bool EmptySlot = false;
 
 	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2, ScreenSize[1] / 2));
 	ImGui::Begin("Select Profile");
@@ -99,7 +101,7 @@ void MenuState::SelectProfileScreen()
 		if (profiles["profiles"][i].empty())
 		{
 			ImGui::Text("Empty");
-			IsSlotEmpty = true;
+			EmptySlot = true;
 		}
 		else
 		{
@@ -113,60 +115,74 @@ void MenuState::SelectProfileScreen()
 	}
 	ImGui::End();
 
-	if (IsSlotEmpty == true)
+	return EmptySlot;
+}
+
+void MenuState::NewProfileUI()
+{
+	ImGui::Begin("NewProfile");
+	ImGui::InputText("Input text", new_profile_name, 15);
+	if (ImGui::Button("Done"))
 	{
-		ImGui::Begin("NewProfile");
-		ImGui::InputText("Input text", new_profile_name, 15);
-		if (ImGui::Button("Done"))
+		bool VerifyNick = true;
+
+		//Only numbers and ASCII letters
+		for (int i = 0; i < strlen(new_profile_name); i++)
 		{
-			bool VerifyNick = true;
-
-			//Only numbers and ASCII letters
-			for (int i = 0; i < strlen(new_profile_name); i++)
+			if (!std::isalnum(static_cast<unsigned char>(new_profile_name[i])))
 			{
-				if (!std::isalnum(static_cast<unsigned char>(new_profile_name[i])))
-				{
-					VerifyNick = false;
-					break;
-				}
+				VerifyNick = false;
+				break;
 			}
+		}
 
-			if (VerifyNick == true)
+		if (VerifyNick == true)
+		{
+			//nick needs to be unique
+			for (int i = 0; i < 5; i++)
 			{
-				//nick needs to be unique
-				for (int i = 0; i < 5; i++)
+				if (!profiles["profiles"][i].empty())
 				{
-					if (!profiles["profiles"][i].empty())
+					if (profiles["profiles"][i]["name"] == new_profile_name)
 					{
-						if (profiles["profiles"][i]["name"] == new_profile_name)
-						{
-							VerifyNick = false;
-							break;
-						}
-					}
-				}
-			}
-
-			if (VerifyNick == false)
-			{
-				//Info player
-			}
-			else
-			{
-				for (int i = 0; i < 5; i++)
-				{
-					if (profiles["profiles"][i].empty())
-					{
-						profiles["profiles"][i]["name"] = new_profile_name;
-						std::ofstream file("Resources/Content/profiles.json");
-						file << profiles.dump(2);
-						file.close();
+						VerifyNick = false;
 						break;
 					}
 				}
 			}
-			new_profile_name[0] = '\0';
 		}
-		ImGui::End();
+
+		if (VerifyNick == false)
+		{
+			//Info player
+		}
+		else
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				if (profiles["profiles"][i].empty())
+				{
+					profiles["profiles"][i]["name"] = new_profile_name;
+					std::ofstream file("Resources/Content/profiles.json");
+					file << profiles.dump(2);
+					file.close();
+					break;
+				}
+			}
+		}
+		new_profile_name[0] = '\0';
 	}
+	ImGui::End();
+}
+
+void MenuState::ButtonUI(ImVec2 Pos, ImVec2 Size, std::string name, std::function<void()> OnClick)
+{
+	ImGui::SetNextWindowPos(Pos);
+	ImGui::Begin((name + "button").c_str(), nullptr, ImGuiWindowFlags_NoMove|ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoBackground);
+
+	if (ImGui::Button(name.c_str(), Size))
+	{
+		OnClick();
+	}
+	ImGui::End();
 }

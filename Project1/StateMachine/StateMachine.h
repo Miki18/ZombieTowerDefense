@@ -14,7 +14,7 @@ class StateMachine
 {
 	private:
 		StateManager* State = nullptr;
-		std::string selected_profile = ".";
+		std::string selected_profile = "";
 
 		StateMachine() {};
 		static StateMachine Instance;

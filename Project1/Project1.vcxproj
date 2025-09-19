@@ -157,6 +157,7 @@
     <None Include="Resources\Content\Monsters\zombie.json" />
     <None Include="Resources\Content\profiles.json" />
     <None Include="Resources\Content\Towers\cannon.json" />
+    <None Include="StateMachine\LoadLevel.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
