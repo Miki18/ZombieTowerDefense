@@ -150,6 +150,8 @@
     <ClInclude Include="StateMachine\MenuState.h" />
     <ClInclude Include="StateMachine\StateMachine.h" />
     <ClInclude Include="StateMachine\StateManager.h" />
+    <ClInclude Include="Monsters\PathPoint.h" />
+    <ClInclude Include="Tower\GrassTile.h" />
     <ClInclude Include="Tower\Tower.h" />
   </ItemGroup>
   <ItemGroup>

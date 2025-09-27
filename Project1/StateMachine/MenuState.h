@@ -19,8 +19,8 @@ class MenuState: public StateManager
 
 		char new_profile_name[15] = "";
 
-		void Input(sf::RenderWindow& window, sf::Clock& DeltaClock);
-		void Update(sf::Clock& DeltaClock);
+		void Input(sf::RenderWindow& window, sf::Time time);
+		void Update(sf::Time time);
 		void Render(sf::RenderWindow& window);
 
 		//Screens in Menu

@@ -23,11 +23,14 @@ void StateMachine::ChangeState(StateManager* newState)
 void StateMachine::Run(sf::RenderWindow& window)
 {
 	deltaClock.start();
+	srand(time(NULL));
 
 	while (window.isOpen())
 	{
-		State->Input(window, deltaClock);
-		State->Update(deltaClock);
+		sf::Time time = deltaClock.restart();
+
+		State->Input(window, time);
+		State->Update(time);
 		State->Render(window);
 	}
 }

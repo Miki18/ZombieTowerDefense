@@ -21,7 +21,7 @@ GameState::GameState()
 	LoadSettings();
 }
 
-void GameState::Input(sf::RenderWindow& window, sf::Clock& DeltaClock)
+void GameState::Input(sf::RenderWindow& window, sf::Time time)
 {
 	while (auto event = window.pollEvent())
 	{
@@ -32,10 +32,10 @@ void GameState::Input(sf::RenderWindow& window, sf::Clock& DeltaClock)
 		}
 	}
 
-	ImGui::SFML::Update(window, DeltaClock.restart());
+	ImGui::SFML::Update(window, time);
 }
 
-void GameState::Update(sf::Clock& DeltaClock)
+void GameState::Update(sf::Time time)
 {
 	for (int i = 0; i < grass_tile.size(); i++)
 	{
@@ -96,6 +96,9 @@ void GameState::Update(sf::Clock& DeltaClock)
 		ImGui::End();
 		ImGui::PopStyleVar(1);
 	}
+
+	UpdateMonsters(time);
+
 }
 
 void GameState::Render(sf::RenderWindow& window)
@@ -114,5 +117,58 @@ void GameState::Render(sf::RenderWindow& window)
 		towers[i]->draw(window);
 	}
 
+	for (int i = 0; i < monsters.size(); i++)
+	{
+		monsters[i]->DrawMonster(window);
+	}
+
 	window.display();
+}
+
+void GameState::UpdateMonsters(sf::Time time)
+{
+	GenerateMonsters(time);
+	MoveMonsters(time);
+
+	for (int i = 0; i < monsters.size(); i++)
+	{
+		if (monsters[i]->IsDead == true)
+		{
+			monsters.erase(monsters.begin() + i);
+		}
+	}
+}
+
+void GameState::GenerateMonsters(sf::Time time)
+{
+	if (timeBetweenWaves < 0)
+	{
+		if (timeCooldownInWave < 0)
+		{
+			monsters.emplace_back(std::make_unique<MonsterPassive>(ZombieTex, 100, 100, TilesSize, paths_startpoints, paths_endpoints, paths)); //replace later with real data
+			MonsterNumberInWave--;
+			if (MonsterNumberInWave == 0)
+			{
+				timeBetweenWaves = 5 + rand() % 11;
+				MonsterNumberInWave = 1 + rand() % 5;
+			}
+			timeCooldownInWave = 0.5;
+		}
+		else
+		{
+			timeCooldownInWave = timeCooldownInWave - time.asSeconds();
+		}
+	}
+	else
+	{
+		timeBetweenWaves = timeBetweenWaves - time.asSeconds();
+	}
+}
+
+void GameState::MoveMonsters(sf::Time time)
+{
+	for (int i = 0; i < monsters.size(); i++)
+	{
+		monsters[i]->MonsterUpdate(time);
+	}
 }

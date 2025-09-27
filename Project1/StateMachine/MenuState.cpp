@@ -19,7 +19,7 @@ MenuState::MenuState()
 	}
 }
 
-void MenuState::Input(sf::RenderWindow& window, sf::Clock& DeltaClock)
+void MenuState::Input(sf::RenderWindow& window, sf::Time time)
 {
 	while (auto event = window.pollEvent())
 	{
@@ -30,10 +30,10 @@ void MenuState::Input(sf::RenderWindow& window, sf::Clock& DeltaClock)
 		}
 	}
 
-	ImGui::SFML::Update(window, DeltaClock.restart());
+	ImGui::SFML::Update(window, time);
 }
 
-void MenuState::Update(sf::Clock& DeltaClock)
+void MenuState::Update(sf::Time time)
 {
 	switch (current_screen)
 	{

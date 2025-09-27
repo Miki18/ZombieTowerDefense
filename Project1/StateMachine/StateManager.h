@@ -29,8 +29,8 @@ class StateManager
 
 	public:
 		StateManager();
-		virtual void Input(sf::RenderWindow& window, sf::Clock& DeltaClock) {};
-		virtual void Update(sf::Clock& DeltaClock) {};
+		virtual void Input(sf::RenderWindow& window, sf::Time time) {};
+		virtual void Update(sf::Time time) {};
 		virtual void Render(sf::RenderWindow& window) {};
 };
 

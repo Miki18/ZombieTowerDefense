@@ -1,4 +1,4 @@
-	//Class that have game loop and change states.
+//Class that have game loop and change states.
 
 #pragma once
 #include "StateManager.h"

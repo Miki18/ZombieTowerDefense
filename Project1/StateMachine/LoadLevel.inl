@@ -73,7 +73,36 @@ void GameState::LoadObjects()
 
 void GameState::LoadPaths()
 {
-	//TODO
+	for (const auto& arr : Level["paths"]["startpoints"])
+	{
+		paths_startpoints.emplace_back(sf::Vector2i(arr[0], arr[1]));
+	}
+
+	for (const auto& arr : Level["paths"]["endpoints"])
+	{
+		paths_endpoints.emplace_back(sf::Vector2i(arr[0], arr[1]));
+	}
+
+	for (const auto& [f, values] : Level["paths"]["path"].items())
+	{
+		PathPoints newPoint;
+		auto pos = f.find(',');
+		int x = std::stoi(f.substr(0, pos));
+		int y = std::stoi(f.substr(pos + 1));
+
+		newPoint.point = sf::Vector2i(x, y);
+
+		std::vector<sf::Vector2i> target;
+
+		for (const auto& arr : values)
+		{
+			target.emplace_back(sf::Vector2i(arr[0], arr[1]));
+		}
+
+		newPoint.successors = target;
+
+		paths.emplace_back(newPoint);
+	}
 }
 
 void GameState::LoadMonsters()
@@ -82,7 +111,15 @@ void GameState::LoadMonsters()
 	{
 		monster_types.push_back(monster);
 
-		//Open, import, create class etc
+		//Read monster name and go to read
+		//resources/visuals/monsters/[monster_name].png
+		//also resources/content/monsters/[monster_name].png
+		//when u create monster (select from monster_types) then use factory pattern
+		//create monsters every X seconds
+
+		std::string path_to_tex = "Resources/Visuals/Monsters/" + monster_types[monster_types.size() - 1] + "_sheet.png";
+
+		ZombieTex.loadFromFile(path_to_tex);
 	}
 }
 

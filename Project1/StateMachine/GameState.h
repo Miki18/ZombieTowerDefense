@@ -1,8 +1,13 @@
 //State "GAME"
 #pragma once
 #include "StateManager.h"
+#include "../Tower/GrassTile.h"
+#include "../Monsters/PathPoint.h"
 #include "../Tower/Tower.h"
 #include "../Tower/CannonTower.h"
+#include "../Monsters/Monster.h"
+#include "../Monsters/MonsterActive.h"
+#include "../Monsters/MonsterPassive.h"
 
 class GameState: public StateManager
 {
@@ -17,12 +22,8 @@ class GameState: public StateManager
 		int SelectedTower = 0;
 		int TowerID = 1;
 
-		struct GrassTile
-		{
-			sf::Vector2i Position;
-			int TowerID = 0;   // 0 means tile is empty
-			bool IsDarker = false;
-		};
+		double TimeUntilNextMonsterSpawns = 10;
+
 		std::vector<GrassTile> grass_tile;
 
 		nlohmann::json Level;
@@ -31,8 +32,20 @@ class GameState: public StateManager
 		std::vector<sf::Texture> RoadTextures;
 		std::vector<sf::RectangleShape> RoadTiles;
 
+		//Path
+		std::vector<sf::Vector2i> paths_startpoints;
+		std::vector<sf::Vector2i> paths_endpoints;
+		std::vector<PathPoints> paths;
+
 		//Monsters
+		std::vector<std::unique_ptr<Monster>> monsters;
 		std::vector<std::string> monster_types;
+		std::vector<sf::Texture> monster_sheets;
+		sf::Texture ZombieTex;
+		//Monsters variables
+		int MonsterNumberInWave = 5;
+		float timeCooldownInWave = 1;
+		float timeBetweenWaves = 5;
 
 		//Tower texture
 		sf::Texture cannon_base;
@@ -53,8 +66,13 @@ class GameState: public StateManager
 		void LoadTowerTextures();
 		void LoadSettings();
 
-		void Input(sf::RenderWindow& window, sf::Clock& DeltaClock);
-		void Update(sf::Clock& DeltaClock);
+		void Input(sf::RenderWindow& window, sf::Time time);
+		void Update(sf::Time time);
 		void Render(sf::RenderWindow& window);
+
+		//Update
+		void UpdateMonsters(sf::Time time);
+		void GenerateMonsters(sf::Time time);
+		void MoveMonsters(sf::Time time);
 };
 

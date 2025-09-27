@@ -31,6 +31,9 @@
     <Filter Include="Source Files\Tower">
       <UniqueIdentifier>{01767cdf-b99e-4410-bf99-0ba2e26f4144}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Structs">
+      <UniqueIdentifier>{27d340d6-2f52-46a4-84da-23676349d82a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -89,11 +92,17 @@
     <ClInclude Include="Monsters\MonsterActive.h">
       <Filter>Header Files\Monsters</Filter>
     </ClInclude>
+    <ClInclude Include="Tower\CannonTower.h">
+      <Filter>Header Files\Tower</Filter>
+    </ClInclude>
     <ClInclude Include="Tower\Tower.h">
       <Filter>Header Files\Tower</Filter>
     </ClInclude>
-    <ClInclude Include="Tower\CannonTower.h">
-      <Filter>Header Files\Tower</Filter>
+    <ClInclude Include="Tower\GrassTile.h">
+      <Filter>Structs</Filter>
+    </ClInclude>
+    <ClInclude Include="Monsters\PathPoint.h">
+      <Filter>Structs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
