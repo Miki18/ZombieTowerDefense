@@ -51,10 +51,12 @@ void GameState::Update(sf::Time time)
 		if (grass_tile[i].IsDarker)
 		{
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.25f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.60f));
 		}
 		else
 		{
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.1f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.45f));
 		}
 
 		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)) and grass_tile[i].TowerID == 0)
@@ -64,7 +66,7 @@ void GameState::Update(sf::Time time)
 			TowerID++;
 		}
 
-		ImGui::PopStyleColor(1);
+		ImGui::PopStyleColor(2);
 		ImGui::End();
 		ImGui::PopStyleVar(1);
 	}
