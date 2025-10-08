@@ -15,10 +15,19 @@ class Tower
 	protected:
 		const float TileSize = 50.0f;
 
+		float hp;
+		float cooldown;
+		float dmg;
+		float radius;
+		sf::Vector2f bulletPoint;
+		int TowerID;
+
 	public:
-		Tower() {};
+		Tower(float hp, float cooldown, float dmg, float radius, sf::Vector2f bulletpoint, int id);
 		~Tower() {};
 
+		int getID();
+		float getRadius();
 		virtual void draw(sf::RenderWindow& window);
 };
 

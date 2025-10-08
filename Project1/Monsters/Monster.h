@@ -13,7 +13,7 @@
 class Monster
 {
 	public:
-		Monster(sf::Texture& tex, float hp, float speed, int TileSize, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths);
+		Monster(sf::Texture& tex, float hp, float speed, int TileSize, int& P_HP, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int Monster_ID);
 		~Monster() {};
 		void virtual MonsterUpdate(sf::Time time) {};
 		void DrawMonster(sf::RenderWindow& window);
@@ -35,9 +35,12 @@ class Monster
 		float speed;
 		float health;
 		int TileSize;
+		int& PlayerHP;
+		int ID;
 		//int dmg and radius only for active monsters
 
 		void virtual MonsterWalk(sf::Time time) {};
 		void ChooseDestination();
+		int GetID();
 };
 

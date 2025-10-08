@@ -30,13 +30,32 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 		{
 			window.close();
 		}
+		else
+		{
+			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+			{
+				if (keyPressed->scancode == sf::Keyboard::Scancode::P)
+				{
+					IsGamePaused = !IsGamePaused;
+				}
+				/*if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
+				{
+					SelectedTower = 0;
+				}*/
+				/*else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2)
+				{
+					SelectedTower = 1;
+				}*/
+			}
+		}
 	}
 
 	ImGui::SFML::Update(window, time);
 }
 
 void GameState::Update(sf::Time time)
-{
+{	
+	//Grass tiles
 	for (int i = 0; i < grass_tile.size(); i++)
 	{
 		ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
@@ -59,11 +78,28 @@ void GameState::Update(sf::Time time)
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.45f));
 		}
 
-		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)) and grass_tile[i].TowerID == 0)
+		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)) and IsGamePaused == false)
 		{
-			towers.emplace_back(std::make_unique<CannonTower>(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize), &cannon_base, &cannon_top, TowerID));
-			grass_tile[i].TowerID = TowerID;
-			TowerID++;
+			if (grass_tile[i].TowerID == 0)
+			{
+				if (SelectedTower == 0 and Money >= towersvalues[0]->price)
+				{
+					towers.emplace_back(std::make_unique<CannonTower>(
+						sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize),
+						towersvalues[0]->hp, towersvalues[0]->cooldown, towersvalues[0]->dmg, towersvalues[0]->radius, towersvalues[0]->bulletpoint, &towersvalues[0]->base, &towersvalues[0]->top, TowerID));
+					grass_tile[i].TowerID = TowerID;
+					Money = Money - towersvalues[0]->price;
+					TowerID++;
+				}
+			}
+			else if (grass_tile[i].TowerID != 0)
+			{
+				int T_ID = grass_tile[i].TowerID;
+				for (int j = 0; j < towers.size(); j++)
+				{
+					//DRAW CIRCLE SYSTEM
+				}
+			}
 		}
 
 		ImGui::PopStyleColor(2);
@@ -71,34 +107,22 @@ void GameState::Update(sf::Time time)
 		ImGui::PopStyleVar(1);
 	}
 
-	for (int i = 0; i < TowerTypes; i++)
+	if (IsGamePaused == true)
 	{
-		ImGui::SetNextWindowPos(ImVec2(1600-TilesSize*TowerTypes + TilesSize*i, 850));
-		
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-
-		std::string name = "UI" + std::to_string(i);
-
-		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-
-		name = "buttonUI" + std::to_string(i);
-		
-		if (i == SelectedTower)
-		{
-			ImGui::ImageButton(name.c_str(), UI_Sprite[1], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
-		}
-		else
-		{
-			if (ImGui::ImageButton(name.c_str(), UI_Sprite[0], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255)))
-			{
-				SelectedTower = i;
-			}
-		}
-
+		ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2, ScreenSize[1] / 2));
+		ImGui::Begin("PausedGameText");
+		ImGui::Text("Game is Paused; click P to unpause");
 		ImGui::End();
-		ImGui::PopStyleVar(1);
+		return;
 	}
 
+	//Select tower UI
+	//SelectTowerUI();
+
+	//Heart and Money UI
+	ShowHealtAndMoney();
+
+	//Update Monster
 	UpdateMonsters(time);
 
 }
@@ -127,6 +151,66 @@ void GameState::Render(sf::RenderWindow& window)
 	window.display();
 }
 
+void GameState::ShowHealtAndMoney()
+{
+	int correct_UI_location = -10;
+	
+	//health
+	ImGui::SetNextWindowPos(ImVec2(correct_UI_location, ScreenSize[1] - TilesSize + correct_UI_location));
+	ImGui::Begin("heart", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Heart)]), sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
+	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+	ImDrawList* drawlist = ImGui::GetWindowDrawList();
+	ImVec2 TextSize = ImGui::CalcTextSize(std::to_string(Health).c_str());
+	cursorPos = ImVec2(cursorPos.x + TilesSize / 2 - TextSize.x / 2, cursorPos.y - TilesSize / 2 - TextSize.y);
+	drawlist->AddText(cursorPos, IM_COL32_WHITE, std::to_string(Health).c_str());
+	ImGui::End();
+
+	int Gap = 10;
+
+	//Money
+	ImGui::SetNextWindowPos(ImVec2(correct_UI_location + TilesSize + Gap, ScreenSize[1] - TilesSize + correct_UI_location));
+	ImGui::Begin("Money", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Money)]), sf::Vector2f(100, 50), sf::Color(255, 255, 255, 255));
+	cursorPos = ImGui::GetCursorScreenPos();
+	drawlist = ImGui::GetWindowDrawList();
+	TextSize = ImGui::CalcTextSize(std::to_string(Money).c_str());
+	cursorPos = ImVec2(cursorPos.x + TilesSize*2 / 2 - TextSize.x / 2, cursorPos.y - TilesSize/ 2 - TextSize.y);
+	drawlist->AddText(cursorPos, IM_COL32_WHITE, std::to_string(Money).c_str());
+	ImGui::End();
+}
+
+void GameState::SelectTowerUI()
+{
+	for (int i = 0; i < TowerTypes; i++)
+	{
+		ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i, ScreenSize[1] - TilesSize));
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+		std::string name = "UI" + std::to_string(i);
+
+		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+
+		name = "buttonUI" + std::to_string(i);
+
+		if (i == SelectedTower)
+		{
+			ImGui::ImageButton(name.c_str(), UI_Sprite[SpriteList(UI_Marked)], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
+		}
+		else
+		{
+			if (ImGui::ImageButton(name.c_str(), UI_Sprite[SpriteList(UI_Square)], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255)))
+			{
+				SelectedTower = i;
+			}
+		}
+
+		ImGui::End();
+		ImGui::PopStyleVar(1);
+	}
+}
+
 void GameState::UpdateMonsters(sf::Time time)
 {
 	GenerateMonsters(time);
@@ -147,7 +231,17 @@ void GameState::GenerateMonsters(sf::Time time)
 	{
 		if (timeCooldownInWave < 0)
 		{
-			monsters.emplace_back(std::make_unique<MonsterPassive>(ZombieTex, 100, 100, TilesSize, paths_startpoints, paths_endpoints, paths)); //replace later with real data
+			int randommonster = rand() % monster_types.size();
+
+			if (monster_types[randommonster]->IsPassive)
+			{
+				monsters.emplace_back(std::make_unique<MonsterPassive>(monster_types[randommonster]->MonsterTex, monster_types[randommonster]->hp, monster_types[randommonster]->Speed, TilesSize, Health, paths_startpoints, paths_endpoints, paths, MonsterID));
+				MonsterID++;
+			}
+			else
+			{
+				//TODO
+			}
 			MonsterNumberInWave--;
 			if (MonsterNumberInWave == 0)
 			{

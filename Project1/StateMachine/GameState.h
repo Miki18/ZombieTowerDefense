@@ -1,7 +1,7 @@
 //State "GAME"
 #pragma once
 #include "StateManager.h"
-#include "../Tower/GrassTile.h"
+#include "../Other/GrassTile.h"
 #include "../Monsters/PathPoint.h"
 #include "../Tower/Tower.h"
 #include "../Tower/CannonTower.h"
@@ -18,11 +18,13 @@ class GameState: public StateManager
 		//Grass tiles - grass Tiles on which towers can stand
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
-		const int TowerTypes = 2;
+		const int TowerTypes = 1;
 		int SelectedTower = 0;
 		int TowerID = 1;
 
-		double TimeUntilNextMonsterSpawns = 10;
+		bool IsGamePaused = false;
+		int Health = 5;
+		int Money = 100;
 
 		std::vector<GrassTile> grass_tile;
 
@@ -38,23 +40,40 @@ class GameState: public StateManager
 		std::vector<PathPoints> paths;
 
 		//Monsters
+		struct MonsterTypeValues
+		{
+			bool IsPassive;
+			sf::Texture MonsterTex;
+			float hp;
+			float Speed;			
+		};
+
 		std::vector<std::unique_ptr<Monster>> monsters;
-		std::vector<std::string> monster_types;
-		std::vector<sf::Texture> monster_sheets;
-		sf::Texture ZombieTex;
+		std::vector<std::unique_ptr<MonsterTypeValues>> monster_types;
+		double TimeUntilNextMonsterSpawns = 10;
+		int MonsterID = 0;
 		//Monsters variables
 		int MonsterNumberInWave = 5;
 		float timeCooldownInWave = 1;
 		float timeBetweenWaves = 5;
 
 		//Tower texture
-		sf::Texture cannon_base;
-		sf::Texture cannon_top;
+		struct TowerTypeValues
+		{
+			float hp;
+			float cooldown;
+			float dmg;
+			float radius;
+			float price;
+			sf::Vector2f bulletpoint;
+			sf::Texture base;
+			sf::Texture top;
+		};
 		std::vector<std::unique_ptr<Tower>> towers;
+		std::vector<std::unique_ptr<TowerTypeValues>> towersvalues;
 
 		//Map has 1600 x 900 size => 32 x 18 tiles
 		const int MapSize[2] = { 32, 17 };   //last on is for UI
-		const int TilesSize = 50;
 
 		//Load functions
 		void GenerateGrassTiles();
@@ -70,7 +89,11 @@ class GameState: public StateManager
 		void Update(sf::Time time);
 		void Render(sf::RenderWindow& window);
 
-		//Update
+		//UI
+		void ShowHealtAndMoney();
+		void SelectTowerUI();
+
+		//Monster
 		void UpdateMonsters(sf::Time time);
 		void GenerateMonsters(sf::Time time);
 		void MoveMonsters(sf::Time time);

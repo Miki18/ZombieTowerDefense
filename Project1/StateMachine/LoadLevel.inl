@@ -109,26 +109,51 @@ void GameState::LoadMonsters()
 {
 	for (auto& monster : Level["monsters"])
 	{
-		monster_types.push_back(monster);
+		MonsterTypeValues nextmonster;
 
-		//Read monster name and go to read
-		//resources/visuals/monsters/[monster_name].png
-		//also resources/content/monsters/[monster_name].png
-		//when u create monster (select from monster_types) then use factory pattern
-		//create monsters every X seconds
+		std::string path_to_tex = "Resources/Visuals/Monsters/" + monster.get<std::string>() + "_sheet.png";
 
-		std::string path_to_tex = "Resources/Visuals/Monsters/" + monster_types[monster_types.size() - 1] + "_sheet.png";
+		nextmonster.MonsterTex.loadFromFile(path_to_tex);
 
-		ZombieTex.loadFromFile(path_to_tex);
+		nlohmann::json monstervalues;
+		std::string path_to_json = "Resources/Content/Monsters/" + monster.get<std::string>();
+		std::fstream file(path_to_json);
+		file >> monstervalues;
+		file.close();
+
+		nextmonster.hp = monstervalues["hp"].get<float>();
+		nextmonster.Speed = monstervalues["speed"].get<float>();
+		nextmonster.IsPassive = monstervalues["type"].get<std::string>() == "passive";
+
+		monster_types.emplace_back(std::make_unique<MonsterTypeValues>(nextmonster));
 	}
 }
 
 void GameState::LoadTowerTextures()
 {
-	cannon_base = sf::Texture("Resources/Visuals/Towers/Cannon/cannon_base.png");
-	cannon_base.setSmooth(true);
-	cannon_top = sf::Texture("Resources/Visuals/Towers/Cannon/cannon_top.png");
-	cannon_top.setSmooth(true);
+	TowerTypeValues towertype;
+
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Cannon/cannon_base.png");
+	towertype.base.setSmooth(true);
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Cannon/cannon_top.png");
+	towertype.top.setSmooth(true);
+
+	std::fstream file("Resources/Content/Towers/cannon");
+
+	nlohmann::json readedtower;
+	file >> readedtower;
+
+	file.close();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.price = readedtower["price"].get<int>();
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.bulletpoint.x = readedtower["bulletPointx"].get<float>();
+	towertype.bulletpoint.y = readedtower["bulletPointy"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
 }
 
 void GameState::LoadSettings()

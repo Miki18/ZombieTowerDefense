@@ -19,12 +19,26 @@ class StateMachine;
 
 class StateManager
 {
-	protected:
-		const float ScreenSize[2] = {1600, 900};
-
+	private:
 		//UI
 		sf::Texture UI_Square_Tex;
 		sf::Texture UI_Marked_Tex;
+		sf::Texture UI_HeartTex;
+		sf::Texture UI_MoneyTex;
+
+	protected:
+		const float ScreenSize[2] = {1600, 900};
+		const int TilesSize = 50;
+
+		//Sprite vector
+		enum SpriteList
+		{
+			UI_Square,
+			UI_Marked,
+			UI_Heart,
+			UI_Money
+		};
+
 		std::vector<sf::Sprite> UI_Sprite;
 
 	public:

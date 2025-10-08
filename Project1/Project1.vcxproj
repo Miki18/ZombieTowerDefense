@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Other\Bullet.cpp" />
     <ClCompile Include="Tower\CannonTower.cpp" />
     <ClCompile Include="Monsters\Monster.cpp" />
     <ClCompile Include="Monsters\MonsterActive.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Other\Bullet.h" />
     <ClInclude Include="Tower\CannonTower.h" />
     <ClInclude Include="Monsters\Monster.h" />
     <ClInclude Include="Monsters\MonsterActive.h" />
@@ -151,14 +153,14 @@
     <ClInclude Include="StateMachine\StateMachine.h" />
     <ClInclude Include="StateMachine\StateManager.h" />
     <ClInclude Include="Monsters\PathPoint.h" />
-    <ClInclude Include="Tower\GrassTile.h" />
+    <ClInclude Include="Other\GrassTile.h" />
     <ClInclude Include="Tower\Tower.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Content\Levels\tutorial1.json" />
-    <None Include="Resources\Content\Monsters\zombie.json" />
+    <None Include="Resources\Content\Monsters\zombie" />
     <None Include="Resources\Content\profiles.json" />
-    <None Include="Resources\Content\Towers\cannon.json" />
+    <None Include="Resources\Content\Towers\cannon" />
     <None Include="StateMachine\LoadLevel.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

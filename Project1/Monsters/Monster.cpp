@@ -1,6 +1,6 @@
 #include "Monster.h"
 
-Monster::Monster(sf::Texture& tex, float hp, float speed, int TileSize, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& path)
+Monster::Monster(sf::Texture& tex, float hp, float speed, int TileSize, int& P_HP, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& path, int Monster_ID): PlayerHP(P_HP)
 {
 	startpoints = &starts;
 	endpoints = &ends;
@@ -10,6 +10,7 @@ Monster::Monster(sf::Texture& tex, float hp, float speed, int TileSize, std::vec
 	this->speed = speed;
 	this->TileSize = TileSize;
 	texture = tex;
+	ID = Monster_ID;
 
 	int startPos;
 	if (starts.size() > 1)
@@ -45,6 +46,7 @@ void Monster::ChooseDestination()
 		if ((*endpoints)[i] == DestinationTile)
 		{
 			IsDead = true;
+			PlayerHP--;
 			return;
 		}
 	}
@@ -66,4 +68,9 @@ void Monster::ChooseDestination()
 			break;
 		}
 	}
+}
+
+int Monster::GetID()
+{
+	return ID;
 }

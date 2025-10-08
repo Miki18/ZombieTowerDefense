@@ -69,6 +69,9 @@
     <ClCompile Include="Tower\CannonTower.cpp">
       <Filter>Source Files\Tower</Filter>
     </ClCompile>
+    <ClCompile Include="Other\Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Monsters\Monster.h">
@@ -98,18 +101,21 @@
     <ClInclude Include="Tower\Tower.h">
       <Filter>Header Files\Tower</Filter>
     </ClInclude>
-    <ClInclude Include="Tower\GrassTile.h">
+    <ClInclude Include="Other\GrassTile.h">
       <Filter>Structs</Filter>
     </ClInclude>
     <ClInclude Include="Monsters\PathPoint.h">
       <Filter>Structs</Filter>
     </ClInclude>
+    <ClInclude Include="Other\Bullet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Content\profiles.json" />
     <None Include="Resources\Content\Levels\tutorial1.json" />
-    <None Include="Resources\Content\Monsters\zombie.json" />
-    <None Include="Resources\Content\Towers\cannon.json" />
+    <None Include="Resources\Content\Monsters\zombie" />
+    <None Include="Resources\Content\Towers\cannon" />
     <None Include="StateMachine\LoadLevel.inl">
       <Filter>Header Files</Filter>
     </None>

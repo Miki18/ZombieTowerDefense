@@ -1,6 +1,6 @@
 #include "MonsterPassive.h"
 
-MonsterPassive::MonsterPassive(sf::Texture tex, float hp, float speed, int TileSize, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths) : Monster(tex, hp, speed, TileSize,starts, ends, paths)
+MonsterPassive::MonsterPassive(sf::Texture tex, float hp, float speed, int TileSize, int& P_HP, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int MonsterID) : Monster(tex, hp, speed, TileSize, P_HP, starts, ends, paths, MonsterID)
 {
 
 }
@@ -57,15 +57,15 @@ void MonsterPassive::MonsterWalk(sf::Time time)
 
 	//Move dealing with texture to other function
 	UntilNextTex = UntilNextTex - time.asSeconds();
-	frame++;
-	if (frame > 7)
-	{
-		frame = 0;
-	}
 	if (UntilNextTex < 0)
 	{
+		frame++;
+		if (frame > 7)
+		{
+			frame = 0;
+		}
 		body.setTexture(&texture);
-		body.setTextureRect(sf::IntRect({ 25*frame,0 }, { 25,50 }));
+		body.setTextureRect(sf::IntRect({ 50*frame,0 }, { 50,100 }));
 		UntilNextTex = float(1.f/7.f);
 	}
 	body.setPosition(Position);
