@@ -7,13 +7,22 @@
 class Bullet
 {
 	public:
-		Bullet(sf::Vector2f Position, int M_ID);
+		Bullet(sf::Vector2f Position, float damage, sf::Vector2f TargetCurrentPos, int Target_ID);
 		
-		void Update(sf::Time time);
+		float getDmg();
+		float getRadius();
+		int getTargetID();
+		sf::Vector2f getPosition();
+		sf::Vector2f getTargetPos();
+
+		void DrawBullet(sf::RenderWindow& window);
+		void Update(sf::Time time, sf::Vector2f Dir, sf::Vector2f TargetCurrentPos);
 
 	private:
-		int MonsterID;
-		float velocity = 50;
-		sf::Vector2f Pos;
+		sf::Vector2f TargetPos;
+		sf::CircleShape circle;
+		int TargetID;
+		float radius = 0;
+		float velocity = 200;
+		float dmg;
 };
-

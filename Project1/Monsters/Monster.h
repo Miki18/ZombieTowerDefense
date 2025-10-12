@@ -13,11 +13,15 @@
 class Monster
 {
 	public:
-		Monster(sf::Texture& tex, float hp, float speed, int TileSize, int& P_HP, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int Monster_ID);
+		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int Monster_ID);
 		~Monster() {};
 		void virtual MonsterUpdate(sf::Time time) {};
 		void DrawMonster(sf::RenderWindow& window);
 		bool IsDead = false;
+
+		void TakeDamage(float dmg);
+		sf::Vector2f getPosition();
+		int GetID();
 
 	protected:
 		std::vector<sf::Vector2i>* startpoints = nullptr;
@@ -34,13 +38,14 @@ class Monster
 		sf::Vector2i DestinationTile;
 		float speed;
 		float health;
+		int price;
 		int TileSize;
 		int& PlayerHP;
+		int& PlayerMoney;
 		int ID;
 		//int dmg and radius only for active monsters
 
 		void virtual MonsterWalk(sf::Time time) {};
 		void ChooseDestination();
-		int GetID();
 };
 

@@ -2,8 +2,7 @@
   "hp": 100,
   "cooldown": 1.0,
   "dmg": 25,
-  "radius": 25,
+  "radius": 100,
   "price": 50,
-  "bulletPointx": 10,
-  "bulletPointy": 10
+  "bulletoffset": 25
 }

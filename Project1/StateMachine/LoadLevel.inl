@@ -124,6 +124,7 @@ void GameState::LoadMonsters()
 		nextmonster.hp = monstervalues["hp"].get<float>();
 		nextmonster.Speed = monstervalues["speed"].get<float>();
 		nextmonster.IsPassive = monstervalues["type"].get<std::string>() == "passive";
+		nextmonster.price = monstervalues["price"].get<int>();
 
 		monster_types.emplace_back(std::make_unique<MonsterTypeValues>(nextmonster));
 	}
@@ -150,14 +151,19 @@ void GameState::LoadTowerTextures()
 	towertype.dmg = readedtower["dmg"].get<float>();
 	towertype.price = readedtower["price"].get<int>();
 	towertype.radius = readedtower["radius"].get<float>();
-	towertype.bulletpoint.x = readedtower["bulletPointx"].get<float>();
-	towertype.bulletpoint.y = readedtower["bulletPointy"].get<float>();
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
 
 	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
 }
 
 void GameState::LoadSettings()
 {
-	//TODO
+	MWS.MinimumMonstersInWave = Level["settings"]["MinimumMonstersInWave"].get<int>();
+	MWS.PossibleAdditionalMonsters = Level["settings"]["PossibleAdditionalMonsters"].get<int>() + 1;
+	MWS.timeBetweenWaves = Level["settings"]["timeBetweenWaves"].get<float>();
+	MWS.timeCooldownInWave = Level["settings"]["timeCooldownInWave"].get<float>();
+	MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % MWS.PossibleAdditionalMonsters;
+	MWS.BetweenWaves = MWS.timeBetweenWaves;
+	MWS.CooldownInWave = MWS.timeCooldownInWave;
 }
 //End loading functions---------------------------

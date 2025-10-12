@@ -1,6 +1,6 @@
 #include "MonsterPassive.h"
 
-MonsterPassive::MonsterPassive(sf::Texture tex, float hp, float speed, int TileSize, int& P_HP, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int MonsterID) : Monster(tex, hp, speed, TileSize, P_HP, starts, ends, paths, MonsterID)
+MonsterPassive::MonsterPassive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int MonsterID) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, ends, paths, MonsterID)
 {
 
 }

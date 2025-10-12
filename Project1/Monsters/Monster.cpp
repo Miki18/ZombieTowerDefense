@@ -1,6 +1,6 @@
 #include "Monster.h"
 
-Monster::Monster(sf::Texture& tex, float hp, float speed, int TileSize, int& P_HP, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& path, int Monster_ID): PlayerHP(P_HP)
+Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& path, int Monster_ID): PlayerHP(P_HP), PlayerMoney(P_Money)
 {
 	startpoints = &starts;
 	endpoints = &ends;
@@ -11,6 +11,7 @@ Monster::Monster(sf::Texture& tex, float hp, float speed, int TileSize, int& P_H
 	this->TileSize = TileSize;
 	texture = tex;
 	ID = Monster_ID;
+	this->price = price;
 
 	int startPos;
 	if (starts.size() > 1)
@@ -39,11 +40,26 @@ void Monster::DrawMonster(sf::RenderWindow& window)
 	window.draw(body);
 }
 
+void Monster::TakeDamage(float dmg)
+{
+	health -= dmg;
+	if (health < 0)
+	{
+		IsDead = true;
+		PlayerMoney += price;
+	}
+}
+
+sf::Vector2f Monster::getPosition()
+{
+	return Position;
+}
+
 void Monster::ChooseDestination()
 {
 	for (int i = 0; i < endpoints->size(); i++)
 	{
-		if ((*endpoints)[i] == DestinationTile)
+		if ((*endpoints)[i] == DestinationTile and IsDead == false)
 		{
 			IsDead = true;
 			PlayerHP--;

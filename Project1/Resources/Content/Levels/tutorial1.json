@@ -62,6 +62,10 @@
     "zombie"
   ],
 
-  "settings": [
-  ]
+  "settings": {
+    "MinimumMonstersInWave": 1,
+    "PossibleAdditionalMonsters" : 2,
+    "timeCooldownInWave" : 1.5,
+    "timeBetweenWaves" : 5
+  }
 }

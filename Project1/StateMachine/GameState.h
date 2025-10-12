@@ -8,6 +8,7 @@
 #include "../Monsters/Monster.h"
 #include "../Monsters/MonsterActive.h"
 #include "../Monsters/MonsterPassive.h"
+#include "../Other/Bullet.h"
 
 class GameState: public StateManager
 {
@@ -18,17 +19,21 @@ class GameState: public StateManager
 		//Grass tiles - grass Tiles on which towers can stand
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
-		const int TowerTypes = 1;
-		int SelectedTower = 0;
-		int TowerID = 1;
-
 		bool IsGamePaused = false;
-		int Health = 5;
+		int Health = 10;
 		int Money = 100;
 
 		std::vector<GrassTile> grass_tile;
 
 		nlohmann::json Level;
+
+		//Tower Options
+		struct TowerOptions
+		{
+			bool IsVisible = false;
+			sf::CircleShape circle;
+		};
+		TowerOptions tower_options;
 
 		//Road
 		std::vector<sf::Texture> RoadTextures;
@@ -45,19 +50,33 @@ class GameState: public StateManager
 			bool IsPassive;
 			sf::Texture MonsterTex;
 			float hp;
-			float Speed;			
+			float Speed;
+			int price;
 		};
 
 		std::vector<std::unique_ptr<Monster>> monsters;
 		std::vector<std::unique_ptr<MonsterTypeValues>> monster_types;
 		double TimeUntilNextMonsterSpawns = 10;
 		int MonsterID = 0;
-		//Monsters variables
-		int MonsterNumberInWave = 5;
-		float timeCooldownInWave = 1;
-		float timeBetweenWaves = 5;
+		//Monsters waves variables
+		struct MonsterWavesSettings
+		{
+			int MinimumMonstersInWave;
+			int PossibleAdditionalMonsters;
+			int MonsterNumberInCurrentWave;
 
-		//Tower texture
+			float timeCooldownInWave;
+			float timeBetweenWaves;
+			float CooldownInWave;
+			float BetweenWaves;
+		};
+		MonsterWavesSettings MWS;
+
+		//Tower variables
+		const int TowerTypes = 1;
+		int SelectedTower = 0;
+		int TowerID = 1;
+
 		struct TowerTypeValues
 		{
 			float hp;
@@ -65,12 +84,14 @@ class GameState: public StateManager
 			float dmg;
 			float radius;
 			float price;
-			sf::Vector2f bulletpoint;
+			float bulletoffset;
 			sf::Texture base;
 			sf::Texture top;
 		};
 		std::vector<std::unique_ptr<Tower>> towers;
 		std::vector<std::unique_ptr<TowerTypeValues>> towersvalues;
+
+		std::vector<Bullet> bullets;
 
 		//Map has 1600 x 900 size => 32 x 18 tiles
 		const int MapSize[2] = { 32, 17 };   //last on is for UI
@@ -92,6 +113,15 @@ class GameState: public StateManager
 		//UI
 		void ShowHealtAndMoney();
 		void SelectTowerUI();
+
+		//Towers
+		void UpdateTowers(sf::Time time);
+		void DetectEnemies(int tower_number);
+
+		//Bullets
+		void UpdateBullets(sf::Time time);
+		void Bullet_MonsterCollision();
+		void RemoveUnusedBullets();
 
 		//Monster
 		void UpdateMonsters(sf::Time time);

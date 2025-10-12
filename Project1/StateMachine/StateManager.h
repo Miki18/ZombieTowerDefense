@@ -25,6 +25,7 @@ class StateManager
 		sf::Texture UI_Marked_Tex;
 		sf::Texture UI_HeartTex;
 		sf::Texture UI_MoneyTex;
+		sf::Texture UI_BigRectangleTex;
 
 	protected:
 		const float ScreenSize[2] = {1600, 900};
@@ -36,7 +37,8 @@ class StateManager
 			UI_Square,
 			UI_Marked,
 			UI_Heart,
-			UI_Money
+			UI_Money,
+			UI_BigRectangle
 		};
 
 		std::vector<sf::Sprite> UI_Sprite;
