@@ -280,7 +280,7 @@ void GameState::DetectEnemies(int tower_number)
 		sf::Vector2f Dir = towers[tower_number]->detectEnemy(monsters[j]->getPosition());
 		if (Dir != sf::Vector2f(0,0))
 		{
-			//if there will be more then one type of shooting (like constant shooting) you will have to place if(type_shooting == "type") {do this} etc
+			//if there will be more then one type of shooting (like constant shooting) you will have to place if(type_shooting == "type") {do this}
 			//Can shoot also check tower's cooldown
 			if (towers[tower_number]->CanShoot())
 			{
