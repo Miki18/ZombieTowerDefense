@@ -17,6 +17,7 @@ class Monster
 		~Monster() {};
 		void virtual MonsterUpdate(sf::Time time) {};
 		void DrawMonster(sf::RenderWindow& window);
+		void DrawHealth(sf::RenderWindow& window);
 		bool IsDead = false;
 
 		void TakeDamage(float dmg);
@@ -37,6 +38,7 @@ class Monster
 		sf::Vector2f Destination;
 		sf::Vector2i DestinationTile;
 		float speed;
+		float maxhealth;
 		float health;
 		int price;
 		int TileSize;

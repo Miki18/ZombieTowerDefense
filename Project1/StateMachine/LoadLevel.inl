@@ -158,12 +158,18 @@ void GameState::LoadTowerTextures()
 
 void GameState::LoadSettings()
 {
-	MWS.MinimumMonstersInWave = Level["settings"]["MinimumMonstersInWave"].get<int>();
-	MWS.PossibleAdditionalMonsters = Level["settings"]["PossibleAdditionalMonsters"].get<int>() + 1;
+	MWS.MinimumMonstersInWave = Level["settings"]["MinimumMonstersInWave"].get<float>();
+	MWS.PossibleAdditionalMonsters = Level["settings"]["PossibleAdditionalMonsters"].get<float>() + 1;
 	MWS.timeBetweenWaves = Level["settings"]["timeBetweenWaves"].get<float>();
 	MWS.timeCooldownInWave = Level["settings"]["timeCooldownInWave"].get<float>();
-	MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % MWS.PossibleAdditionalMonsters;
+	MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % int(MWS.PossibleAdditionalMonsters);
+	MWS.IncreasingPossibleNumber = Level["settings"]["IncreasingPossibleNumber"].get<float>();
+	MWS.IncreasingMinimumNumber = Level["settings"]["IncreasingMinimumNumber"].get<float>();
 	MWS.BetweenWaves = MWS.timeBetweenWaves;
 	MWS.CooldownInWave = MWS.timeCooldownInWave;
+
+	LevelTime = Level["settings"]["LevelTime"].get<float>();
+
+	speech = Level["settings"]["LevelMessage"].get<std::vector<std::string>>();
 }
 //End loading functions---------------------------

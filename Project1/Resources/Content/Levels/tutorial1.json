@@ -64,8 +64,12 @@
 
   "settings": {
     "MinimumMonstersInWave": 1,
-    "PossibleAdditionalMonsters" : 2,
+    "PossibleAdditionalMonsters": 2,
+    "IncreasingPossibleNumber": 0.1,
+    "IncreasingMinimumNumber":  0.5,
     "timeCooldownInWave" : 1.5,
-    "timeBetweenWaves" : 5
+    "timeBetweenWaves": 5,
+    "LevelTime": 90,
+    "LevelMessage": [ "Hi!", "This is first level - tutorial1!", "Place towers to defeat zombies.", "You will get money for killing them.", "Do not let zombies pass!", "Good luck!" ]
   }
 }

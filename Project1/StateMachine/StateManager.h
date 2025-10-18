@@ -19,34 +19,39 @@ class StateMachine;
 
 class StateManager
 {
-	private:
-		//UI
-		sf::Texture UI_Square_Tex;
-		sf::Texture UI_Marked_Tex;
-		sf::Texture UI_HeartTex;
-		sf::Texture UI_MoneyTex;
-		sf::Texture UI_BigRectangleTex;
+private:
+	//UI
+	sf::Texture UI_Square_Tex;
+	sf::Texture UI_Marked_Tex;
+	sf::Texture UI_HeartTex;
+	sf::Texture UI_MoneyTex;
+	sf::Texture UI_BigRectangleTex;
+	sf::Texture UI_RectangleButtonTex;
+	sf::Texture UI_NewProfileTex;
+	sf::Texture UI_LoadProfilesTex;
 
-	protected:
-		const float ScreenSize[2] = {1600, 900};
-		const int TilesSize = 50;
+protected:
+	const float ScreenSize[2] = { 1600, 900 };
+	const int TilesSize = 50;
 
-		//Sprite vector
-		enum SpriteList
-		{
-			UI_Square,
-			UI_Marked,
-			UI_Heart,
-			UI_Money,
-			UI_BigRectangle
-		};
+	//Sprite vector
+	enum SpriteList
+	{
+		UI_Square,
+		UI_Marked,
+		UI_Heart,
+		UI_Money,
+		UI_BigRectangle,
+		UI_RectangleButton,
+		UI_NewProfile,
+		UI_LoadProfiles
+	};
 
-		std::vector<sf::Sprite> UI_Sprite;
+	std::vector<sf::Sprite> UI_Sprite;
 
-	public:
-		StateManager();
-		virtual void Input(sf::RenderWindow& window, sf::Time time) {};
-		virtual void Update(sf::Time time) {};
-		virtual void Render(sf::RenderWindow& window) {};
+public:
+	StateManager();
+	virtual void Input(sf::RenderWindow& window, sf::Time time) {};
+	virtual void Update(sf::Time time) {};
+	virtual void Render(sf::RenderWindow& window) {};
 };
-

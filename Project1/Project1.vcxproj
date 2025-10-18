@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Other\Bullet.h" />
+    <ClInclude Include="Other\GrassTileForMenu.h" />
     <ClInclude Include="Tower\CannonTower.h" />
     <ClInclude Include="Monsters\Monster.h" />
     <ClInclude Include="Monsters\MonsterActive.h" />

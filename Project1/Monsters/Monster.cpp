@@ -7,6 +7,7 @@ Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSiz
 	paths = &path;
 
 	health = hp;
+	maxhealth = hp;
 	this->speed = speed;
 	this->TileSize = TileSize;
 	texture = tex;
@@ -43,10 +44,27 @@ void Monster::DrawMonster(sf::RenderWindow& window)
 void Monster::TakeDamage(float dmg)
 {
 	health -= dmg;
-	if (health < 0)
+	if (health <= 0)
 	{
 		IsDead = true;
 		PlayerMoney += price;
+	}
+}
+
+void Monster::DrawHealth(sf::RenderWindow& window)
+{
+	if (health / maxhealth < 1)
+	{
+		sf::RectangleShape back(sf::Vector2f(20, 5));
+		back.setFillColor(sf::Color(sf::Color::Black));
+		back.setPosition(sf::Vector2f(Position.x - body.getSize().x/2, Position.y - body.getSize().y / 2));
+		
+		sf::RectangleShape fill(sf::Vector2f(20 * health / maxhealth, 5));
+		fill.setFillColor(sf::Color(sf::Color::Red));
+		fill.setPosition(sf::Vector2f(Position.x - body.getSize().x / 2, Position.y - body.getSize().y/2));
+
+		window.draw(back);
+		window.draw(fill);
 	}
 }
 

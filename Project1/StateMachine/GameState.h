@@ -20,8 +20,14 @@ class GameState: public StateManager
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
 		bool IsGamePaused = false;
+		bool ShowMessage = false;
+		bool PlayerWin = false;
+		bool PlayerLose = false;
 		int Health = 10;
 		int Money = 100;
+
+		//Map has 1600 x 900 size => 32 x 17 tiles
+		const int MapSize[2] = { 32, 17 };   //last on is for UI
 
 		std::vector<GrassTile> grass_tile;
 
@@ -61,8 +67,10 @@ class GameState: public StateManager
 		//Monsters waves variables
 		struct MonsterWavesSettings
 		{
-			int MinimumMonstersInWave;
-			int PossibleAdditionalMonsters;
+			float MinimumMonstersInWave;
+			float PossibleAdditionalMonsters;
+			float IncreasingPossibleNumber;
+			float IncreasingMinimumNumber;
 			int MonsterNumberInCurrentWave;
 
 			float timeCooldownInWave;
@@ -70,7 +78,9 @@ class GameState: public StateManager
 			float CooldownInWave;
 			float BetweenWaves;
 		};
+		float LevelTime;
 		MonsterWavesSettings MWS;
+		std::vector<std::string> speech;
 
 		//Tower variables
 		const int TowerTypes = 1;
@@ -93,9 +103,6 @@ class GameState: public StateManager
 
 		std::vector<Bullet> bullets;
 
-		//Map has 1600 x 900 size => 32 x 18 tiles
-		const int MapSize[2] = { 32, 17 };   //last on is for UI
-
 		//Load functions
 		void GenerateGrassTiles();
 		void LoadRoadTiles();
@@ -106,6 +113,8 @@ class GameState: public StateManager
 		void LoadTowerTextures();
 		void LoadSettings();
 
+		void ExitFuntion();
+
 		void Input(sf::RenderWindow& window, sf::Time time);
 		void Update(sf::Time time);
 		void Render(sf::RenderWindow& window);
@@ -113,6 +122,7 @@ class GameState: public StateManager
 		//UI
 		void ShowHealtAndMoney();
 		void SelectTowerUI();
+		void ShowPauseMessage();
 
 		//Towers
 		void UpdateTowers(sf::Time time);

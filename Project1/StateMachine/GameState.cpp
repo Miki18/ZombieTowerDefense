@@ -22,6 +22,17 @@ GameState::GameState()
 
 	tower_options.circle.setOutlineColor(sf::Color::Red);
 	tower_options.circle.setFillColor(sf::Color(255, 0, 0, 60));
+
+	if (!speech.empty())
+	{
+		IsGamePaused = true;
+		ShowMessage = true;
+	}
+}
+
+void GameState::ExitFuntion()
+{
+	StateMachine::Get().ChangeState(new MenuState());
 }
 
 void GameState::Input(sf::RenderWindow& window, sf::Time time)
@@ -40,6 +51,16 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				if (keyPressed->scancode == sf::Keyboard::Scancode::P)
 				{
 					IsGamePaused = !IsGamePaused;
+					ShowMessage = false;
+
+					if (PlayerWin)
+					{
+						ExitFuntion();
+					}
+					if (PlayerLose)
+					{
+						ExitFuntion();
+					}
 				}
 				/*if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
 				{
@@ -134,26 +155,7 @@ void GameState::Update(sf::Time time)
 
 	if (IsGamePaused == true)
 	{
-		sf::Vector2f picSize = { 310,210 };
-
-		ImGui::SetNextWindowSize(ImVec2(picSize.x, picSize.y));
-		ImGui::SetNextWindowPos(ImVec2(ScreenSize[0]/2 - picSize.x/2, ScreenSize[1]/2 - picSize.y/2));
-
-		ImGui::Begin("PausedGameText", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-		ImGui::Image(UI_Sprite[SpriteList(UI_BigRectangle)]);
-
-		ImDrawList* drawlist = ImGui::GetForegroundDrawList();
-		ImVec2 T_size = ImGui::CalcTextSize("Game is Paused");
-		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Game is Paused");
-
-		T_size = ImGui::CalcTextSize("Click P to resume");
-		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to resume");
-
-		ImGui::End();
+		ShowPauseMessage();
 		return;
 	}
 
@@ -167,6 +169,25 @@ void GameState::Update(sf::Time time)
 	UpdateBullets(time);
 	Bullet_MonsterCollision();
 	RemoveUnusedBullets();
+
+	if (Health <= 0)
+	{
+		PlayerLose = true;
+		IsGamePaused = true;
+	}
+
+	if (LevelTime > 0)
+	{
+		LevelTime = LevelTime - time.asSeconds();
+	}
+	else
+	{
+		if (monsters.size() == 0 and PlayerLose == false)
+		{
+			PlayerWin = true;
+			IsGamePaused = true;
+		}
+	}
 }
 
 void GameState::Render(sf::RenderWindow& window)
@@ -198,6 +219,11 @@ void GameState::Render(sf::RenderWindow& window)
 	for (int i = 0; i < bullets.size(); i++)
 	{
 		bullets[i].DrawBullet(window);
+	}
+
+	for (int i = 0; i < monsters.size(); i++)
+	{
+		monsters[i]->DrawHealth(window);
 	}
 
 	window.display();
@@ -270,6 +296,73 @@ void GameState::SelectTowerUI()
 		ImGui::End();
 		ImGui::PopStyleVar(1);
 	}
+}
+
+void GameState::ShowPauseMessage()
+{
+	sf::Vector2f picSize = { 310,210 };
+
+	ImGui::SetNextWindowSize(ImVec2(picSize.x, picSize.y));
+	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2));
+
+	ImGui::Begin("PausedGameText", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::Image(UI_Sprite[SpriteList(UI_BigRectangle)]);
+
+	ImDrawList* drawlist = ImGui::GetForegroundDrawList();
+	if (ShowMessage)
+	{
+		for (int i = 0; i < speech.size() and i < 9; i++)
+		{
+			ImVec2 T_size = ImGui::CalcTextSize(speech[i].c_str());
+			ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2 + 20);
+			cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + T_size.y * i + 5 * i);
+			drawlist->AddText(cursorPos, IM_COL32_WHITE, speech[i].c_str());
+		}
+
+		ImVec2 T_size = ImGui::CalcTextSize("Press P to start");
+		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2 + 20);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + T_size.y * 9 + 5 * 9);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Press P to start");
+	}
+	else if(PlayerWin)
+	{
+		ImVec2 T_size = ImGui::CalcTextSize("Congrats! You win!");
+		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Congrats! You win!");
+
+		T_size = ImGui::CalcTextSize("Click P to continue");
+		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to continue");
+	}
+	else if(PlayerLose)
+	{
+		ImVec2 T_size = ImGui::CalcTextSize("You lose!");
+		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "You lose!");
+
+		T_size = ImGui::CalcTextSize("Click P to continue");
+		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to continue");
+	}
+	else
+	{
+		ImVec2 T_size = ImGui::CalcTextSize("Game is Paused");
+		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Game is Paused");
+
+		T_size = ImGui::CalcTextSize("Click P to resume");
+		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
+		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to resume");
+	}
+
+	ImGui::End();
+	return;
 }
 
 void GameState::DetectEnemies(int tower_number)
@@ -372,7 +465,10 @@ void GameState::RemoveUnusedBullets()
 
 void GameState::UpdateMonsters(sf::Time time)
 {
-	GenerateMonsters(time);
+	if (LevelTime > 0)
+	{
+		GenerateMonsters(time);
+	}
 	MoveMonsters(time);
 
 	for (int i = 0; i < monsters.size(); i++)
@@ -404,7 +500,9 @@ void GameState::GenerateMonsters(sf::Time time)
 			MWS.MonsterNumberInCurrentWave--;
 			if (MWS.MonsterNumberInCurrentWave == 0)
 			{
-				MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % MWS.PossibleAdditionalMonsters;
+				MWS.PossibleAdditionalMonsters += MWS.IncreasingPossibleNumber;
+				MWS.MinimumMonstersInWave += MWS.IncreasingMinimumNumber;
+				MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % int(MWS.PossibleAdditionalMonsters);
 				MWS.timeBetweenWaves = MWS.BetweenWaves;
 			}
 			MWS.timeCooldownInWave = MWS.CooldownInWave;
