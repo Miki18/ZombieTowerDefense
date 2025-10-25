@@ -1,6 +1,6 @@
 #include "CannonTower.h"
 
-CannonTower::CannonTower(sf::Vector2f Pos, float hp, float cooldown, float dmg, float radius, float bulletoffset, sf::Texture* tex1, sf::Texture* tex2, int id) : Tower(hp, cooldown, dmg, radius, bulletoffset, id), base(*tex1), top(*tex2)
+CannonTower::CannonTower(sf::Vector2f Pos, float hp, float cooldown, float dmg, float radius, float bulletoffset, sf::Texture* tex1, sf::Texture* tex2, int id, int price) : Tower(hp, cooldown, dmg, radius, bulletoffset, id, price), base(*tex1), top(*tex2)
 {
 	float scale = 50.f / float(tex2->getSize().x);   //texture is square; x = y
 	top.setScale(sf::Vector2f(scale, scale));
@@ -11,6 +11,11 @@ CannonTower::CannonTower(sf::Vector2f Pos, float hp, float cooldown, float dmg, 
 
 	base.setPosition(Pos);
 	top.setPosition(Position);
+}
+
+int CannonTower::getSellPrice()
+{
+	return price/2;
 }
 
 bool CannonTower::CanShoot()

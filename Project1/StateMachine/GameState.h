@@ -37,6 +37,7 @@ class GameState: public StateManager
 		struct TowerOptions
 		{
 			bool IsVisible = false;
+			int SelectedTowerID = 0;
 			sf::CircleShape circle;
 		};
 		TowerOptions tower_options;

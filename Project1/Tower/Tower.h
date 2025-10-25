@@ -22,13 +22,15 @@ class Tower
 		float radius;
 		float bulletOffset;
 		int TowerID;
+		int price;
 
 	public:
-		Tower(float hp, float cooldown, float dmg, float radius, float bulletoffset, int id);
+		Tower(float hp, float cooldown, float dmg, float radius, float bulletoffset, int id, int price);
 		~Tower() {};
 
 		int getID();
 
+		virtual int getSellPrice() { return 0;  };
 		float getRadius();
 		float getDmg();
 		virtual void UpdateTower(sf::Time time) {};

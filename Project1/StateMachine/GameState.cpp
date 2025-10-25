@@ -72,7 +72,7 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				}*/
 			}
 
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 			{
 				tower_options.IsVisible = false;
 			}
@@ -118,7 +118,7 @@ void GameState::Update(sf::Time time)
 					//when creating tower calculate X and Y position on screen (top left corner of GrassTile)
 					towers.emplace_back(std::make_unique<CannonTower>(
 						sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize),
-						towersvalues[0]->hp, towersvalues[0]->cooldown, towersvalues[0]->dmg, towersvalues[0]->radius, towersvalues[0]->bulletoffset, &towersvalues[0]->base, &towersvalues[0]->top, TowerID));
+						towersvalues[0]->hp, towersvalues[0]->cooldown, towersvalues[0]->dmg, towersvalues[0]->radius, towersvalues[0]->bulletoffset, &towersvalues[0]->base, &towersvalues[0]->top, TowerID, towersvalues[0]->price));
 					grass_tile[i].TowerID = TowerID;
 					Money = Money - towersvalues[0]->price;
 					TowerID++;
@@ -126,10 +126,10 @@ void GameState::Update(sf::Time time)
 			}
 			else if (grass_tile[i].TowerID != 0)
 			{
-				int T_ID = grass_tile[i].TowerID;
+				tower_options.SelectedTowerID = grass_tile[i].TowerID;
 				for (int j = 0; j < towers.size(); j++)
 				{
-					if (towers[j]->getID() == T_ID)
+					if (towers[j]->getID() == tower_options.SelectedTowerID)
 					{
 						tower_options.IsVisible = true;
 						float radius = towers[j]->getRadius();
@@ -149,6 +149,26 @@ void GameState::Update(sf::Time time)
 
 	//Select tower UI
 	//SelectTowerUI();
+
+	if (tower_options.IsVisible == true)
+	{
+		ImGui::SetNextWindowPos(ImVec2(600, ScreenSize[1] - TilesSize));
+		ImGui::Begin("SellTower");
+		if (ImGui::Button("SellTowerButton"))
+		{
+			for (int i = 0; i < towers.size(); i++)
+			{
+				if (towers[i]->getID() == tower_options.SelectedTowerID)
+				{
+					Money = Money + towers[i]->getSellPrice();
+					tower_options.IsVisible = false;
+					towers.erase(towers.begin() + i);
+					break;
+				}
+			}
+		}
+		ImGui::End();
+	}
 
 	//Heart and Money UI
 	ShowHealtAndMoney();
@@ -204,6 +224,13 @@ void GameState::Render(sf::RenderWindow& window)
 	if(tower_options.IsVisible==true)
 	{
 		window.draw(tower_options.circle);
+	}
+	
+	if (IsGamePaused == true)
+	{
+		window.display();
+
+		return;
 	}
 
 	for (int i = 0; i < towers.size(); i++)
