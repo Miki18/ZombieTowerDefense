@@ -21,14 +21,13 @@ class StateManager
 {
 private:
 	//UI
-	sf::Texture UI_Square_Tex;
-	sf::Texture UI_Marked_Tex;
 	sf::Texture UI_HeartTex;
 	sf::Texture UI_MoneyTex;
-	sf::Texture UI_BigRectangleTex;
-	sf::Texture UI_RectangleButtonTex;
-	sf::Texture UI_NewProfileTex;
-	sf::Texture UI_LoadProfilesTex;
+	sf::Texture UI_ShovelTex;
+	sf::Texture UI_DolarTex;
+	sf::Texture UI_RepairTex;
+	sf::Texture UI_UpgradeTex;
+	sf::Texture UI_TitleTex;
 
 protected:
 	const float ScreenSize[2] = { 1600, 900 };
@@ -37,14 +36,13 @@ protected:
 	//Sprite vector
 	enum SpriteList
 	{
-		UI_Square,
-		UI_Marked,
 		UI_Heart,
 		UI_Money,
-		UI_BigRectangle,
-		UI_RectangleButton,
-		UI_NewProfile,
-		UI_LoadProfiles
+		UI_Shovel,
+		UI_Dolar,
+		UI_Repair,
+		UI_Upgrade,
+		UI_Title
 	};
 
 	std::vector<sf::Sprite> UI_Sprite;

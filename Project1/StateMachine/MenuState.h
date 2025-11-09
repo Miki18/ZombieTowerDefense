@@ -16,7 +16,8 @@ private:
 		SelectLevel,
 		Options,
 		Settings,
-		Credits
+		Credits,
+		DeleteProfile
 	};
 
 	bool changeState = false;
@@ -46,9 +47,11 @@ private:
 	void OptionsScreen();
 	void SettingsScreen();
 	void CreditsScreen();
+	void DeleteProfileScreen();
 
 	//UI Elements
 	bool LoadProfilesUI();
 	void NewProfileUI();
 	void ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick);
+	void InfoWidget(std::string message);
 };

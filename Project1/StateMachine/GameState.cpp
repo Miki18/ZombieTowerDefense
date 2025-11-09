@@ -26,7 +26,7 @@ GameState::GameState()
 	if (!speech.empty())
 	{
 		IsGamePaused = true;
-		ShowMessage = true;
+		IsMessageVisible = true;
 	}
 }
 
@@ -51,13 +51,13 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				if (keyPressed->scancode == sf::Keyboard::Scancode::P)
 				{
 					IsGamePaused = !IsGamePaused;
-					ShowMessage = false;
+					IsMessageVisible = false;
 
-					if (PlayerWin)
+					if (IsPlayerWin)
 					{
 						ExitFuntion();
 					}
-					if (PlayerLose)
+					if (IsPlayerLose)
 					{
 						ExitFuntion();
 					}
@@ -118,10 +118,22 @@ void GameState::Update(sf::Time time)
 					//when creating tower calculate X and Y position on screen (top left corner of GrassTile)
 					towers.emplace_back(std::make_unique<CannonTower>(
 						sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize),
-						towersvalues[0]->hp, towersvalues[0]->cooldown, towersvalues[0]->dmg, towersvalues[0]->radius, towersvalues[0]->bulletoffset, &towersvalues[0]->base, &towersvalues[0]->top, TowerID, towersvalues[0]->price));
+						towersvalues[0]->hp, towersvalues[0]->IncreaseHp, 
+						towersvalues[0]->cooldown, towersvalues[0]->IncreaseCooldown, 
+						towersvalues[0]->dmg, towersvalues[0]->IncreaseDmg, 
+						towersvalues[0]->radius, towersvalues[0]->IncreaseRadius, 
+						towersvalues[0]->bulletoffset, &towersvalues[0]->base, &towersvalues[0]->top, TowerID, 
+						towersvalues[0]->price, towersvalues[0]->UpgradePrice, towersvalues[0]->IncreaseUpgradePrice));
 					grass_tile[i].TowerID = TowerID;
 					Money = Money - towersvalues[0]->price;
 					TowerID++;
+
+					tower_options.IsVisible = true;
+					float radius = towers[towers.size()-1]->getRadius();
+					tower_options.circle.setRadius(radius);
+					tower_options.circle.setOrigin(sf::Vector2f(radius, radius));
+					tower_options.circle.setPosition(towers[towers.size()-1]->getPosition());
+
 				}
 			}
 			else if (grass_tile[i].TowerID != 0)
@@ -150,33 +162,25 @@ void GameState::Update(sf::Time time)
 	//Select tower UI
 	//SelectTowerUI();
 
-	if (tower_options.IsVisible == true)
-	{
-		ImGui::SetNextWindowPos(ImVec2(600, ScreenSize[1] - TilesSize));
-		ImGui::Begin("SellTower");
-		if (ImGui::Button("SellTowerButton"))
-		{
-			for (int i = 0; i < towers.size(); i++)
-			{
-				if (towers[i]->getID() == tower_options.SelectedTowerID)
-				{
-					Money = Money + towers[i]->getSellPrice();
-					tower_options.IsVisible = false;
-					towers.erase(towers.begin() + i);
-					break;
-				}
-			}
-		}
-		ImGui::End();
-	}
-
 	//Heart and Money UI
 	ShowHealtAndMoney();
 
 	if (IsGamePaused == true)
 	{
-		ShowPauseMessage();
+		ShowMessage();
 		return;
+	}
+
+	if (tower_options.IsVisible == true)
+	{
+		for (int i = 0; i < towers.size(); i++)
+		{
+			if (towers[i]->getID() == tower_options.SelectedTowerID)
+			{
+				TowerUI(i);
+				break;
+			}
+		}
 	}
 
 	//Tower
@@ -192,7 +196,7 @@ void GameState::Update(sf::Time time)
 
 	if (Health <= 0)
 	{
-		PlayerLose = true;
+		IsPlayerLose = true;
 		IsGamePaused = true;
 	}
 
@@ -202,9 +206,9 @@ void GameState::Update(sf::Time time)
 	}
 	else
 	{
-		if (monsters.size() == 0 and PlayerLose == false)
+		if (monsters.size() == 0 and IsPlayerLose == false)
 		{
-			PlayerWin = true;
+			IsPlayerWin = true;
 			IsGamePaused = true;
 		}
 	}
@@ -221,7 +225,7 @@ void GameState::Render(sf::RenderWindow& window)
 
 	ImGui::SFML::Render(window);
 	
-	if(tower_options.IsVisible==true)
+	if(tower_options.IsVisible==true and IsGamePaused == false)
 	{
 		window.draw(tower_options.circle);
 	}
@@ -267,10 +271,11 @@ void GameState::UpdateTowers(sf::Time time)
 
 void GameState::ShowHealtAndMoney()
 {
-	int correct_UI_location = -10;
-
 	//health
-	ImGui::SetNextWindowPos(ImVec2(correct_UI_location, ScreenSize[1] - TilesSize + correct_UI_location));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
+	ImGui::SetNextWindowPos(ImVec2(0, ScreenSize[1] - TilesSize));
 	ImGui::Begin("heart", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Heart)]), sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
 	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
@@ -280,10 +285,8 @@ void GameState::ShowHealtAndMoney()
 	drawlist->AddText(cursorPos, IM_COL32_WHITE, std::to_string(Health).c_str());
 	ImGui::End();
 
-	int Gap = 10;
-
 	//Money
-	ImGui::SetNextWindowPos(ImVec2(correct_UI_location + TilesSize + Gap, ScreenSize[1] - TilesSize + correct_UI_location));
+	ImGui::SetNextWindowPos(ImVec2(TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("Money", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
 	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Money)]), sf::Vector2f(100, 50), sf::Color(255, 255, 255, 255));
 	cursorPos = ImGui::GetCursorScreenPos();
@@ -292,11 +295,24 @@ void GameState::ShowHealtAndMoney()
 	cursorPos = ImVec2(cursorPos.x + TilesSize * 2 / 2 - TextSize.x / 2, cursorPos.y - TilesSize / 2 - TextSize.y);
 	drawlist->AddText(cursorPos, IM_COL32_WHITE, std::to_string(Money).c_str());
 	ImGui::End();
+
+	//Shovel
+	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
+	ImGui::SetNextWindowPos(ImVec2(3 * TilesSize, ScreenSize[1] - TilesSize));
+	ImGui::Begin("Shovel", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.2f));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.4f));
+	ImGui::ImageButton("ShovelButton", UI_Sprite[SpriteList(UI_Shovel)], sf::Vector2f(50, 50));
+	ImGui::PopStyleColor(3);
+	ImGui::End();
+
+	ImGui::PopStyleVar(2);
 }
 
 void GameState::SelectTowerUI()
 {
-	for (int i = 0; i < TowerTypes; i++)
+	/*for (int i = 0; i < TowerTypes; i++)
 	{
 		ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i, ScreenSize[1] - TilesSize));
 
@@ -322,74 +338,210 @@ void GameState::SelectTowerUI()
 
 		ImGui::End();
 		ImGui::PopStyleVar(1);
-	}
+	}*/
 }
 
-void GameState::ShowPauseMessage()
+void GameState::TowerUI(int towersindex)
+{
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.1, 0.1, 1.0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 4);
+
+	bool IsTowerRemoved = false;
+
+	//Start with 5*TileSize, because for Health money and shovel 4 tiles was used
+	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
+	ImGui::SetNextWindowPos(ImVec2(4 * TilesSize, ScreenSize[1] - TilesSize));
+	ImGui::Begin("SellTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	if (ImGui::Button("##SellTowerButton", ImVec2(50, 50)))
+	{
+		for (int i = 0; i < grass_tile.size(); i++)
+		{
+			if (grass_tile[i].TowerID == tower_options.SelectedTowerID)
+			{
+				grass_tile[i].TowerID = 0;
+				break;
+			}
+		}
+
+		Money = Money + towers[towersindex]->getSellPrice();
+		tower_options.IsVisible = false;
+		IsTowerRemoved = true;
+		towers.erase(towers.begin() + towersindex);
+	}
+
+	if (IsTowerRemoved)
+	{
+		ImGui::End();
+		ImGui::PopStyleColor(4);
+		ImGui::PopStyleVar(4);
+		return;
+	}
+
+	if (ImGui::IsItemHovered())
+	{
+		std::string price = std::to_string(towers[towersindex]->getSellPrice());
+		ImVec2 TextSize = ImGui::CalcTextSize("Sell:");
+		ImGui::SetCursorScreenPos(ImVec2(4 * TilesSize + (TilesSize/2 - TextSize.x/2), ScreenSize[1] - TilesSize/2 - TextSize.y));
+		ImGui::Text("Sell:");
+		TextSize = ImGui::CalcTextSize(price.c_str());
+		ImGui::SetCursorScreenPos(ImVec2(4 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2));
+		ImGui::Text(price.c_str());
+	}
+	else
+	{
+		ImGui::SetCursorScreenPos(ImVec2(4 * TilesSize - 7, ScreenSize[1] - TilesSize - 7));
+		ImGui::Image(UI_Sprite[SpriteList::UI_Dolar], sf::Vector2f(64,64));
+	}
+
+	ImGui::End();
+
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.475, 0.440, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.475, 0.440, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5, 0.475, 0.440, 1.0));
+
+	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
+	ImGui::SetNextWindowPos(ImVec2(5 * TilesSize, ScreenSize[1] - TilesSize));
+	ImGui::Begin("RepairTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	ImGui::ImageButton("RepairTowerButton", UI_Sprite[SpriteList(UI_Repair)], sf::Vector2f(50, 50));
+	ImGui::End();
+
+	int UpgradePrice = towers[towersindex]->getUpgradePrice();
+
+	if (Money > UpgradePrice and towers[towersindex]->getCurrentLevel() != 5)
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+	}
+	else
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.475, 0.440, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.475, 0.440, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5, 0.475, 0.440, 1.0));
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
+	ImGui::SetNextWindowPos(ImVec2(6 * TilesSize, ScreenSize[1] - TilesSize));
+	ImGui::Begin("UpgradeTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	if (ImGui::Button("##UpgradeTowerButton", ImVec2 (50, 50)))
+	{
+		if (Money >= towers[towersindex]->getUpgradePrice() and towers[towersindex]->getCurrentLevel() < 5)
+		{
+			Money = Money - towers[towersindex]->getUpgradePrice();
+			towers[towersindex]->Upgrade();
+			tower_options.circle.setRadius(towers[towersindex]->getRadius());
+			tower_options.circle.setOrigin(sf::Vector2f(towers[towersindex]->getRadius(), towers[towersindex]->getRadius()));
+		}
+	}
+
+	if (towers[towersindex]->getCurrentLevel() == 5)
+	{
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 0.2, 1.0));
+		ImVec2 TextSize = ImGui::CalcTextSize("MAX");
+		ImGui::SetCursorScreenPos(ImVec2(6 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2 - TextSize.y));
+		ImGui::Text("MAX");
+		TextSize = ImGui::CalcTextSize("LVL!");
+		ImGui::SetCursorScreenPos(ImVec2(6 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2));
+		ImGui::Text("LVL!");
+		ImGui::PopStyleColor(1);
+	}
+	else
+	{
+		if (ImGui::IsItemHovered())
+		{
+			std::string price = std::to_string(towers[towersindex]->getSellPrice());
+			ImVec2 TextSize = ImGui::CalcTextSize("Price:");
+			ImGui::SetCursorScreenPos(ImVec2(6 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2 - TextSize.y));
+			ImGui::Text("Price:");
+			TextSize = ImGui::CalcTextSize(std::to_string(UpgradePrice).c_str());
+			ImGui::SetCursorScreenPos(ImVec2(6 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2));
+			ImGui::Text(std::to_string(UpgradePrice).c_str());
+		}
+		else
+		{
+			ImGui::SetCursorScreenPos(ImVec2(6 * TilesSize, ScreenSize[1] - TilesSize));
+			ImGui::Image(UI_Sprite[SpriteList::UI_Upgrade], sf::Vector2f(50, 50));
+		}
+	}
+
+	ImGui::End();
+
+	ImGui::PopStyleVar(4);
+	ImGui::PopStyleColor(10);
+}
+
+void GameState::ShowMessage()
 {
 	sf::Vector2f picSize = { 310,210 };
 
 	ImGui::SetNextWindowSize(ImVec2(picSize.x, picSize.y));
 	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2));
 
-	ImGui::Begin("PausedGameText", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-	ImGui::Image(UI_Sprite[SpriteList(UI_BigRectangle)]);
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.1, 0.1, 1.0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 4);
 
-	ImDrawList* drawlist = ImGui::GetForegroundDrawList();
-	if (ShowMessage)
+	ImGui::Begin("PausedGameText", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+	if (IsMessageVisible)
 	{
 		for (int i = 0; i < speech.size() and i < 9; i++)
 		{
 			ImVec2 T_size = ImGui::CalcTextSize(speech[i].c_str());
 			ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2 + 20);
 			cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + T_size.y * i + 5 * i);
-			drawlist->AddText(cursorPos, IM_COL32_WHITE, speech[i].c_str());
+			ImGui::SetCursorScreenPos(cursorPos);
+			ImGui::Text(speech[i].c_str());
 		}
 
 		ImVec2 T_size = ImGui::CalcTextSize("Press P to start");
 		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2 + 20);
 		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + T_size.y * 9 + 5 * 9);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Press P to start");
+		ImGui::SetCursorScreenPos(cursorPos);
+		ImGui::Text("Press P to start");;
 	}
-	else if(PlayerWin)
+	else if(IsPlayerWin)
 	{
-		ImVec2 T_size = ImGui::CalcTextSize("Congrats! You win!");
-		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Congrats! You win!");
-
-		T_size = ImGui::CalcTextSize("Click P to continue");
-		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to continue");
+		CustomTextMessages("Congrats! You win!", "Press P to continue", picSize);
 	}
-	else if(PlayerLose)
+	else if(IsPlayerLose)
 	{
-		ImVec2 T_size = ImGui::CalcTextSize("You lose!");
-		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "You lose!");
-
-		T_size = ImGui::CalcTextSize("Click P to continue");
-		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to continue");
+		CustomTextMessages("You lose!", "Press P to continue", picSize);
 	}
 	else
 	{
-		ImVec2 T_size = ImGui::CalcTextSize("Game is Paused");
-		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Game is Paused");
-
-		T_size = ImGui::CalcTextSize("Click P to resume");
-		cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
-		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
-		drawlist->AddText(cursorPos, IM_COL32_WHITE, "Click P to resume");
+		CustomTextMessages("Game is Paused", "Press P to resume", picSize);
 	}
 
 	ImGui::End();
+
+	ImGui::PopStyleVar(1);
+	ImGui::PopStyleColor(2);
+
 	return;
+}
+
+void GameState::CustomTextMessages(std::string UpperText, std::string LowerText, sf::Vector2f picSize)
+{
+	ImVec2 T_size = ImGui::CalcTextSize(UpperText.c_str());
+	ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+	cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 - T_size.y);
+	ImGui::SetCursorScreenPos(cursorPos);
+	ImGui::Text(UpperText.c_str());
+
+	T_size = ImGui::CalcTextSize(LowerText.c_str());
+	cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2);
+	cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + picSize.y / 2 + T_size.y);
+	ImGui::SetCursorScreenPos(cursorPos);
+	ImGui::Text(LowerText.c_str());
 }
 
 void GameState::DetectEnemies(int tower_number)

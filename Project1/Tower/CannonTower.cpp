@@ -1,6 +1,6 @@
 #include "CannonTower.h"
 
-CannonTower::CannonTower(sf::Vector2f Pos, float hp, float cooldown, float dmg, float radius, float bulletoffset, sf::Texture* tex1, sf::Texture* tex2, int id, int price) : Tower(hp, cooldown, dmg, radius, bulletoffset, id, price), base(*tex1), top(*tex2)
+CannonTower::CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
 {
 	float scale = 50.f / float(tex2->getSize().x);   //texture is square; x = y
 	top.setScale(sf::Vector2f(scale, scale));
@@ -11,11 +11,54 @@ CannonTower::CannonTower(sf::Vector2f Pos, float hp, float cooldown, float dmg, 
 
 	base.setPosition(Pos);
 	top.setPosition(Position);
+
+	Dot.setRadius(2.f);
+	Dot.setOrigin(sf::Vector2f(Dot.getRadius(), Dot.getRadius()));
+	Dot.setPosition(Position);
+	Dot.setFillColor(sf::Color::White);
+}
+
+void CannonTower::Upgrade()
+{
+	hp = hp + IncreaseHp;
+
+	base_cooldown = base_cooldown + IncreaseCooldown;
+
+	dmg = dmg + IncreaseDmg;
+
+	radius = radius + IncreaseRadius;
+
+	switch (currentLevel)
+	{
+	case 1:
+		currentLevel++;
+		break;
+
+	case 2:
+		currentLevel++;
+		Dot.setFillColor(sf::Color(170, 170, 170));
+		break;
+
+	case 3:
+		currentLevel++;
+		Dot.setFillColor(sf::Color(85, 85, 85));
+		break;
+
+	case 4:
+		currentLevel++;
+		Dot.setFillColor(sf::Color(0, 0, 0));
+		break;
+	}
+}
+
+int CannonTower::getUpgradePrice()
+{
+	return UpgradePrice + ((currentLevel - 1) * IncreaseUpgradePrice);
 }
 
 int CannonTower::getSellPrice()
 {
-	return price/2;
+	return price/2 + (currentLevel * IncreaseUpgradePrice)/2;
 }
 
 bool CannonTower::CanShoot()
@@ -30,7 +73,6 @@ bool CannonTower::CanShoot()
 
 sf::Vector2f CannonTower::getBulletStartingPosition(sf::Vector2f Dir)
 {
-	//std::cout << Dir.x << " "<< Dir.y << std::endl;
 	sf::Vector2f StartingPosition = Position - bulletOffset*Dir;
 	return StartingPosition;
 }
@@ -73,4 +115,8 @@ void CannonTower::draw(sf::RenderWindow& window)
 {
 	window.draw(base);
 	window.draw(top);
+	if (currentLevel != 1)
+	{
+		window.draw(Dot);
+	}
 }

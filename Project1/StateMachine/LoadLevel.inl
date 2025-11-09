@@ -147,10 +147,21 @@ void GameState::LoadTowerTextures()
 	file.close();
 
 	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
 	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
 	towertype.dmg = readedtower["dmg"].get<float>();
+	//towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
 	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
 	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
 	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
 
 	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));

@@ -2,23 +2,21 @@
 
 StateManager::StateManager()
 {
-	UI_Square_Tex.loadFromFile("Resources/Visuals/UI/UI_Square.png");
-	UI_Marked_Tex.loadFromFile("Resources/Visuals/UI/UI_marked.png");
 	UI_HeartTex.loadFromFile("Resources/Visuals/UI/Heart.png");
 	UI_MoneyTex.loadFromFile("Resources/Visuals/UI/Money.png");
-	UI_BigRectangleTex.loadFromFile("Resources/Visuals/UI/PauseUI.png");
-	UI_RectangleButtonTex.loadFromFile("Resources/Visuals/UI/UI_MenuButton.png");
-	UI_NewProfileTex.loadFromFile("Resources/Visuals/UI/NewProfileUI.png");
-	UI_LoadProfilesTex.loadFromFile("Resources/Visuals/UI/LoadProfilesUI.png");
+	UI_ShovelTex.loadFromFile("Resources/Visuals/UI/Shovel.png");
+	UI_DolarTex.loadFromFile("Resources/Visuals/UI/UI_DolarButton.png");
+	UI_RepairTex.loadFromFile("Resources/Visuals/UI/UI_RepairButton.png");
+	UI_UpgradeTex.loadFromFile("Resources/Visuals/UI/UI_UpgradeButton.png");
+	UI_TitleTex.loadFromFile("Resources/Visuals/UI/Title.png");
 
-	UI_Sprite.push_back(sf::Sprite(UI_Square_Tex));
-	UI_Sprite.push_back(sf::Sprite(UI_Marked_Tex));
 	UI_Sprite.push_back(sf::Sprite(UI_HeartTex));
 	UI_Sprite.push_back(sf::Sprite(UI_MoneyTex));
-	UI_Sprite.push_back(sf::Sprite(UI_BigRectangleTex));
-	UI_Sprite.push_back(sf::Sprite(UI_RectangleButtonTex));
-	UI_Sprite.push_back(sf::Sprite(UI_NewProfileTex));
-	UI_Sprite.push_back(sf::Sprite(UI_LoadProfilesTex));
+	UI_Sprite.push_back(sf::Sprite(UI_ShovelTex));
+	UI_Sprite.push_back(sf::Sprite(UI_DolarTex));
+	UI_Sprite.push_back(sf::Sprite(UI_RepairTex));
+	UI_Sprite.push_back(sf::Sprite(UI_UpgradeTex));
+	UI_Sprite.push_back(sf::Sprite(UI_TitleTex));
 
-	UI_Sprite[2].setScale(sf::Vector2f(TilesSize / UI_Sprite[2].getTexture().getSize().x, TilesSize / UI_Sprite[2].getTexture().getSize().y));
+	UI_Sprite[SpriteList(UI_Shovel)].setScale(sf::Vector2f(TilesSize / UI_Sprite[SpriteList(UI_Shovel)].getTexture().getSize().x, TilesSize / UI_Sprite[SpriteList(UI_Shovel)].getTexture().getSize().y));
 }

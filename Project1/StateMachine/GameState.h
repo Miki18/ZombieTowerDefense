@@ -20,9 +20,9 @@ class GameState: public StateManager
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
 		bool IsGamePaused = false;
-		bool ShowMessage = false;
-		bool PlayerWin = false;
-		bool PlayerLose = false;
+		bool IsMessageVisible = false;
+		bool IsPlayerWin = false;
+		bool IsPlayerLose = false;
 		int Health = 10;
 		int Money = 100;
 
@@ -63,7 +63,7 @@ class GameState: public StateManager
 
 		std::vector<std::unique_ptr<Monster>> monsters;
 		std::vector<std::unique_ptr<MonsterTypeValues>> monster_types;
-		double TimeUntilNextMonsterSpawns = 10;
+		//double TimeUntilNextMonsterSpawns = 10;
 		int MonsterID = 0;
 		//Monsters waves variables
 		struct MonsterWavesSettings
@@ -91,10 +91,21 @@ class GameState: public StateManager
 		struct TowerTypeValues
 		{
 			float hp;
+			float IncreaseHp;
+
 			float cooldown;
+			float IncreaseCooldown;
+
 			float dmg;
+			float IncreaseDmg;
+
 			float radius;
+			float IncreaseRadius;
+
 			float price;
+			float UpgradePrice;
+			float IncreaseUpgradePrice;
+
 			float bulletoffset;
 			sf::Texture base;
 			sf::Texture top;
@@ -123,7 +134,9 @@ class GameState: public StateManager
 		//UI
 		void ShowHealtAndMoney();
 		void SelectTowerUI();
-		void ShowPauseMessage();
+		void TowerUI(int towersindex);
+		void ShowMessage();
+		void CustomTextMessages(std::string UpperText, std::string LowerText, sf::Vector2f picSize);
 
 		//Towers
 		void UpdateTowers(sf::Time time);

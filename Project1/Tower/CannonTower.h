@@ -6,13 +6,17 @@ class CannonTower : public Tower
 	private:
 		sf::Sprite base;
 		sf::Sprite top;
+		sf::CircleShape Dot;
 
 		sf::Vector2f Position;
 
 	public:
-		CannonTower(sf::Vector2f Pos, float hp, float cooldown, float dmg, float radius, float bulletoffset, sf::Texture* tex1, sf::Texture* tex2, int id, int price);
+		CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice);
 
+		void Upgrade() override;
+		int getUpgradePrice() override;
 		int getSellPrice() override;
+
 		bool CanShoot() override;
 		sf::Vector2f getBulletStartingPosition(sf::Vector2f Dir) override;
 		void UpdateTower(sf::Time time) override;
