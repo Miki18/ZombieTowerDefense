@@ -133,6 +133,7 @@ void GameState::Update(sf::Time time)
 					tower_options.circle.setRadius(radius);
 					tower_options.circle.setOrigin(sf::Vector2f(radius, radius));
 					tower_options.circle.setPosition(towers[towers.size()-1]->getPosition());
+					tower_options.SelectedTowerID = towers[towers.size() - 1]->getID();
 
 				}
 			}
@@ -415,7 +416,7 @@ void GameState::TowerUI(int towersindex)
 
 	int UpgradePrice = towers[towersindex]->getUpgradePrice();
 
-	if (Money > UpgradePrice and towers[towersindex]->getCurrentLevel() != 5)
+	if (Money >= UpgradePrice and towers[towersindex]->getCurrentLevel() != 5)
 	{
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
