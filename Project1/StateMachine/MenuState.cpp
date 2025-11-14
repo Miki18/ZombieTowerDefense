@@ -17,7 +17,7 @@ MenuState::MenuState()
 
 	if (StateMachine::Get().getSelectedProfile().length() == 0)
 	{
-		std::ifstream file("Resources/Content/profiles.json");
+		std::ifstream file("Resources/Content/profiles");
 		file >> profiles;
 		file.close();
 
@@ -137,7 +137,7 @@ void MenuState::MainMenuScreen()
 	//Change profile
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Change Profile", [this]
 		{
-			std::ifstream file("Resources/Content/profiles.json");
+			std::ifstream file("Resources/Content/profiles");
 			file >> profiles;
 			file.close();
 
@@ -227,7 +227,7 @@ void MenuState::DeleteProfileScreen()
 				if (profiles["profiles"][i]["name"].get<std::string>() == StateMachine::Get().getSelectedProfile())
 				{
 					profiles["profiles"][i] = nlohmann::json::object();
-					std::ofstream file("Resources/Content/profiles.json");
+					std::ofstream file("Resources/Content/profiles");
 					file << profiles.dump(2);
 					file.close();
 					current_screen = SelectProfile;
@@ -399,7 +399,7 @@ void MenuState::NewProfileUI()
 				if (profiles["profiles"][i].empty())
 				{
 					profiles["profiles"][i]["name"] = new_profile_name;
-					std::ofstream file("Resources/Content/profiles.json");
+					std::ofstream file("Resources/Content/profiles");
 					file << profiles.dump(2);
 					file.close();
 					break;

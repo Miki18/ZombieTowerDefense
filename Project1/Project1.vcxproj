@@ -158,9 +158,9 @@
     <ClInclude Include="Tower\Tower.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Content\Levels\tutorial1.json" />
+    <None Include="Resources\Content\Levels\tutorial1" />
     <None Include="Resources\Content\Monsters\zombie" />
-    <None Include="Resources\Content\profiles.json" />
+    <None Include="Resources\Content\profiles" />
     <None Include="Resources\Content\Towers\cannon" />
     <None Include="StateMachine\LoadLevel.inl" />
   </ItemGroup>

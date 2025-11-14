@@ -61,7 +61,7 @@ void GameState::LoadLevelData()
 		//std::cout << road_source_paths[i] << std::endl;
 	}
 
-	std::ifstream file("Resources/Content/Levels/tutorial1.json");
+	std::ifstream file("Resources/Content/Levels/tutorial1");
 	file >> Level;
 	file.close();
 }
