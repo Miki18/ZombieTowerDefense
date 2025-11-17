@@ -119,7 +119,6 @@ class GameState: public StateManager
 		void GenerateGrassTiles();
 		void LoadRoadTiles();
 		void LoadLevelData();
-		void LoadObjects();
 		void LoadPaths();
 		void LoadMonsters();
 		void LoadTowerTextures();

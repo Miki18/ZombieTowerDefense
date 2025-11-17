@@ -260,6 +260,12 @@ void MenuState::SelectProfileScreen()
 	bool IsSlotEmpty = LoadProfilesUI();
 
 	if (IsSlotEmpty == true) { NewProfileUI(); }
+
+	//Exit
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Exit", []
+		{
+			exit(0);
+		});
 }
 
 bool MenuState::LoadProfilesUI()

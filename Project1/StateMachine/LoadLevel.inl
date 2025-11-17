@@ -66,11 +66,6 @@ void GameState::LoadLevelData()
 	file.close();
 }
 
-void GameState::LoadObjects()
-{
-	//TODO
-}
-
 void GameState::LoadPaths()
 {
 	for (const auto& arr : Level["paths"]["startpoints"])

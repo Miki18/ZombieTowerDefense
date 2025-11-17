@@ -10,8 +10,6 @@ GameState::GameState()
 
 	LoadRoadTiles();
 
-	LoadObjects();
-
 	LoadPaths();
 
 	LoadMonsters();
