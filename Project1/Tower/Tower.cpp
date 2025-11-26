@@ -1,6 +1,6 @@
 #include "Tower.h"
 
-Tower::Tower(float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, int id, int price, int UPrice, int IncUpgradePrice)
+Tower::Tower(float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UPrice, int IncUpgradePrice)
 {
 	this->TowerID = id;
 
@@ -18,6 +18,7 @@ Tower::Tower(float hp, float IncHp, float cooldown, float IncCooldown, float dmg
 	this->IncreaseRadius = IncRadius;
 
 	this->bulletOffset = bulletoffset;
+	this->bulletSpeed = bulletspeed;
 
 	this->price = price;
 	this->UpgradePrice = UPrice;

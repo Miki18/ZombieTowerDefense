@@ -1,0 +1,20 @@
+{
+  "hp": 70,
+  "IncreaseHp": 15,
+
+  "cooldown": 2.5,
+  "IncreaseCooldown": -0.1,
+
+  "dmg": 20,
+  "IncreaseDmg": 10,
+
+  "radius": 140,
+  "IncreaseRadius": 20,
+
+  "price": 80,
+  "UpgradePrice": 20,
+  "IncreaseUpgradePrice": 10,
+
+  "bulletoffset": 25,
+  "bulletspeed": 500
+}

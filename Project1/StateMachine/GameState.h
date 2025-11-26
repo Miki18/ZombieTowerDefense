@@ -5,6 +5,7 @@
 #include "../Monsters/PathPoint.h"
 #include "../Tower/Tower.h"
 #include "../Tower/CannonTower.h"
+#include "../Tower/SniperTower.h"
 #include "../Monsters/Monster.h"
 #include "../Monsters/MonsterActive.h"
 #include "../Monsters/MonsterPassive.h"
@@ -26,6 +27,9 @@ class GameState: public StateManager
 		int Health = 10;
 		int Money = 100;
 
+		//Prototype
+		bool IsPlayerSelectedHammer = false;
+
 		//Map has 1600 x 900 size => 32 x 17 tiles
 		const int MapSize[2] = { 32, 17 };   //last on is for UI
 
@@ -43,12 +47,17 @@ class GameState: public StateManager
 		TowerOptions tower_options;
 
 		//Road
+		struct RoadTileData
+		{
+			sf::RectangleShape shape;
+			bool IsBridge;
+		};
+		sf::Texture BridgeTex;
 		std::vector<sf::Texture> RoadTextures;
-		std::vector<sf::RectangleShape> RoadTiles;
+		std::vector<RoadTileData> RoadTiles;
 
 		//Path
 		std::vector<sf::Vector2i> paths_startpoints;
-		std::vector<sf::Vector2i> paths_endpoints;
 		std::vector<PathPoints> paths;
 
 		//Monsters
@@ -63,28 +72,28 @@ class GameState: public StateManager
 
 		std::vector<std::unique_ptr<Monster>> monsters;
 		std::vector<std::unique_ptr<MonsterTypeValues>> monster_types;
-		//double TimeUntilNextMonsterSpawns = 10;
 		int MonsterID = 0;
 		//Monsters waves variables
 		struct MonsterWavesSettings
 		{
-			float MinimumMonstersInWave;
-			float PossibleAdditionalMonsters;
-			float IncreasingPossibleNumber;
-			float IncreasingMinimumNumber;
-			int MonsterNumberInCurrentWave;
+			float MinimumMonstersInWave;  //min number of monsters in this wave
+			float PossibleAdditionalMonsters;  //MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % int(MWS.PossibleAdditionalMonsters);
+			float IncreasingPossibleNumber;  //MWS.PossibleAdditionalMonsters += MWS.IncreasingPossibleNumber;
+			float IncreasingMinimumNumber;   //MWS.MinimumMonstersInWave += MWS.IncreasingMinimumNumber;
+			int MonsterNumberInCurrentWave;  //Number of monsters in current wave to spawn (if this == 0 then a new waves starts)
 
-			float timeCooldownInWave;
-			float timeBetweenWaves;
-			float CooldownInWave;
-			float BetweenWaves;
+			//To check cooldown substract delta time from time... variable
+			float timeCooldownInWave; //time between monsters in single wave 
+			float timeBetweenWaves; //time between waves 
+			float CooldownInWave; //store cooldown in wave, so I can later timeCooldownInWave = CooldownInWave
+			float BetweenWaves; //store time between waves, so I can later timeBetweenWaves = BetweenWaves
 		};
 		float LevelTime;
 		MonsterWavesSettings MWS;
 		std::vector<std::string> speech;
 
 		//Tower variables
-		const int TowerTypes = 1;
+		const int TowerTypes = 2;
 		int SelectedTower = 0;
 		int TowerID = 1;
 
@@ -107,6 +116,7 @@ class GameState: public StateManager
 			float IncreaseUpgradePrice;
 
 			float bulletoffset;
+			float bulletspeed;
 			sf::Texture base;
 			sf::Texture top;
 		};
@@ -129,6 +139,8 @@ class GameState: public StateManager
 		void Input(sf::RenderWindow& window, sf::Time time);
 		void Update(sf::Time time);
 		void Render(sf::RenderWindow& window);
+
+		void RemoveGreenTile(int index);
 
 		//UI
 		void ShowHealtAndMoney();

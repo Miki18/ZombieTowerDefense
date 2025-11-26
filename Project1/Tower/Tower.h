@@ -29,6 +29,7 @@ class Tower
 		float IncreaseRadius;
 
 		float bulletOffset;
+		float bulletSpeed;
 		int TowerID;
 
 		int currentLevel = 1;
@@ -37,7 +38,7 @@ class Tower
 		int IncreaseUpgradePrice;
 
 	public:
-		Tower(float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, int id, int price, int UpgradePrice, int IncUpgradePrice);
+		Tower(float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UpgradePrice, int IncUpgradePrice);
 		~Tower() {};
 
 		float getRadius();
@@ -48,6 +49,7 @@ class Tower
 		virtual void Upgrade() {};
 		virtual int getUpgradePrice() { return 0; };
 
+		virtual float getBulletSpeed() { return 0.0f; }
 		virtual int getSellPrice() { return 0;  };
 		virtual void UpdateTower(sf::Time time) {};
 		virtual bool CanShoot() { return true; };

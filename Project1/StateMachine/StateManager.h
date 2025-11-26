@@ -23,7 +23,7 @@ private:
 	//UI
 	sf::Texture UI_HeartTex;
 	sf::Texture UI_MoneyTex;
-	sf::Texture UI_ShovelTex;
+	sf::Texture UI_HammerTex;
 	sf::Texture UI_DolarTex;
 	sf::Texture UI_RepairTex;
 	sf::Texture UI_UpgradeTex;
@@ -38,7 +38,7 @@ protected:
 	{
 		UI_Heart,
 		UI_Money,
-		UI_Shovel,
+		UI_Hammer,
 		UI_Dolar,
 		UI_Repair,
 		UI_Upgrade,

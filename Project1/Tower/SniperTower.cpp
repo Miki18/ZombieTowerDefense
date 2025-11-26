@@ -1,10 +1,9 @@
-#include "CannonTower.h"
+#include "SniperTower.h"
 
-CannonTower::CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
+SniperTower::SniperTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
 {
 	float scale = 50.f / float(tex2->getSize().x);   //texture is square; x = y
 	top.setScale(sf::Vector2f(scale, scale));
-	base.setScale(sf::Vector2f(scale, scale));
 
 	Position = sf::Vector2f(Pos.x + 25, Pos.y + 25);
 	top.setOrigin(sf::Vector2f(32, 32));
@@ -12,13 +11,13 @@ CannonTower::CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown
 	base.setPosition(Pos);
 	top.setPosition(Position);
 
-	Dot.setRadius(2.f);
+	Dot.setRadius(3.f);
 	Dot.setOrigin(sf::Vector2f(Dot.getRadius(), Dot.getRadius()));
 	Dot.setPosition(Position);
 	Dot.setFillColor(sf::Color::White);
 }
 
-void CannonTower::Upgrade()
+void SniperTower::Upgrade()
 {
 	hp = hp + IncreaseHp;
 
@@ -51,22 +50,22 @@ void CannonTower::Upgrade()
 	}
 }
 
-int CannonTower::getUpgradePrice()
+int SniperTower::getUpgradePrice()
 {
 	return UpgradePrice + ((currentLevel - 1) * IncreaseUpgradePrice);
 }
 
-int CannonTower::getSellPrice()
+int SniperTower::getSellPrice()
 {
-	return price/2 + (currentLevel * IncreaseUpgradePrice)/2;
+	return price / 4 + (currentLevel * IncreaseUpgradePrice) / 3;
 }
 
-float CannonTower::getBulletSpeed()
+float SniperTower::getBulletSpeed()
 {
 	return bulletSpeed;
 }
 
-bool CannonTower::CanShoot()
+bool SniperTower::CanShoot()
 {
 	if (cooldown <= 0)
 	{
@@ -76,13 +75,13 @@ bool CannonTower::CanShoot()
 	return false;
 }
 
-sf::Vector2f CannonTower::getBulletStartingPosition(sf::Vector2f Dir)
+sf::Vector2f SniperTower::getBulletStartingPosition(sf::Vector2f Dir)
 {
-	sf::Vector2f StartingPosition = Position - bulletOffset*Dir;
+	sf::Vector2f StartingPosition = Position - bulletOffset * Dir;
 	return StartingPosition;
 }
 
-void CannonTower::UpdateTower(sf::Time time)
+void SniperTower::UpdateTower(sf::Time time)
 {
 	if (cooldown >= 0)
 	{
@@ -90,12 +89,12 @@ void CannonTower::UpdateTower(sf::Time time)
 	}
 }
 
-sf::Vector2f CannonTower::getPosition()
+sf::Vector2f SniperTower::getPosition()
 {
 	return Position;
 }
 
-sf::Vector2f CannonTower::detectEnemy(sf::Vector2f EnemyPos)
+sf::Vector2f SniperTower::detectEnemy(sf::Vector2f EnemyPos)
 {
 	//check if lenght is smaller than radius
 	sf::Vector2f tower_enemy = Position - EnemyPos;
@@ -113,12 +112,11 @@ sf::Vector2f CannonTower::detectEnemy(sf::Vector2f EnemyPos)
 
 		return tower_enemy;
 	}
-	return sf::Vector2f(0,0);
+	return sf::Vector2f(0, 0);
 }
 
-void CannonTower::draw(sf::RenderWindow& window)
+void SniperTower::draw(sf::RenderWindow& window)
 {
-	window.draw(base);
 	window.draw(top);
 	if (currentLevel != 1)
 	{

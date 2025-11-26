@@ -130,6 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Other\Bullet.cpp" />
+    <ClCompile Include="Tower\SniperTower.cpp" />
     <ClCompile Include="Tower\CannonTower.cpp" />
     <ClCompile Include="Monsters\Monster.cpp" />
     <ClCompile Include="Monsters\MonsterActive.cpp" />
@@ -145,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="Other\Bullet.h" />
     <ClInclude Include="Other\GrassTileForMenu.h" />
+    <ClInclude Include="Tower\SniperTower.h" />
     <ClInclude Include="Tower\CannonTower.h" />
     <ClInclude Include="Monsters\Monster.h" />
     <ClInclude Include="Monsters\MonsterActive.h" />

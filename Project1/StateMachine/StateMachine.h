@@ -27,6 +27,7 @@ class StateMachine
 		void ChangeState(StateManager* newState);
 		void Run(sf::RenderWindow& window);
 
+		std::string SelectedLevel = "";
 		std::string getSelectedProfile();
 		void setSelectedProfile(std::string nick);
 };

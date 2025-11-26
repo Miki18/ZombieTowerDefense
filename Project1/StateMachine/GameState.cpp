@@ -60,19 +60,37 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 						ExitFuntion();
 					}
 				}
-				/*if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Num1)
 				{
 					SelectedTower = 0;
-				}*/
-				/*else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2)
+				}
+				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2)
 				{
 					SelectedTower = 1;
-				}*/
+				}
 			}
 
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 			{
 				tower_options.IsVisible = false;
+				IsPlayerSelectedHammer = false;
+			}
+
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			{
+				if (IsPlayerSelectedHammer == true)
+				{
+					for (int i = 0; i < RoadTiles.size(); i++)
+					{
+						if (RoadTiles[i].IsBridge == true and RoadTiles[i].shape.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)))
+						{
+							IsPlayerSelectedHammer = false;
+							Money = Money - 100;
+							RemoveGreenTile(i);
+							break;
+						}
+					}
+				}
 			}
 		}
 	}
@@ -120,7 +138,8 @@ void GameState::Update(sf::Time time)
 						towersvalues[0]->cooldown, towersvalues[0]->IncreaseCooldown, 
 						towersvalues[0]->dmg, towersvalues[0]->IncreaseDmg, 
 						towersvalues[0]->radius, towersvalues[0]->IncreaseRadius, 
-						towersvalues[0]->bulletoffset, &towersvalues[0]->base, &towersvalues[0]->top, TowerID, 
+						towersvalues[0]->bulletoffset, towersvalues[0]->bulletspeed,
+						&towersvalues[0]->base, &towersvalues[0]->top, TowerID,
 						towersvalues[0]->price, towersvalues[0]->UpgradePrice, towersvalues[0]->IncreaseUpgradePrice));
 					grass_tile[i].TowerID = TowerID;
 					Money = Money - towersvalues[0]->price;
@@ -133,6 +152,28 @@ void GameState::Update(sf::Time time)
 					tower_options.circle.setPosition(towers[towers.size()-1]->getPosition());
 					tower_options.SelectedTowerID = towers[towers.size() - 1]->getID();
 
+				}
+				else if (SelectedTower == 1 and Money >= towersvalues[1]->price)
+				{
+					towers.emplace_back(std::make_unique<SniperTower>(
+						sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize),
+						towersvalues[1]->hp, towersvalues[1]->IncreaseHp,
+						towersvalues[1]->cooldown, towersvalues[1]->IncreaseCooldown,
+						towersvalues[1]->dmg, towersvalues[1]->IncreaseDmg,
+						towersvalues[1]->radius, towersvalues[1]->IncreaseRadius,
+						towersvalues[1]->bulletoffset, towersvalues[1]->bulletspeed,
+						&towersvalues[1]->base, &towersvalues[1]->top, TowerID,
+						towersvalues[1]->price, towersvalues[1]->UpgradePrice, towersvalues[1]->IncreaseUpgradePrice));
+					grass_tile[i].TowerID = TowerID;
+					Money = Money - towersvalues[1]->price;
+					TowerID++;
+
+					tower_options.IsVisible = true;
+					float radius = towers[towers.size() - 1]->getRadius();
+					tower_options.circle.setRadius(radius);
+					tower_options.circle.setOrigin(sf::Vector2f(radius, radius));
+					tower_options.circle.setPosition(towers[towers.size() - 1]->getPosition());
+					tower_options.SelectedTowerID = towers[towers.size() - 1]->getID();
 				}
 			}
 			else if (grass_tile[i].TowerID != 0)
@@ -159,7 +200,7 @@ void GameState::Update(sf::Time time)
 	}
 
 	//Select tower UI
-	//SelectTowerUI();
+	SelectTowerUI();
 
 	//Heart and Money UI
 	ShowHealtAndMoney();
@@ -219,7 +260,7 @@ void GameState::Render(sf::RenderWindow& window)
 
 	for (int i = 0; i < RoadTiles.size(); i++)
 	{
-		window.draw(RoadTiles[i]);
+		window.draw(RoadTiles[i].shape);
 	}
 
 	ImGui::SFML::Render(window);
@@ -268,6 +309,34 @@ void GameState::UpdateTowers(sf::Time time)
 	}
 }
 
+void GameState::RemoveGreenTile(int index)
+{
+	//get location
+	sf::Vector2f Pos = RoadTiles[index].shape.getPosition();
+	sf::Vector2i location = { int(Pos.x) / TilesSize, int(Pos.y) / TilesSize };
+
+	//create imgui grass tile
+	bool IsDark = (location.x + location.y) % 2;
+	GrassTile tile = { sf::Vector2i(location.x, location.y), 0, IsDark };
+	grass_tile.push_back(tile);
+
+	//Remove this segment from path tile
+	for (int i = 0; i < paths.size(); i++)
+	{
+		for (int j = 0; j < paths[i].successors.size(); j++)
+		{
+			if (paths[i].successors[j] == location)
+			{
+				paths[i].successors.erase(paths[i].successors.begin() + j);
+				j = j - 1;
+			}
+		}
+	}
+
+	//erase road
+	RoadTiles.erase(RoadTiles.begin() + index);
+}
+
 void GameState::ShowHealtAndMoney()
 {
 	//health
@@ -295,14 +364,31 @@ void GameState::ShowHealtAndMoney()
 	drawlist->AddText(cursorPos, IM_COL32_WHITE, std::to_string(Money).c_str());
 	ImGui::End();
 
-	//Shovel
+	//Hammer
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(3 * TilesSize, ScreenSize[1] - TilesSize));
-	ImGui::Begin("Shovel", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Begin("Hammer", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.2f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.4f));
-	ImGui::ImageButton("ShovelButton", UI_Sprite[SpriteList(UI_Shovel)], sf::Vector2f(50, 50));
+	if (ImGui::ImageButton("HammerButton", UI_Sprite[SpriteList(UI_Hammer)], sf::Vector2f(50, 50)))
+	{
+		if (Money >= 100)
+		{
+			IsPlayerSelectedHammer = true;
+		}
+	}
+
+	if (ImGui::IsItemHovered() == true)
+	{
+		ImVec2 Txt = ImGui::CalcTextSize("Price:");
+		ImGui::SetCursorScreenPos(ImVec2(3 * TilesSize + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize/2 - 5));
+		ImGui::Text("Price:");
+		Txt = ImGui::CalcTextSize("100");
+		ImGui::SetCursorScreenPos(ImVec2(3 * TilesSize + (TilesSize - Txt.x)/2, ScreenSize[1] - TilesSize / 2 + 5));
+		ImGui::Text("100");
+	}
+
 	ImGui::PopStyleColor(3);
 	ImGui::End();
 
@@ -311,33 +397,25 @@ void GameState::ShowHealtAndMoney()
 
 void GameState::SelectTowerUI()
 {
-	/*for (int i = 0; i < TowerTypes; i++)
+	for (int i = 0; i < TowerTypes; i++)
 	{
 		ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i, ScreenSize[1] - TilesSize));
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
 		std::string name = "UI" + std::to_string(i);
+		std::string button_name = "Button" + name;
 
-		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
 
-		name = "buttonUI" + std::to_string(i);
-
-		if (i == SelectedTower)
+		if (ImGui::Button(button_name.c_str(), ImVec2(TilesSize, TilesSize)))
 		{
-			ImGui::ImageButton(name.c_str(), UI_Sprite[SpriteList(UI_Marked)], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
-		}
-		else
-		{
-			if (ImGui::ImageButton(name.c_str(), UI_Sprite[SpriteList(UI_Square)], sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255)))
-			{
-				SelectedTower = i;
-			}
+			SelectedTower = i;
 		}
 
 		ImGui::End();
 		ImGui::PopStyleVar(1);
-	}*/
+	}
 }
 
 void GameState::TowerUI(int towersindex)
@@ -355,7 +433,7 @@ void GameState::TowerUI(int towersindex)
 
 	bool IsTowerRemoved = false;
 
-	//Start with 5*TileSize, because for Health money and shovel 4 tiles was used
+	//Start with 5*TileSize, because for Health money and hammer 4 tiles was used
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(4 * TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("SellTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
@@ -555,7 +633,7 @@ void GameState::DetectEnemies(int tower_number)
 			//Can shoot also check tower's cooldown
 			if (towers[tower_number]->CanShoot())
 			{
-				bullets.emplace_back(towers[tower_number]->getBulletStartingPosition(Dir), towers[tower_number]->getDmg(), monsters[j]->getPosition(), monsters[j]->GetID());
+				bullets.emplace_back(towers[tower_number]->getBulletStartingPosition(Dir), towers[tower_number]->getDmg(), towers[tower_number]->getBulletSpeed(), monsters[j]->getPosition(), monsters[j]->GetID());
 			}
 			break;
 		}
@@ -668,7 +746,7 @@ void GameState::GenerateMonsters(sf::Time time)
 
 			if (monster_types[randommonster]->IsPassive)
 			{
-				monsters.emplace_back(std::make_unique<MonsterPassive>(monster_types[randommonster]->MonsterTex, monster_types[randommonster]->hp, monster_types[randommonster]->Speed, monster_types[randommonster]->price, TilesSize, Health, Money, paths_startpoints, paths_endpoints, paths, MonsterID));
+				monsters.emplace_back(std::make_unique<MonsterPassive>(monster_types[randommonster]->MonsterTex, monster_types[randommonster]->hp, monster_types[randommonster]->Speed, monster_types[randommonster]->price, TilesSize, Health, Money, paths_startpoints, paths, MonsterID));
 				MonsterID++;
 			}
 			else

@@ -1,9 +1,8 @@
 #include "Monster.h"
 
-Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& path, int Monster_ID): PlayerHP(P_HP), PlayerMoney(P_Money)
+Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& path, int Monster_ID): PlayerHP(P_HP), PlayerMoney(P_Money)
 {
 	startpoints = &starts;
-	endpoints = &ends;
 	paths = &path;
 
 	health = hp;
@@ -75,15 +74,7 @@ sf::Vector2f Monster::getPosition()
 
 void Monster::ChooseDestination()
 {
-	for (int i = 0; i < endpoints->size(); i++)
-	{
-		if ((*endpoints)[i] == DestinationTile and IsDead == false)
-		{
-			IsDead = true;
-			PlayerHP--;
-			return;
-		}
-	}
+	bool HasDestination = false;
 
 	for (int i = 0; i < paths->size(); i++)
 	{
@@ -99,8 +90,15 @@ void Monster::ChooseDestination()
 				DestinationTile = (*paths)[i].successors[Random];
 			}
 			Destination = sf::Vector2f(TileSize / 2 + DestinationTile.x * TileSize, TileSize / 2 + DestinationTile.y * TileSize);
+			HasDestination = true;
 			break;
 		}
+	}
+
+	if (HasDestination == false)
+	{
+		IsDead = true;
+		PlayerHP--;
 	}
 }
 

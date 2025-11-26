@@ -7,7 +7,7 @@
 class Bullet
 {
 	public:
-		Bullet(sf::Vector2f Position, float damage, sf::Vector2f TargetCurrentPos, int Target_ID);
+		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID);
 		
 		float getDmg();
 		float getRadius();
@@ -23,6 +23,6 @@ class Bullet
 		sf::CircleShape circle;
 		int TargetID;
 		float radius = 0;
-		float velocity = 200;
+		float velocity = 0;
 		float dmg;
 };

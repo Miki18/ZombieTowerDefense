@@ -15,5 +15,6 @@
   "UpgradePrice": 35,
   "IncreaseUpgradePrice": 15,
 
-  "bulletoffset": 25
+  "bulletoffset": 25,
+  "bulletspeed": 200
 }

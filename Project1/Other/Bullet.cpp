@@ -1,10 +1,11 @@
 #include "Bullet.h"
 
-Bullet::Bullet(sf::Vector2f Position, float damage, sf::Vector2f TargetCurrentPos, int Target_ID)
+Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID)
 {
 	TargetID = Target_ID;
 	dmg = damage;
 	TargetPos = TargetCurrentPos;
+	velocity = Speed;
 
 	circle.setOrigin(sf::Vector2f(3, 3));
 	circle.setRadius(5);

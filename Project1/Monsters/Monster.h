@@ -13,7 +13,7 @@
 class Monster
 {
 	public:
-		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<sf::Vector2i>& ends, std::vector<PathPoints>& paths, int Monster_ID);
+		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int Monster_ID);
 		~Monster() {};
 		void virtual MonsterUpdate(sf::Time time) {};
 		void DrawMonster(sf::RenderWindow& window);
@@ -26,7 +26,6 @@ class Monster
 
 	protected:
 		std::vector<sf::Vector2i>* startpoints = nullptr;
-		std::vector<sf::Vector2i>* endpoints = nullptr;
 		std::vector<PathPoints>* paths = nullptr;
 
 		sf::Texture texture;

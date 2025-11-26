@@ -154,10 +154,16 @@ void MenuState::MainMenuScreen()
 void MenuState::SelectLevelScreen()
 {
 	//Start
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Tutorial 1", [this]
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 - 100), "Tutorial 1", [this]
 		{
 			//TODO mark, that player finished this level
-			//StateMachine::Get().ChangeState(new GameState());
+			StateMachine::Get().SelectedLevel = "tutorial1";
+			changeState = true;
+		});
+
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Tutorial 2", [this]
+		{
+			StateMachine::Get().SelectedLevel = "tutorial2";
 			changeState = true;
 		});
 

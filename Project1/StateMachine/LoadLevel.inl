@@ -1,3 +1,4 @@
+#include "GameState.h"
 //Load Functions-------------------------------
 void GameState::GenerateGrassTiles()
 {
@@ -18,16 +19,26 @@ void GameState::LoadRoadTiles()
 	{
 		for (int i = 0; i < coords.size(); i++)
 		{
-			RoadTiles.push_back(sf::RectangleShape());
-			int CurrentTileNumber = RoadTiles.size() - 1;
-			RoadTiles[CurrentTileNumber].setOrigin(sf::Vector2f(TilesSize / 2, TilesSize / 2));
-			RoadTiles[CurrentTileNumber].setSize(sf::Vector2f(TilesSize, TilesSize));
+			RoadTileData RoadField;
+			RoadField.IsBridge = coords[i][2].get<int>();
+
+			RoadField.shape.setOrigin(sf::Vector2f(TilesSize / 2, TilesSize / 2));
+			RoadField.shape.setSize(sf::Vector2f(TilesSize, TilesSize));
 
 			//In JSON file road are marked as 0, 1, 2, etc.
 			// Since game read road type and sort it alphabeticaly, it is possible to easily convert road type -> id in RoadTextures vector
-			RoadTiles[CurrentTileNumber].setTexture(&RoadTextures[atoi(road_type.c_str())]);
+			if (RoadField.IsBridge == 1)
+			{
+				RoadField.shape.setTexture(&BridgeTex);
+			}
+			else
+			{
+				RoadField.shape.setTexture(&RoadTextures[atoi(road_type.c_str())]);
+			}
 
-			RoadTiles[CurrentTileNumber].setPosition(sf::Vector2f(TilesSize / 2 + coords[i][0] * TilesSize, TilesSize / 2 + coords[i][1] * TilesSize));
+			RoadField.shape.setPosition(sf::Vector2f(TilesSize / 2 + coords[i][0] * TilesSize, TilesSize / 2 + coords[i][1] * TilesSize));
+
+			RoadTiles.push_back(RoadField);
 
 			//remove tile from road
 			for (int j = 0; j < grass_tile.size(); j++)
@@ -58,12 +69,15 @@ void GameState::LoadLevelData()
 	for (int i = 0; i < road_source_paths.size(); i++)
 	{
 		RoadTextures.push_back(sf::Texture(road_source_paths[i]));
-		//std::cout << road_source_paths[i] << std::endl;
 	}
 
-	std::ifstream file("Resources/Content/Levels/tutorial1");
+	std::string lvl = StateMachine::Get().SelectedLevel;
+
+	std::ifstream file("Resources/Content/Levels/" + lvl);
 	file >> Level;
 	file.close();
+
+	BridgeTex.loadFromFile("Resources/Visuals/Bridge/bridge.png");
 }
 
 void GameState::LoadPaths()
@@ -71,11 +85,6 @@ void GameState::LoadPaths()
 	for (const auto& arr : Level["paths"]["startpoints"])
 	{
 		paths_startpoints.emplace_back(sf::Vector2i(arr[0], arr[1]));
-	}
-
-	for (const auto& arr : Level["paths"]["endpoints"])
-	{
-		paths_endpoints.emplace_back(sf::Vector2i(arr[0], arr[1]));
 	}
 
 	for (const auto& [f, values] : Level["paths"]["path"].items())
@@ -129,6 +138,7 @@ void GameState::LoadTowerTextures()
 {
 	TowerTypeValues towertype;
 
+	//Cannon
 	towertype.base.loadFromFile("Resources/Visuals/Towers/Cannon/cannon_base.png");
 	towertype.base.setSmooth(true);
 	towertype.top.loadFromFile("Resources/Visuals/Towers/Cannon/cannon_top.png");
@@ -148,7 +158,7 @@ void GameState::LoadTowerTextures()
 	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
 
 	towertype.dmg = readedtower["dmg"].get<float>();
-	//towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
 
 	towertype.price = readedtower["price"].get<int>();
 	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
@@ -158,6 +168,36 @@ void GameState::LoadTowerTextures()
 	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
 
 	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
+	//Sniper
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Sniper/Sniper.png");
+
+	file.open("Resources/Content/Towers/sniper");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
 
 	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
 }
