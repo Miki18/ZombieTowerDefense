@@ -3,7 +3,7 @@
   "IncreaseHp": 15,
 
   "cooldown": 2.5,
-  "IncreaseCooldown": -0.1,
+  "IncreaseCooldown": -0.2,
 
   "dmg": 20,
   "IncreaseDmg": 10,

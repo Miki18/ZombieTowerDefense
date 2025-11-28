@@ -85,6 +85,10 @@ void GameState::LoadPaths()
 	for (const auto& arr : Level["paths"]["startpoints"])
 	{
 		paths_startpoints.emplace_back(sf::Vector2i(arr[0], arr[1]));
+		BlackHole.push_back(sf::CircleShape());
+		BlackHole[BlackHole.size() - 1].setRadius(20);
+		BlackHole[BlackHole.size() - 1].setFillColor(sf::Color::Black);
+		BlackHole[BlackHole.size() - 1].setPosition(sf::Vector2f(arr[0] * TilesSize + 5, arr[1] * TilesSize + 5));
 	}
 
 	for (const auto& [f, values] : Level["paths"]["path"].items())
@@ -106,6 +110,14 @@ void GameState::LoadPaths()
 		newPoint.successors = target;
 
 		paths.emplace_back(newPoint);
+	}
+
+	for (const auto& arr : Level["paths"]["endpoints"])
+	{
+		RedArrows.push_back(UI_Sprite[SpriteList(UI_Arrow)]);
+		RedArrows[RedArrows.size() - 1].setOrigin(sf::Vector2f(TilesSize/2, TilesSize/2));
+		RedArrows[RedArrows.size() - 1].setPosition(sf::Vector2f(arr[0] * TilesSize + TilesSize/2, arr[1] * TilesSize + TilesSize/2));
+		RedArrows[RedArrows.size() - 1].setRotation(sf::degrees(90 * arr[2]));
 	}
 }
 

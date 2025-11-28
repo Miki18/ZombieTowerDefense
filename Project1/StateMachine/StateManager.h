@@ -28,6 +28,7 @@ private:
 	sf::Texture UI_RepairTex;
 	sf::Texture UI_UpgradeTex;
 	sf::Texture UI_TitleTex;
+	sf::Texture UI_ArrowTex;
 
 protected:
 	const float ScreenSize[2] = { 1600, 900 };
@@ -42,7 +43,8 @@ protected:
 		UI_Dolar,
 		UI_Repair,
 		UI_Upgrade,
-		UI_Title
+		UI_Title,
+		UI_Arrow
 	};
 
 	std::vector<sf::Sprite> UI_Sprite;

@@ -27,8 +27,7 @@ class GameState: public StateManager
 		int Health = 10;
 		int Money = 100;
 
-		//Prototype
-		bool IsPlayerSelectedHammer = false;
+		int price_offset = 5;
 
 		//Map has 1600 x 900 size => 32 x 17 tiles
 		const int MapSize[2] = { 32, 17 };   //last on is for UI
@@ -55,6 +54,8 @@ class GameState: public StateManager
 		sf::Texture BridgeTex;
 		std::vector<sf::Texture> RoadTextures;
 		std::vector<RoadTileData> RoadTiles;
+		std::vector<sf::CircleShape> BlackHole;
+		std::vector<sf::Sprite> RedArrows;
 
 		//Path
 		std::vector<sf::Vector2i> paths_startpoints;
@@ -111,7 +112,7 @@ class GameState: public StateManager
 			float radius;
 			float IncreaseRadius;
 
-			float price;
+			int price;
 			float UpgradePrice;
 			float IncreaseUpgradePrice;
 

@@ -68,23 +68,25 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				{
 					SelectedTower = 1;
 				}
+				else if (keyPressed->scancode == sf::Keyboard::Scancode::Tab)
+				{
+					SelectedTower = -1;
+				}
 			}
 
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
 			{
 				tower_options.IsVisible = false;
-				IsPlayerSelectedHammer = false;
 			}
 
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 			{
-				if (IsPlayerSelectedHammer == true)
+				if (SelectedTower == -1 and Money >= 100)
 				{
 					for (int i = 0; i < RoadTiles.size(); i++)
 					{
 						if (RoadTiles[i].IsBridge == true and RoadTiles[i].shape.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)))
 						{
-							IsPlayerSelectedHammer = false;
 							Money = Money - 100;
 							RemoveGreenTile(i);
 							break;
@@ -263,6 +265,16 @@ void GameState::Render(sf::RenderWindow& window)
 		window.draw(RoadTiles[i].shape);
 	}
 
+	for (int i = 0; i < BlackHole.size(); i++)
+	{
+		window.draw(BlackHole[i]);
+	}
+
+	for (int i = 0; i < RedArrows.size(); i++)
+	{
+		window.draw(RedArrows[i]);
+	}
+
 	ImGui::SFML::Render(window);
 	
 	if(tower_options.IsVisible==true and IsGamePaused == false)
@@ -345,7 +357,7 @@ void GameState::ShowHealtAndMoney()
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(0, ScreenSize[1] - TilesSize));
 	ImGui::Begin("heart", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Heart)]), sf::Vector2f(50, 50), sf::Color(255, 255, 255, 255));
+	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Heart)]), sf::Vector2f(TilesSize, TilesSize), sf::Color(255, 255, 255, 255));
 	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 	ImDrawList* drawlist = ImGui::GetWindowDrawList();
 	ImVec2 TextSize = ImGui::CalcTextSize(std::to_string(Health).c_str());
@@ -356,7 +368,7 @@ void GameState::ShowHealtAndMoney()
 	//Money
 	ImGui::SetNextWindowPos(ImVec2(TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("Money", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Money)]), sf::Vector2f(100, 50), sf::Color(255, 255, 255, 255));
+	ImGui::Image(sf::Sprite(UI_Sprite[SpriteList(UI_Money)]), sf::Vector2f(TilesSize * 2, TilesSize), sf::Color(255, 255, 255, 255));
 	cursorPos = ImGui::GetCursorScreenPos();
 	drawlist = ImGui::GetWindowDrawList();
 	TextSize = ImGui::CalcTextSize(std::to_string(Money).c_str());
@@ -367,55 +379,107 @@ void GameState::ShowHealtAndMoney()
 	//Hammer
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(3 * TilesSize, ScreenSize[1] - TilesSize));
-	ImGui::Begin("Hammer", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+
 	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.2f));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.4f));
-	if (ImGui::ImageButton("HammerButton", UI_Sprite[SpriteList(UI_Hammer)], sf::Vector2f(50, 50)))
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0, 0.0, 0.0, 0.0));
+
+	bool IsHammerSelected = false;
+
+	if (SelectedTower == -1)
 	{
-		if (Money >= 100)
-		{
-			IsPlayerSelectedHammer = true;
-		}
+		IsHammerSelected = true;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 2);
+		ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+	}
+
+	ImGui::Begin("Hammer", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	if (ImGui::ImageButton("HammerButton", UI_Sprite[SpriteList(UI_Hammer)], sf::Vector2f(TilesSize, TilesSize)))
+	{
+		SelectedTower = -1;
 	}
 
 	if (ImGui::IsItemHovered() == true)
 	{
 		ImVec2 Txt = ImGui::CalcTextSize("Price:");
-		ImGui::SetCursorScreenPos(ImVec2(3 * TilesSize + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize/2 - 5));
+		ImGui::SetCursorScreenPos(ImVec2(3 * TilesSize + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize / 2 - price_offset));
 		ImGui::Text("Price:");
 		Txt = ImGui::CalcTextSize("100");
-		ImGui::SetCursorScreenPos(ImVec2(3 * TilesSize + (TilesSize - Txt.x)/2, ScreenSize[1] - TilesSize / 2 + 5));
+		ImGui::SetCursorScreenPos(ImVec2(3 * TilesSize + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize / 2 + price_offset));
 		ImGui::Text("100");
 	}
 
-	ImGui::PopStyleColor(3);
 	ImGui::End();
+	
+	if (IsHammerSelected == true)
+	{
+		ImGui::PopStyleVar(1);
+		ImGui::PopStyleColor(1);
+	}
+
+	ImGui::PopStyleColor(4);
 
 	ImGui::PopStyleVar(2);
 }
 
 void GameState::SelectTowerUI()
 {
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.1, 0.1, 1.0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 4);
+
+	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
+
 	for (int i = 0; i < TowerTypes; i++)
 	{
 		ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i, ScreenSize[1] - TilesSize));
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-
 		std::string name = "UI" + std::to_string(i);
-		std::string button_name = "Button" + name;
+		std::string button_name = "##Button" + name;
+
+		bool IsSelected = false;
+
+		if (SelectedTower == i)
+		{
+			IsSelected = true;
+			ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+		}
 
 		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
 
-		if (ImGui::Button(button_name.c_str(), ImVec2(TilesSize, TilesSize)))
+		if (ImGui::ImageButton(button_name.c_str(), sf::Sprite(towersvalues[i]->top), sf::Vector2f(TilesSize, TilesSize)))
 		{
 			SelectedTower = i;
 		}
 
+		if (ImGui::IsItemHovered() == true)
+		{
+			ImVec2 Txt = ImGui::CalcTextSize("Price:");
+			ImGui::SetCursorScreenPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize / 2 - price_offset));
+			ImGui::Text("Price:");
+			Txt = ImGui::CalcTextSize(std::to_string(towersvalues[i]->price).c_str());
+			ImGui::SetCursorScreenPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize / 2 + price_offset));
+			ImGui::Text(std::to_string(towersvalues[i]->price).c_str());
+		}
+
+		if (IsSelected == true)
+		{
+			ImGui::PopStyleColor(1);
+		}
+
 		ImGui::End();
-		ImGui::PopStyleVar(1);
 	}
+
+	ImGui::PopStyleVar(4);
+	ImGui::PopStyleColor(4);
 }
 
 void GameState::TowerUI(int towersindex)
@@ -437,7 +501,7 @@ void GameState::TowerUI(int towersindex)
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(4 * TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("SellTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	if (ImGui::Button("##SellTowerButton", ImVec2(50, 50)))
+	if (ImGui::Button("##SellTowerButton", ImVec2(TilesSize, TilesSize)))
 	{
 		for (int i = 0; i < grass_tile.size(); i++)
 		{
@@ -487,7 +551,7 @@ void GameState::TowerUI(int towersindex)
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(5 * TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("RepairTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	ImGui::ImageButton("RepairTowerButton", UI_Sprite[SpriteList(UI_Repair)], sf::Vector2f(50, 50));
+	ImGui::ImageButton("RepairTowerButton", UI_Sprite[SpriteList(UI_Repair)], sf::Vector2f(TilesSize, TilesSize));
 	ImGui::End();
 
 	int UpgradePrice = towers[towersindex]->getUpgradePrice();
@@ -508,7 +572,7 @@ void GameState::TowerUI(int towersindex)
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(6 * TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("UpgradeTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	if (ImGui::Button("##UpgradeTowerButton", ImVec2 (50, 50)))
+	if (ImGui::Button("##UpgradeTowerButton", ImVec2 (TilesSize, TilesSize)))
 	{
 		if (Money >= towers[towersindex]->getUpgradePrice() and towers[towersindex]->getCurrentLevel() < 5)
 		{
@@ -545,7 +609,7 @@ void GameState::TowerUI(int towersindex)
 		else
 		{
 			ImGui::SetCursorScreenPos(ImVec2(6 * TilesSize, ScreenSize[1] - TilesSize));
-			ImGui::Image(UI_Sprite[SpriteList::UI_Upgrade], sf::Vector2f(50, 50));
+			ImGui::Image(UI_Sprite[SpriteList::UI_Upgrade], sf::Vector2f(TilesSize, TilesSize));
 		}
 	}
 
