@@ -149,6 +149,12 @@ void MenuState::MainMenuScreen()
 		{
 			exit(0);
 		});
+
+	int VersionTextOffset = 25;
+	ImGui::SetNextWindowPos(ImVec2(0,ScreenSize[1] - VersionTextOffset));
+	ImGui::Begin("Version", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+	ImGui::Text("Version 1.2.1b");
+	ImGui::End();
 }
 
 void MenuState::SelectLevelScreen()
