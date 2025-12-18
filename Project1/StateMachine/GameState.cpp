@@ -88,7 +88,7 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 						if (RoadTiles[i].IsBridge == true and RoadTiles[i].shape.getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)))
 						{
 							Money = Money - 100;
-							RemoveGreenTile(i);
+							RemoveBridge(i);
 							break;
 						}
 					}
@@ -321,11 +321,104 @@ void GameState::UpdateTowers(sf::Time time)
 	}
 }
 
-void GameState::RemoveGreenTile(int index)
+void GameState::RemoveBridge(int index)
 {
 	//get location
 	sf::Vector2f Pos = RoadTiles[index].shape.getPosition();
 	sf::Vector2i location = { int(Pos.x) / TilesSize, int(Pos.y) / TilesSize };
+
+	//Replace nearest road tiles
+	for (int i = 0; i < RoadTiles.size(); i++)
+	{
+		if (RoadTiles[i].shape.getPosition() == sf::Vector2f(Pos.x - TilesSize, Pos.y))
+		{
+			if (RoadTiles[i].shape.getTexture() == &RoadTextures[3])  //left right down
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[0]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[4]) //all directions
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[1]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[5]) //left right top
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[6]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[8]) //right down top
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[10]);
+			}
+		}
+		if (RoadTiles[i].shape.getPosition() == sf::Vector2f(Pos.x + TilesSize, Pos.y))
+		{
+			if (RoadTiles[i].shape.getTexture() == &RoadTextures[3]) //left right top
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[9]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[4]) //all directions
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[8]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[3]) //left right down
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[7]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[2]) //left top down
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[10]);
+			}
+		}
+		if (RoadTiles[i].shape.getPosition() == sf::Vector2f(Pos.x, Pos.y + TilesSize))
+		{
+			if (RoadTiles[i].shape.getTexture() == &RoadTextures[1]) //left down top
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[6]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[4]) //all directions
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[5]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[3]) //left right down
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[7]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[8]) //right top down
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[9]);
+			}
+		}
+		if (RoadTiles[i].shape.getPosition() == sf::Vector2f(Pos.x, Pos.y - TilesSize))
+		{
+			if (RoadTiles[i].shape.getTexture() == &RoadTextures[1]) //left down top
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[0]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[4]) //all directions
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[3]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[5]) //left right top
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[2]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[8]) //right top down
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[7]);
+			}
+		}
+	}
 
 	//create imgui grass tile
 	bool IsDark = (location.x + location.y) % 2;

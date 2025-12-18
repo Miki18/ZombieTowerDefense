@@ -25,7 +25,7 @@ class GameState: public StateManager
 		bool IsPlayerWin = false;
 		bool IsPlayerLose = false;
 		int Health = 10;
-		int Money = 100;
+		int Money = 1000;
 
 		int price_offset = 5;
 
@@ -141,7 +141,7 @@ class GameState: public StateManager
 		void Update(sf::Time time);
 		void Render(sf::RenderWindow& window);
 
-		void RemoveGreenTile(int index);
+		void RemoveBridge(int index);
 
 		//UI
 		void ShowHealtAndMoney();

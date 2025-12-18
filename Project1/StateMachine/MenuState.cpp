@@ -25,6 +25,10 @@ MenuState::MenuState()
 	}
 	else
 	{
+		std::ifstream file("Resources/Content/profiles");
+		file >> profiles;
+		file.close();
+
 		current_screen = MainMenu;
 	}
 }
