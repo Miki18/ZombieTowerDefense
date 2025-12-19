@@ -1,4 +1,4 @@
 # ZombieTowerDefense
 
-version 1.2.2b
+version 1.2.2c
 

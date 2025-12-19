@@ -354,9 +354,9 @@ void GameState::RemoveBridge(int index)
 		}
 		if (RoadTiles[i].shape.getPosition() == sf::Vector2f(Pos.x + TilesSize, Pos.y))
 		{
-			if (RoadTiles[i].shape.getTexture() == &RoadTextures[3]) //left right top
+			if (RoadTiles[i].shape.getTexture() == &RoadTextures[3]) //left right down
 			{
-				RoadTiles[i].shape.setTexture(&RoadTextures[9]);
+				RoadTiles[i].shape.setTexture(&RoadTextures[7]);
 			}
 
 			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[4]) //all directions
@@ -364,9 +364,9 @@ void GameState::RemoveBridge(int index)
 				RoadTiles[i].shape.setTexture(&RoadTextures[8]);
 			}
 
-			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[3]) //left right down
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[5]) //left right top
 			{
-				RoadTiles[i].shape.setTexture(&RoadTextures[7]);
+				RoadTiles[i].shape.setTexture(&RoadTextures[8]);
 			}
 
 			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[2]) //left top down
