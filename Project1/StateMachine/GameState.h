@@ -25,7 +25,7 @@ class GameState: public StateManager
 		bool IsPlayerWin = false;
 		bool IsPlayerLose = false;
 		int Health = 10;
-		int Money = 1000;
+		int Money = 100;
 
 		int price_offset = 5;
 
