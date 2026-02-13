@@ -15,20 +15,16 @@ MenuState::MenuState()
 		}
 	}
 
+	std::ifstream file("Resources/Content/profiles");
+	file >> profiles;
+	file.close();
+
 	if (StateMachine::Get().getSelectedProfile().length() == 0)
 	{
-		std::ifstream file("Resources/Content/profiles");
-		file >> profiles;
-		file.close();
-
 		current_screen = SelectProfile;
 	}
 	else
 	{
-		std::ifstream file("Resources/Content/profiles");
-		file >> profiles;
-		file.close();
-
 		current_screen = MainMenu;
 	}
 }
@@ -157,16 +153,15 @@ void MenuState::MainMenuScreen()
 	int VersionTextOffset = 25;
 	ImGui::SetNextWindowPos(ImVec2(0,ScreenSize[1] - VersionTextOffset));
 	ImGui::Begin("Version", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-	ImGui::Text("Version 1.2.2c");
+	ImGui::Text("Version 1.3.0");
 	ImGui::End();
 }
 
 void MenuState::SelectLevelScreen()
 {
 	//Start
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 - 100), "Tutorial 1", [this]
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Tutorial 1", [this]
 		{
-			//TODO mark, that player finished this level
 			StateMachine::Get().SelectedLevel = "tutorial1";
 			changeState = true;
 		});
@@ -174,6 +169,12 @@ void MenuState::SelectLevelScreen()
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Tutorial 2", [this]
 		{
 			StateMachine::Get().SelectedLevel = "tutorial2";
+			changeState = true;
+		});
+
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Tutorial 3", [this]
+		{
+			StateMachine::Get().SelectedLevel = "tutorial3";
 			changeState = true;
 		});
 
@@ -441,6 +442,7 @@ void MenuState::NewProfileUI()
 
 void MenuState::ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick)
 {
+	Pos = ImVec2(Pos.x - 8, Pos.y);
 	ImGui::SetNextWindowPos(Pos);
 
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));

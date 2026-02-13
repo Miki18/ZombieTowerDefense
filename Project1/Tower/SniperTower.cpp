@@ -1,6 +1,6 @@
 #include "SniperTower.h"
 
-SniperTower::SniperTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
+SniperTower::SniperTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(Pos, hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
 {
 	float scale = 50.f / float(tex2->getSize().x);   //texture is square; x = y
 	top.setScale(sf::Vector2f(scale, scale));
@@ -8,7 +8,7 @@ SniperTower::SniperTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown
 	Position = sf::Vector2f(Pos.x + 25, Pos.y + 25);
 	top.setOrigin(sf::Vector2f(32, 32));
 
-	base.setPosition(Pos);
+	//base.setPosition(Pos);  //not using
 	top.setPosition(Position);
 
 	Dot.setRadius(3.f);
@@ -19,7 +19,8 @@ SniperTower::SniperTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown
 
 void SniperTower::Upgrade()
 {
-	hp = hp + IncreaseHp;
+	maxhp = maxhp + IncreaseHp;
+	hp = maxhp;
 
 	base_cooldown = base_cooldown + IncreaseCooldown;
 
@@ -58,6 +59,11 @@ int SniperTower::getUpgradePrice()
 int SniperTower::getSellPrice()
 {
 	return price / 4 + (currentLevel * IncreaseUpgradePrice) / 3;
+}
+
+int SniperTower::getRepairPrice()
+{
+	return int((maxhp-hp)/2);
 }
 
 float SniperTower::getBulletSpeed()

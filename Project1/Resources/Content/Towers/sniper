@@ -1,4 +1,6 @@
 {
+  "name": "Sniper",
+
   "hp": 70,
   "IncreaseHp": 15,
 

@@ -1,18 +1,27 @@
 #include "Bullet.h"
 
-Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID)
+Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, bool Friendly)
 {
 	TargetID = Target_ID;
 	dmg = damage;
 	TargetPos = TargetCurrentPos;
 	velocity = Speed;
+	IsFriendly = Friendly;
 
 	circle.setOrigin(sf::Vector2f(3, 3));
 	circle.setRadius(5);
 	circle.setOutlineThickness(1);
 	circle.setPosition(Position);
-	circle.setOutlineColor(sf::Color::Red);
-	circle.setFillColor(sf::Color(200, 80, 80, 255));
+	if (IsFriendly == true)
+	{
+		circle.setOutlineColor(sf::Color::Red);
+		circle.setFillColor(sf::Color(200, 80, 80, 255));
+	}
+	else
+	{
+		circle.setOutlineColor(sf::Color(50, 20, 50, 255));
+		circle.setFillColor(sf::Color(150, 60, 150, 255));
+	}
 
 	radius = 3;
 }

@@ -7,13 +7,14 @@
 class Bullet
 {
 	public:
-		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID);
+		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, bool Friendly);
 		
 		float getDmg();
 		float getRadius();
 		int getTargetID();
 		sf::Vector2f getPosition();
 		sf::Vector2f getTargetPos();
+		bool IsFriendly;
 
 		void DrawBullet(sf::RenderWindow& window);
 		void Update(sf::Time time, sf::Vector2f Dir, sf::Vector2f TargetCurrentPos);

@@ -1,0 +1,22 @@
+{
+  "name": "Mine",
+
+  "hp": 30,
+  "IncreaseHp": 5,
+
+  "cooldown": 1.0,
+  "IncreaseCooldown": 0.0,
+
+  "dmg": 10,
+  "IncreaseDmg": 5,
+
+  "radius": 0,
+  "IncreaseRadius": 0,
+
+  "price": 300,
+  "UpgradePrice": 200,
+  "IncreaseUpgradePrice": 200,
+
+  "bulletoffset": 0,
+  "bulletspeed": 0
+}

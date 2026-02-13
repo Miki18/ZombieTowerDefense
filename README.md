@@ -1,6 +1,6 @@
 # ZombieTowerDefense
 
-Current version: 1.2.2c
+Current version: 1.3.0
 
 # About the Game
 
@@ -11,9 +11,9 @@ Game is still in development.
 # Content
 
 **Game contains**:
-  - 2 levels
-  - 2 towers
-  - one monster - zombie
+  - 3 levels
+  - 3 towers
+  - 2 monsters - zombie and worm
   - remove bridge mechanic
 
 **Towers**:

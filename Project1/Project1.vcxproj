@@ -129,6 +129,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Tower\Goldmine.cpp" />
+    <ClCompile Include="imgui-SFML.cpp" />
     <ClCompile Include="Other\Bullet.cpp" />
     <ClCompile Include="Tower\SniperTower.cpp" />
     <ClCompile Include="Tower\CannonTower.cpp" />
@@ -136,7 +138,6 @@
     <ClCompile Include="Monsters\MonsterActive.cpp" />
     <ClCompile Include="Monsters\MonsterPassive.cpp" />
     <ClCompile Include="StateMachine\GameState.cpp" />
-    <ClCompile Include="imgui-SFML.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="StateMachine\MenuState.cpp" />
     <ClCompile Include="StateMachine\StateMachine.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Tower\Goldmine.h" />
     <ClInclude Include="Other\Bullet.h" />
     <ClInclude Include="Other\GrassTileForMenu.h" />
     <ClInclude Include="Tower\SniperTower.h" />

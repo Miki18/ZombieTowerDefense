@@ -1,6 +1,6 @@
 #include "CannonTower.h"
 
-CannonTower::CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
+CannonTower::CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(Pos, hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
 {
 	float scale = 50.f / float(tex2->getSize().x);   //texture is square; x = y
 	top.setScale(sf::Vector2f(scale, scale));
@@ -20,7 +20,8 @@ CannonTower::CannonTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown
 
 void CannonTower::Upgrade()
 {
-	hp = hp + IncreaseHp;
+	maxhp = maxhp + IncreaseHp;
+	hp = maxhp;
 
 	base_cooldown = base_cooldown + IncreaseCooldown;
 
@@ -59,6 +60,11 @@ int CannonTower::getUpgradePrice()
 int CannonTower::getSellPrice()
 {
 	return price/2 + (currentLevel * IncreaseUpgradePrice)/2;
+}
+
+int CannonTower::getRepairPrice()
+{
+    return int((maxhp-hp)/4);
 }
 
 float CannonTower::getBulletSpeed()

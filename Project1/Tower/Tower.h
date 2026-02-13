@@ -15,6 +15,7 @@ class Tower
 	protected:
 		const float TileSize = 50.0f;
 
+		float maxhp;
 		float hp;
 		float IncreaseHp;
 
@@ -37,25 +38,34 @@ class Tower
 		int UpgradePrice;
 		int IncreaseUpgradePrice;
 
+		sf::Vector2f Position;
+
 	public:
-		Tower(float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UpgradePrice, int IncUpgradePrice);
+		Tower(sf::Vector2f Position, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UpgradePrice, int IncUpgradePrice);
 		~Tower() {};
 
 		float getRadius();
 		float getDmg();
 		int getID();
 		int getCurrentLevel() { return currentLevel; };
+		int gethp() { return hp; };
+		bool hasMaxHeath();
 
 		virtual void Upgrade() {};
 		virtual int getUpgradePrice() { return 0; };
 
 		virtual float getBulletSpeed() { return 0.0f; }
 		virtual int getSellPrice() { return 0;  };
+		virtual int getRepairPrice() { return 0; };
+		void Repair() { hp = maxhp; };
 		virtual void UpdateTower(sf::Time time) {};
-		virtual bool CanShoot() { return true; };
+		virtual void GenerateGold(int* Money) {};
+		virtual bool CanShoot() { return false; };
+		virtual void TakeDmg(int Damage);
 		virtual sf::Vector2f getBulletStartingPosition(sf::Vector2f Dir) { return sf::Vector2f(0, 0); };
 		virtual sf::Vector2f getPosition();
 		virtual sf::Vector2f detectEnemy(sf::Vector2f EnemyPos) { return sf::Vector2f(0,0); };
 		virtual void draw(sf::RenderWindow& window);
+		void drawhealth(sf::RenderWindow& window);
 };
 

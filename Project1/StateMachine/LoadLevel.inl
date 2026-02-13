@@ -7,7 +7,7 @@ void GameState::GenerateGrassTiles()
 		for (int j = 0; j < MapSize[1]; j++)
 		{
 			bool IsDark = (i + j) % 2;
-			GrassTile tile = { sf::Vector2i(i, j), 0, IsDark };
+			GrassTile tile = { sf::Vector2i(i, j), 0, IsDark, 0 };
 			grass_tile.push_back(tile);
 		}
 	}
@@ -77,7 +77,7 @@ void GameState::LoadLevelData()
 	file >> Level;
 	file.close();
 
-	BridgeTex.loadFromFile("Resources/Visuals/Bridge/bridge.png");
+	BridgeTex.loadFromFile("Resources/Visuals/Other/bridge.png");
 }
 
 void GameState::LoadPaths()
@@ -141,6 +141,19 @@ void GameState::LoadMonsters()
 		nextmonster.Speed = monstervalues["speed"].get<float>();
 		nextmonster.IsPassive = monstervalues["type"].get<std::string>() == "passive";
 		nextmonster.price = monstervalues["price"].get<int>();
+		nextmonster.texSize.x = monstervalues["Size"][0].get<int>();
+		nextmonster.texSize.y = monstervalues["Size"][1].get<int>();
+
+		if (nextmonster.IsPassive == false)
+		{
+			path_to_tex = "Resources/Visuals/Monsters/" + monster.get<std::string>() + "_attack_sheet.png";
+
+			nextmonster.MonsterTexAttack.loadFromFile(path_to_tex);
+			nextmonster.range = monstervalues["Range"].get<float>();
+			nextmonster.bulletoffset.x = monstervalues["BulletSpawn"][0].get<float>();
+			nextmonster.bulletoffset.y = monstervalues["BulletSpawn"][1].get<float>();
+			nextmonster.Dmg = monstervalues["Dmg"].get<int>();
+		}
 
 		monster_types.emplace_back(std::make_unique<MonsterTypeValues>(nextmonster));
 	}
@@ -162,6 +175,8 @@ void GameState::LoadTowerTextures()
 	file >> readedtower;
 
 	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
 
 	towertype.hp = readedtower["hp"].get<float>();
 	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
@@ -191,6 +206,40 @@ void GameState::LoadTowerTextures()
 	file >> readedtower;
 
 	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
+	//Goldmine
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_top.png");
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_down.png");
+
+	file.open("Resources/Content/Towers/goldmine");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
 
 	towertype.hp = readedtower["hp"].get<float>();
 	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
@@ -229,5 +278,47 @@ void GameState::LoadSettings()
 	LevelTime = Level["settings"]["LevelTime"].get<float>();
 
 	speech = Level["settings"]["LevelMessage"].get<std::vector<std::string>>();
+}
+
+void GameState::LoadGold()
+{
+	if (Level["gold"].empty() == true)
+	{
+		return;
+	}
+
+	for (auto& gold : Level["gold"])
+	{
+		for (int i = 0; i < grass_tile.size(); i++)
+		{
+			if (grass_tile[i].Position.x == gold[0] and grass_tile[i].Position.y == gold[1])
+			{
+				grass_tile[i].HasGold = true;
+				break;
+			}
+		}
+	}
+}
+
+void GameState::LoadGoldTexture()
+{
+	if (Level["gold"].empty() == true)
+	{
+		return;
+	}
+
+	GoldBarTex.loadFromFile("Resources/Visuals/Other/GoldBar.png");
+
+	RuinsTex.loadFromFile("Resources/Visuals/Other/Ruins.png");
+
+	for (int i = 0; i < grass_tile.size(); i++)
+	{
+		if (grass_tile[i].HasGold == true)
+		{
+			GoldBars.push_back(sf::Sprite(GoldBarTex));
+			GoldBars[GoldBars.size() - 1].setScale(sf::Vector2f(TilesSize / GoldBars[GoldBars.size() - 1].getTexture().getSize().x, TilesSize / GoldBars[GoldBars.size() - 1].getTexture().getSize().y));
+			GoldBars[GoldBars.size()-1].setPosition(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize));
+		}
+	}
 }
 //End loading functions---------------------------

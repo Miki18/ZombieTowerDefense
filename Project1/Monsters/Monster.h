@@ -13,17 +13,25 @@
 class Monster
 {
 	public:
-		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int Monster_ID);
+		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int Monster_ID, sf::Vector2f texSize);
 		~Monster() {};
 		void virtual MonsterUpdate(sf::Time time) {};
+		bool virtual IsShooter() { return false; };
+		void virtual ResetCooldown(float cooldown) {};
 		void DrawMonster(sf::RenderWindow& window);
 		void DrawHealth(sf::RenderWindow& window);
 		bool IsDead = false;
 
 		void TakeDamage(float dmg);
 		sf::Vector2f getPosition();
+		sf::Vector2f virtual getBulletStartPosition() {return sf::Vector2f(0,0); };
 		int GetID();
-
+		int virtual GetDmg() { return 0; };
+		float virtual GetRange() { return 0.0f; };
+		float virtual GetCooldown() { return 0.0f; };
+		void virtual LowerCooldown(sf::Time time) {};
+		void virtual ChangeAnimation(bool A) {};
+		void virtual PlayAnimation(sf::Time time) {};
 	protected:
 		std::vector<sf::Vector2i>* startpoints = nullptr;
 		std::vector<PathPoints>* paths = nullptr;

@@ -7,7 +7,6 @@ class SniperTower : public Tower
 		sf::Sprite base;
 		sf::Sprite top;
 		sf::CircleShape Dot;
-		sf::Vector2f Position;
 
 	public:
 		SniperTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice);
@@ -15,6 +14,7 @@ class SniperTower : public Tower
 		void Upgrade() override;
 		int getUpgradePrice() override;
 		int getSellPrice() override;
+		int getRepairPrice() override;
 
 		float getBulletSpeed() override;
 		bool CanShoot() override;

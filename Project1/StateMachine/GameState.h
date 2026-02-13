@@ -6,6 +6,7 @@
 #include "../Tower/Tower.h"
 #include "../Tower/CannonTower.h"
 #include "../Tower/SniperTower.h"
+#include "../Tower/Goldmine.h"
 #include "../Monsters/Monster.h"
 #include "../Monsters/MonsterActive.h"
 #include "../Monsters/MonsterPassive.h"
@@ -52,10 +53,12 @@ class GameState: public StateManager
 			bool IsBridge;
 		};
 		sf::Texture BridgeTex;
+		sf::Texture GoldBarTex;
 		std::vector<sf::Texture> RoadTextures;
 		std::vector<RoadTileData> RoadTiles;
 		std::vector<sf::CircleShape> BlackHole;
 		std::vector<sf::Sprite> RedArrows;
+		std::vector<sf::Sprite> GoldBars;
 
 		//Path
 		std::vector<sf::Vector2i> paths_startpoints;
@@ -69,6 +72,11 @@ class GameState: public StateManager
 			float hp;
 			float Speed;
 			int price;
+			sf::Vector2f texSize;
+			sf::Texture MonsterTexAttack;
+			float range;
+			sf::Vector2f bulletoffset;
+			int Dmg;
 		};
 
 		std::vector<std::unique_ptr<Monster>> monsters;
@@ -94,12 +102,14 @@ class GameState: public StateManager
 		std::vector<std::string> speech;
 
 		//Tower variables
-		const int TowerTypes = 2;
+		const int TowerTypes = 3;
 		int SelectedTower = 0;
 		int TowerID = 1;
 
 		struct TowerTypeValues
 		{
+			std::string name;
+
 			float hp;
 			float IncreaseHp;
 
@@ -124,6 +134,8 @@ class GameState: public StateManager
 		std::vector<std::unique_ptr<Tower>> towers;
 		std::vector<std::unique_ptr<TowerTypeValues>> towersvalues;
 
+		sf::Texture RuinsTex;
+
 		std::vector<Bullet> bullets;
 
 		//Load functions
@@ -134,6 +146,8 @@ class GameState: public StateManager
 		void LoadMonsters();
 		void LoadTowerTextures();
 		void LoadSettings();
+		void LoadGold();
+		void LoadGoldTexture();
 
 		void ExitFuntion();
 
@@ -156,12 +170,12 @@ class GameState: public StateManager
 
 		//Bullets
 		void UpdateBullets(sf::Time time);
-		void Bullet_MonsterCollision();
+		void Bullet_ObjectsCollision();
 		void RemoveUnusedBullets();
 
 		//Monster
 		void UpdateMonsters(sf::Time time);
 		void GenerateMonsters(sf::Time time);
-		void MoveMonsters(sf::Time time);
+		bool MonsterShoot(int monster_index);
 };
 

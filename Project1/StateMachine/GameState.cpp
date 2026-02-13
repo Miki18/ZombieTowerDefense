@@ -18,6 +18,10 @@ GameState::GameState()
 
 	LoadSettings();
 
+	LoadGold();
+
+	LoadGoldTexture();
+
 	tower_options.circle.setOutlineColor(sf::Color::Red);
 	tower_options.circle.setFillColor(sf::Color(255, 0, 0, 60));
 
@@ -67,6 +71,10 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2)
 				{
 					SelectedTower = 1;
+				}
+				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num3)
+				{
+					SelectedTower = 2;
 				}
 				else if (keyPressed->scancode == sf::Keyboard::Scancode::Tab)
 				{
@@ -129,7 +137,7 @@ void GameState::Update(sf::Time time)
 
 		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)) and IsGamePaused == false)
 		{
-			if (grass_tile[i].TowerID == 0)
+			if (grass_tile[i].TowerID == 0 and grass_tile[i].HasRuins == false)
 			{
 				if (SelectedTower == 0 and Money >= towersvalues[0]->price)
 				{
@@ -176,6 +184,36 @@ void GameState::Update(sf::Time time)
 					tower_options.circle.setOrigin(sf::Vector2f(radius, radius));
 					tower_options.circle.setPosition(towers[towers.size() - 1]->getPosition());
 					tower_options.SelectedTowerID = towers[towers.size() - 1]->getID();
+				}
+				else if (SelectedTower == 2 and Money >= towersvalues[2]->price and grass_tile[i].HasGold == true)
+				{
+					towers.emplace_back(std::make_unique<Goldmine>(
+						sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize),
+						towersvalues[2]->hp, towersvalues[2]->IncreaseHp,
+						towersvalues[2]->cooldown, towersvalues[2]->IncreaseCooldown,
+						towersvalues[2]->dmg, towersvalues[2]->IncreaseDmg,
+						towersvalues[2]->radius, towersvalues[2]->IncreaseRadius,
+						towersvalues[2]->bulletoffset, towersvalues[2]->bulletspeed,
+						&towersvalues[2]->base, &towersvalues[2]->top, TowerID,
+						towersvalues[2]->price, towersvalues[2]->UpgradePrice, towersvalues[2]->IncreaseUpgradePrice));
+					grass_tile[i].TowerID = TowerID;
+					Money = Money - towersvalues[2]->price;
+					TowerID++;
+
+					tower_options.IsVisible = true;
+					float radius = towers[towers.size() - 1]->getRadius();
+					tower_options.circle.setRadius(radius);
+					tower_options.circle.setOrigin(sf::Vector2f(radius, radius));
+					tower_options.circle.setPosition(towers[towers.size() - 1]->getPosition());
+					tower_options.SelectedTowerID = towers[towers.size() - 1]->getID();
+				}
+			}
+			else if (grass_tile[i].TowerID == 0 and grass_tile[i].HasRuins == true)
+			{
+				if (Money >= 100 and SelectedTower == -1)
+				{
+					Money = Money - 100;
+					grass_tile[i].HasRuins = false;
 				}
 			}
 			else if (grass_tile[i].TowerID != 0)
@@ -233,7 +271,7 @@ void GameState::Update(sf::Time time)
 
 	//Handle bullets
 	UpdateBullets(time);
-	Bullet_MonsterCollision();
+	Bullet_ObjectsCollision();
 	RemoveUnusedBullets();
 
 	if (Health <= 0)
@@ -289,6 +327,22 @@ void GameState::Render(sf::RenderWindow& window)
 		return;
 	}
 
+	for (int i = 0; i < GoldBars.size(); i++)
+	{
+		window.draw(GoldBars[i]);
+	}
+
+	for (int i = 0; i < grass_tile.size(); i++)
+	{
+		if (grass_tile[i].HasRuins == true)
+		{
+			sf::Sprite sprite(RuinsTex);
+			sprite.setPosition(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize));
+			sprite.setScale(sf::Vector2f(50.0f / 64.0f, 50.0f / 64.0f));
+			window.draw(sprite);
+		}
+	}
+
 	for (int i = 0; i < towers.size(); i++)
 	{
 		towers[i]->draw(window);
@@ -309,6 +363,11 @@ void GameState::Render(sf::RenderWindow& window)
 		monsters[i]->DrawHealth(window);
 	}
 
+	for (int i = 0; i < towers.size(); i++)
+	{
+		towers[i]->drawhealth(window);
+	}
+
 	window.display();
 }
 
@@ -318,6 +377,7 @@ void GameState::UpdateTowers(sf::Time time)
 	{
 		towers[i]->UpdateTower(time);
 		DetectEnemies(i);
+		towers[i]->GenerateGold(&Money);
 	}
 }
 
@@ -546,7 +606,7 @@ void GameState::SelectTowerUI()
 			ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
 		}
 
-		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+		ImGui::Begin(name.c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground);
 
 		if (ImGui::ImageButton(button_name.c_str(), sf::Sprite(towersvalues[i]->top), sf::Vector2f(TilesSize, TilesSize)))
 		{
@@ -555,7 +615,10 @@ void GameState::SelectTowerUI()
 
 		if (ImGui::IsItemHovered() == true)
 		{
-			ImVec2 Txt = ImGui::CalcTextSize("Price:");
+			ImVec2 Txt = ImGui::CalcTextSize(towersvalues[i]->name.c_str());
+			ImGui::SetCursorScreenPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize / 2 - 3*price_offset));
+			ImGui::Text(towersvalues[i]->name.c_str());
+			Txt = ImGui::CalcTextSize("Price:");
 			ImGui::SetCursorScreenPos(ImVec2(ScreenSize[0] - TilesSize * TowerTypes + TilesSize * i + (TilesSize - Txt.x) / 2, ScreenSize[1] - TilesSize / 2 - price_offset));
 			ImGui::Text("Price:");
 			Txt = ImGui::CalcTextSize(std::to_string(towersvalues[i]->price).c_str());
@@ -637,14 +700,63 @@ void GameState::TowerUI(int towersindex)
 
 	ImGui::End();
 
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.475, 0.440, 1.0));
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.475, 0.440, 1.0));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5, 0.475, 0.440, 1.0));
+	//3 case:
+	// full hp brak obrazka i pisz full hp
+	// no full hp i brak hajsu na naprawê -> obrazek z szarym t³em; jak siê najedzie to znika obrazek i hp siê pokazuje
+	// no full hp i jest hajs na naprawê -> obrazk z normalnym t³em i pisz jak siê najedzie ile hajsu
+	if (towers[towersindex]->hasMaxHeath() or towers[towersindex]->getRepairPrice() > Money)
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.475, 0.440, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.475, 0.440, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5, 0.475, 0.440, 1.0));
+	}
+	else
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+	}
 
 	ImGui::SetNextWindowSize(ImVec2(TilesSize, TilesSize));
 	ImGui::SetNextWindowPos(ImVec2(5 * TilesSize, ScreenSize[1] - TilesSize));
 	ImGui::Begin("RepairTower", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
-	ImGui::ImageButton("RepairTowerButton", UI_Sprite[SpriteList(UI_Repair)], sf::Vector2f(TilesSize, TilesSize));
+	if (ImGui::Button("##RepairTowerButton", ImVec2(TilesSize, TilesSize)))
+	{
+		if (!towers[towersindex]->hasMaxHeath() and towers[towersindex]->getRepairPrice() <= Money)
+		{
+			Money = Money - towers[towersindex]->getRepairPrice();
+			towers[towersindex]->Repair();
+		}
+	}
+
+	if (towers[towersindex]->hasMaxHeath())
+	{
+		ImVec2 TextSize = ImGui::CalcTextSize("FULL");
+		ImGui::SetCursorScreenPos(ImVec2(5 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2 - TextSize.y));
+		ImGui::Text("FULL");
+		TextSize = ImGui::CalcTextSize("HP!");
+		ImGui::SetCursorScreenPos(ImVec2(5 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2));
+		ImGui::Text("HP!");
+	}
+	else
+	{
+		if (ImGui::IsItemHovered())
+		{
+			std::string price = std::to_string(towers[towersindex]->getRepairPrice());
+			ImVec2 TextSize = ImGui::CalcTextSize("Price:");
+			ImGui::SetCursorScreenPos(ImVec2(5 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2 - TextSize.y));
+			ImGui::Text("Price:");
+			TextSize = ImGui::CalcTextSize(std::to_string(towers[towersindex]->getRepairPrice()).c_str());
+			ImGui::SetCursorScreenPos(ImVec2(5 * TilesSize + (TilesSize / 2 - TextSize.x / 2), ScreenSize[1] - TilesSize / 2));
+			ImGui::Text(std::to_string(towers[towersindex]->getRepairPrice()).c_str());
+		}
+		else
+		{
+			ImGui::SetCursorScreenPos(ImVec2(5 * TilesSize, ScreenSize[1] - TilesSize));
+			ImGui::Image(UI_Sprite[SpriteList::UI_Repair], sf::Vector2f(TilesSize, TilesSize));
+		}
+	}
+
 	ImGui::End();
 
 	int UpgradePrice = towers[towersindex]->getUpgradePrice();
@@ -790,7 +902,7 @@ void GameState::DetectEnemies(int tower_number)
 			//Can shoot also check tower's cooldown
 			if (towers[tower_number]->CanShoot())
 			{
-				bullets.emplace_back(towers[tower_number]->getBulletStartingPosition(Dir), towers[tower_number]->getDmg(), towers[tower_number]->getBulletSpeed(), monsters[j]->getPosition(), monsters[j]->GetID());
+				bullets.emplace_back(towers[tower_number]->getBulletStartingPosition(Dir), towers[tower_number]->getDmg(), towers[tower_number]->getBulletSpeed(), monsters[j]->getPosition(), monsters[j]->GetID(), true);
 			}
 			break;
 		}
@@ -801,23 +913,44 @@ void GameState::UpdateBullets(sf::Time time)
 {
 	for (int i = 0; i < bullets.size(); i++)
 	{
-		bool MonsterSelected = false;
-		for (int j = 0; j < monsters.size(); j++)
-		{
-			if (monsters[j]->GetID() == bullets[i].getTargetID())
-			{
-				MonsterSelected = true;
-				sf::Vector2f Dir = monsters[j]->getPosition() - bullets[i].getPosition();
-				float length = Dir.length();
-				Dir.x = Dir.x / length;
-				Dir.y = Dir.y / length;
+		bool TargetSelected = false;
 
-				bullets[i].Update(time, Dir, monsters[j]->getPosition());
-				break;
+		if (bullets[i].IsFriendly)
+		{
+			for (int j = 0; j < monsters.size(); j++)
+			{
+				if (monsters[j]->GetID() == bullets[i].getTargetID())
+				{
+					TargetSelected = true;
+					sf::Vector2f Dir = monsters[j]->getPosition() - bullets[i].getPosition();
+					float length = Dir.length();
+					Dir.x = Dir.x / length;
+					Dir.y = Dir.y / length;
+
+					bullets[i].Update(time, Dir, monsters[j]->getPosition());
+					break;
+				}
+			}
+		}
+		else
+		{
+			for (int j = 0; j < towers.size(); j++)
+			{
+				if (towers[j]->getID() == bullets[i].getTargetID())
+				{
+					TargetSelected = true;
+					sf::Vector2f Dir = towers[j]->getPosition() - bullets[i].getPosition();
+					float length = Dir.length();
+					Dir.x = Dir.x / length;
+					Dir.y = Dir.y / length;
+
+					bullets[i].Update(time, Dir, towers[j]->getPosition());
+					break;
+				}
 			}
 		}
 
-		if (MonsterSelected == false)
+		if (TargetSelected == false)
 		{
 			sf::Vector2f Dir = bullets[i].getTargetPos() - bullets[i].getPosition();
 			float length = Dir.length();
@@ -829,28 +962,66 @@ void GameState::UpdateBullets(sf::Time time)
 	}
 }
 
-void GameState::Bullet_MonsterCollision()
+void GameState::Bullet_ObjectsCollision()
 {
 	std::vector<Bullet>::iterator B_iter = bullets.begin();
 	std::vector<std::unique_ptr<Monster>>::iterator M_iter = monsters.begin();
+	std::vector<std::unique_ptr<Tower>>::iterator T_iter = towers.begin();
 
 	for (B_iter = bullets.begin(); B_iter != bullets.end();)
 	{
 		bool hit = false;
-		for (M_iter = monsters.begin(); M_iter != monsters.end();)
+
+		if (B_iter->IsFriendly == true)
 		{
-			if (B_iter->getRadius() > ((*M_iter)->getPosition() - B_iter->getPosition()).length())
+			for (M_iter = monsters.begin(); M_iter != monsters.end();)
 			{
-				hit = true;
-				(*M_iter)->TakeDamage(B_iter->getDmg());
-				B_iter = bullets.erase(B_iter);
-				if ((*M_iter)->IsDead == true)
+				if (B_iter->getRadius() > ((*M_iter)->getPosition() - B_iter->getPosition()).length())
 				{
-					monsters.erase(M_iter);
+					hit = true;
+					(*M_iter)->TakeDamage(B_iter->getDmg());
+					B_iter = bullets.erase(B_iter);
+					if ((*M_iter)->IsDead == true)
+					{
+						monsters.erase(M_iter);
+					}
+					break;
 				}
-				break;
+				M_iter++;
 			}
-			M_iter++;
+		}
+		else
+		{
+			for (T_iter = towers.begin(); T_iter != towers.end();)
+			{
+				if (B_iter->getRadius() > ((*T_iter)->getPosition() - B_iter->getPosition()).length())
+				{
+					hit = true;
+					(*T_iter)->TakeDmg(int(B_iter->getDmg()));
+					B_iter = bullets.erase(B_iter);
+					if ((*T_iter)->gethp() < 0)
+					{
+
+						for (int i = 0; i < grass_tile.size(); i++)
+						{
+							if (grass_tile[i].TowerID == (*T_iter)->getID())
+							{
+								if ((*T_iter)->getRadius() == 0)
+								{
+									grass_tile[i].HasRuins = true;
+								}
+								grass_tile[i].TowerID = 0;
+								break;
+							}
+						}
+
+						tower_options.IsVisible = false;
+						towers.erase(T_iter);
+					}
+					break;
+				}
+				T_iter++;
+			}
 		}
 
 		if (hit == false)
@@ -882,7 +1053,29 @@ void GameState::UpdateMonsters(sf::Time time)
 	{
 		GenerateMonsters(time);
 	}
-	MoveMonsters(time);
+
+	for (int i = 0; i < monsters.size(); i++)
+	{
+		if (monsters[i]->IsShooter())
+		{
+			//if monster is shooter then check if it can shot tower if yes then cooldown then shoot (and it can't move)
+			bool HasTower = MonsterShoot(i);
+			if (HasTower == true)
+			{
+				monsters[i]->ChangeAnimation(1);
+				monsters[i]->LowerCooldown(time);
+				monsters[i]->PlayAnimation(time);
+				continue;
+			}
+			else
+			{
+				monsters[i]->ChangeAnimation(0);
+				monsters[i]->ResetCooldown(0.5);
+			}
+		}
+		monsters[i]->MonsterUpdate(time);
+		monsters[i]->PlayAnimation(time);
+	}
 
 	for (int i = 0; i < monsters.size(); i++)
 	{
@@ -903,12 +1096,13 @@ void GameState::GenerateMonsters(sf::Time time)
 
 			if (monster_types[randommonster]->IsPassive)
 			{
-				monsters.emplace_back(std::make_unique<MonsterPassive>(monster_types[randommonster]->MonsterTex, monster_types[randommonster]->hp, monster_types[randommonster]->Speed, monster_types[randommonster]->price, TilesSize, Health, Money, paths_startpoints, paths, MonsterID));
+				monsters.emplace_back(std::make_unique<MonsterPassive>(monster_types[randommonster]->MonsterTex, monster_types[randommonster]->hp, monster_types[randommonster]->Speed, monster_types[randommonster]->price, TilesSize, Health, Money, paths_startpoints, paths, MonsterID, monster_types[randommonster]->texSize));
 				MonsterID++;
 			}
 			else
 			{
-				//TODO
+				monsters.emplace_back(std::make_unique<MonsterActive>(monster_types[randommonster]->MonsterTex, monster_types[randommonster]->hp, monster_types[randommonster]->Speed, monster_types[randommonster]->price, TilesSize, Health, Money, paths_startpoints, paths, MonsterID, monster_types[randommonster]->texSize, monster_types[randommonster]->MonsterTexAttack, monster_types[randommonster]->range, monster_types[randommonster]->bulletoffset, monster_types[randommonster]->Dmg));
+				MonsterID++;
 			}
 			MWS.MonsterNumberInCurrentWave--;
 			if (MWS.MonsterNumberInCurrentWave == 0)
@@ -931,10 +1125,19 @@ void GameState::GenerateMonsters(sf::Time time)
 	}
 }
 
-void GameState::MoveMonsters(sf::Time time)
+bool GameState::MonsterShoot(int monster_index)
 {
-	for (int i = 0; i < monsters.size(); i++)
+	for (int i = 0; i < towers.size(); i++)
 	{
-		monsters[i]->MonsterUpdate(time);
+		if (sf::Vector2f(monsters[monster_index]->getPosition() - towers[i]->getPosition()).length() <= monsters[monster_index]->GetRange())
+		{
+			if (monsters[monster_index]->GetCooldown() <= 0.0f)
+			{
+				bullets.emplace_back(monsters[monster_index]->getBulletStartPosition(), monsters[monster_index]->GetDmg(), 150, towers[i]->getPosition(), towers[i]->getID(), false);
+				monsters[monster_index]->ResetCooldown(1.0f);
+			}
+			return true;
+		}
 	}
+	return false;
 }

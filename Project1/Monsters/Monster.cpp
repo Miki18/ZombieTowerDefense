@@ -1,6 +1,6 @@
 #include "Monster.h"
 
-Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& path, int Monster_ID): PlayerHP(P_HP), PlayerMoney(P_Money)
+Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& path, int Monster_ID, sf::Vector2f texSize): PlayerHP(P_HP), PlayerMoney(P_Money)
 {
 	startpoints = &starts;
 	paths = &path;
@@ -29,10 +29,10 @@ Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSiz
 	ChooseDestination();
 
 	body.setTexture(&texture);
-	body.setTextureRect(sf::IntRect({ 0,0 }, { 25,50 }));
+	body.setTextureRect(sf::IntRect({ 0,0 }, { int(texSize.x), int(texSize.y) }));
 	body.setPosition(Position);
-	body.setSize(sf::Vector2f(25, 50));
-	body.setOrigin(sf::Vector2f(13,25));
+	body.setSize(texSize);
+	body.setOrigin(sf::Vector2f(texSize.x/2,texSize.y/2));
 }
 
 void Monster::DrawMonster(sf::RenderWindow& window)
