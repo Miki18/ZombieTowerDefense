@@ -1,6 +1,6 @@
 #include "MonsterActive.h"
 
-MonsterActive::MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, paths, MonsterID, texSize)
+MonsterActive::MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, sf::SoundBuffer& Monster_sound) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, paths, MonsterID, texSize), sounds(Monster_sound)
 {
 	this->Attack_texture = tex2;
 	this->range = Range;
@@ -84,6 +84,25 @@ void MonsterActive::PlayAnimation(sf::Time time)
 		body.setTextureRect(sf::IntRect({ 100 * frame,0 }, { 100,100 }));   //WARNING
 		UntilNextTex = float(1.f / 8.f);
 	}
+}
+
+void MonsterActive::PlaySound()
+{
+	sounds.play();
+}
+
+void MonsterActive::SetVolume(float vol)
+{
+	if (vol > 100.0f)
+	{
+		vol = 100.0f;
+	}
+	if (vol < 0.0f)
+	{
+		vol = 0.0f;
+	}
+
+	sounds.setVolume(vol);
 }
 
 void MonsterActive::MonsterWalk(sf::Time time)

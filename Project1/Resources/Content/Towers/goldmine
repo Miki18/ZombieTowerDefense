@@ -13,8 +13,8 @@
   "radius": 0,
   "IncreaseRadius": 0,
 
-  "price": 300,
-  "UpgradePrice": 200,
+  "price": 500,
+  "UpgradePrice": 300,
   "IncreaseUpgradePrice": 200,
 
   "bulletoffset": 0,

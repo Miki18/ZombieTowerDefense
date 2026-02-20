@@ -15,6 +15,9 @@ class StateMachine
 	private:
 		StateManager* State = nullptr;
 		std::string selected_profile = "";
+		bool Tutorials[3] = { false, false, false };
+		float SoundVolume = 100.0f;
+		float MusicVolume = 100.0f;
 
 		StateMachine() {};
 		static StateMachine Instance;
@@ -30,5 +33,9 @@ class StateMachine
 		std::string SelectedLevel = "";
 		std::string getSelectedProfile();
 		void setSelectedProfile(std::string nick);
+		void PassLevel(int index, bool Check);
+		bool GetLevelStatus(int index);
+		void VolumeSetting(ImVec2 Pos, std::string name, bool IsMusic);
+		float GetVolume(bool isMusic);
 };
 

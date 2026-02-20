@@ -1,6 +1,6 @@
 #include "Goldmine.h"
 
-Goldmine::Goldmine(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice) : Tower(Pos, hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice), base(*tex1), top(*tex2)
+Goldmine::Goldmine(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice, sf::SoundBuffer& tower_shoot) : Tower(Pos, hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice, tower_shoot), base(*tex1), top(*tex2)
 {
 	float scale = 50.f / float(tex2->getSize().x);
 	top.setScale(sf::Vector2f(scale, scale));
@@ -26,22 +26,22 @@ void Goldmine::Upgrade()
 	{
 	case 1:
 		currentLevel++;
-		base.setColor(sf::Color(0.2,  0.2, 0.1));
+		base.setColor(sf::Color(100,  100, 50));
 		break;
 
 	case 2:
 		currentLevel++;
-		base.setColor(sf::Color(0.4, 0.4, 0.2));
+		base.setColor(sf::Color(150, 150, 75));
 		break;
 
 	case 3:
 		currentLevel++;
-		base.setColor(sf::Color(0.6, 0.6, 0.3));
+		base.setColor(sf::Color(200, 200, 100));
 		break;
 
 	case 4:
 		currentLevel++;
-		base.setColor(sf::Color(0.8, 0.8, 0.4));
+		base.setColor(sf::Color(250, 250, 125));
 		break;
 	}
 }

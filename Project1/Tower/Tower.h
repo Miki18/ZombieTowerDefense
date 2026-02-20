@@ -40,8 +40,10 @@ class Tower
 
 		sf::Vector2f Position;
 
+		sf::Sound sound;
+
 	public:
-		Tower(sf::Vector2f Position, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UpgradePrice, int IncUpgradePrice);
+		Tower(sf::Vector2f Position, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UpgradePrice, int IncUpgradePrice, sf::SoundBuffer& tower_shoot);
 		~Tower() {};
 
 		float getRadius();
@@ -67,5 +69,7 @@ class Tower
 		virtual sf::Vector2f detectEnemy(sf::Vector2f EnemyPos) { return sf::Vector2f(0,0); };
 		virtual void draw(sf::RenderWindow& window);
 		void drawhealth(sf::RenderWindow& window);
+		void PlaySound();
+		void SetVolume(float vol);
 };
 

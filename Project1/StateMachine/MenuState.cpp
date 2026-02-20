@@ -43,7 +43,7 @@ void MenuState::Input(sf::RenderWindow& window, sf::Time time)
 	ImGui::SFML::Update(window, time);
 }
 
-void MenuState::Update(sf::Time time)
+void MenuState::Update(sf::RenderWindow& window, sf::Time time)
 {
 	for (int i = 0; i < GrassTile.size(); i++)
 	{
@@ -88,7 +88,7 @@ void MenuState::Update(sf::Time time)
 		OptionsScreen();
 		break;
 	case MenuState::Settings:
-		SettingsScreen();
+		SettingsScreen(window);
 		break;
 	case MenuState::Credits:
 		CreditsScreen();
@@ -107,6 +107,22 @@ void MenuState::Render(sf::RenderWindow& window)
 
 	ImGui::SFML::Render(window);
 	window.display();
+
+	if (changeMode == true)
+	{
+		changeMode = false;
+		window.close();
+		if (IsFullscreen)
+		{
+			window.create(sf::VideoMode({ 1600, 900 }), "Game", sf::Style::None, sf::State::Windowed);
+			IsFullscreen = false;
+		}
+		else
+		{
+			window.create(sf::VideoMode({ 1600, 900 }), "Game", sf::Style::None, sf::State::Fullscreen);
+			IsFullscreen = true;
+		}
+	}
 
 	if (changeState == true)
 	{
@@ -153,7 +169,7 @@ void MenuState::MainMenuScreen()
 	int VersionTextOffset = 25;
 	ImGui::SetNextWindowPos(ImVec2(0,ScreenSize[1] - VersionTextOffset));
 	ImGui::Begin("Version", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-	ImGui::Text("Version 1.3.0");
+	ImGui::Text("Version 1.3.1");
 	ImGui::End();
 }
 
@@ -164,19 +180,19 @@ void MenuState::SelectLevelScreen()
 		{
 			StateMachine::Get().SelectedLevel = "tutorial1";
 			changeState = true;
-		});
+		}, 1, StateMachine::Get().GetLevelStatus(0));
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Tutorial 2", [this]
 		{
 			StateMachine::Get().SelectedLevel = "tutorial2";
 			changeState = true;
-		});
+		}, StateMachine::Get().GetLevelStatus(0), StateMachine::Get().GetLevelStatus(1));
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Tutorial 3", [this]
 		{
 			StateMachine::Get().SelectedLevel = "tutorial3";
 			changeState = true;
-		});
+		}, StateMachine::Get().GetLevelStatus(1), StateMachine::Get().GetLevelStatus(2));
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
 		{
@@ -207,15 +223,32 @@ void MenuState::OptionsScreen()
 
 
 	//Main menu
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - 100 / 2 + 300), "Back", [this]
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
 		{
 			current_screen = MainMenu;
 		});
 }
 
-void MenuState::SettingsScreen()
+void MenuState::SettingsScreen(sf::RenderWindow& window)
 {
-	InfoWidget("Nothing to do here.");
+	if (IsFullscreen)
+	{
+		ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Window Mode", [this]
+			{
+				changeMode = true;
+			});
+	}
+	else
+	{
+		ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Fullscreen", [this]
+			{
+				changeMode = true;
+			});
+	}
+
+	StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0]/2 - ButtonSize.x /2 - 8, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Sounds", 0);
+
+	StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 - 8, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Music", 1);
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
 		{
@@ -226,6 +259,15 @@ void MenuState::SettingsScreen()
 void MenuState::CreditsScreen()
 {
 	InfoWidget("Game by Miki18");
+	
+	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 - 55, ScreenSize[1] / 2 - ButtonSize.y / 2 + 50));
+	ImGui::SetNextWindowSize(ImVec2(400, 100));
+	ImGui::Begin("Links", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |ImGuiWindowFlags_NoDecoration);
+	ImGui::Text("Music and Sounds:");
+	ImGui::Text("Sound FX - BUBBLE POP SOUND EFFECT - FREE");
+	ImGui::Text("SOUNDFX FREE - Cute Pop Sound Effects");
+	ImGui::Text("Kevin MacLeod - Carefree");
+	ImGui::End();
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
 		{
@@ -329,6 +371,10 @@ bool MenuState::LoadProfilesUI()
 			if (ImGui::Button(read_nick.c_str()))
 			{
 				StateMachine::Get().setSelectedProfile(read_nick);
+				StateMachine::Get().PassLevel(0, profiles["profiles"][i]["Tutorial1"].get<bool>());
+				StateMachine::Get().PassLevel(1, profiles["profiles"][i]["Tutorial2"].get<bool>());
+				StateMachine::Get().PassLevel(2, profiles["profiles"][i]["Tutorial3"].get<bool>());
+
 				current_screen = MainMenu;
 			}
 
@@ -422,6 +468,9 @@ void MenuState::NewProfileUI()
 				if (profiles["profiles"][i].empty())
 				{
 					profiles["profiles"][i]["name"] = new_profile_name;
+					profiles["profiles"][i]["Tutorial1"] = false;
+					profiles["profiles"][i]["Tutorial2"] = false;
+					profiles["profiles"][i]["Tutorial3"] = false;
 					std::ofstream file("Resources/Content/profiles");
 					file << profiles.dump(2);
 					file.close();
@@ -440,22 +489,39 @@ void MenuState::NewProfileUI()
 	ImGui::PopStyleColor(2);
 }
 
-void MenuState::ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick)
+void MenuState::ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick, bool IsActive, bool IsColored)
 {
-	Pos = ImVec2(Pos.x - 8, Pos.y);
-	ImGui::SetNextWindowPos(Pos);
+	ImGui::SetNextWindowPos(ImVec2(Pos.x - 8, Pos.y));
 
-	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
-	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
-	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+	if (IsActive == false)
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.475, 0.440, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.475, 0.440, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5, 0.475, 0.440, 1.0));
+	}
+	else if(IsColored == true)
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.65, 0.65, 0.0, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.65, 0.65, 0.0, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45, 0.45, 0.0, 1.0));
+	}
+	else
+	{
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+	}
 
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.1, 0.1, 1.0));
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 4);
 
-	ImGui::Begin((name + "button").c_str(), nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground);
+	ImGui::Begin((name + "button").c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
 	if (ImGui::Button(name.c_str(), ImVec2(ButtonSize.x, ButtonSize.y)))
 	{
-		OnClick();
+		if (IsActive)
+		{
+			OnClick();
+		}
 	}
 
 	ImGui::End();

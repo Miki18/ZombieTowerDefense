@@ -59,14 +59,36 @@
     "zombie"
   ],
 
+  "waves": [
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 2.5,
+      "monsters": [ "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 8,
+      "cooldown": 2.5,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 8,
+      "cooldown": 2.5,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 8,
+      "cooldown": 2.0,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 6,
+      "cooldown": 1.0,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    }
+  ],
+
   "settings": {
-    "MinimumMonstersInWave": 1,
-    "PossibleAdditionalMonsters": 2,
-    "IncreasingPossibleNumber": 0.1,
-    "IncreasingMinimumNumber": 0.5,
-    "timeCooldownInWave": 1.5,
-    "timeBetweenWaves": 5,
-    "LevelTime": 90,
+    "Money":  100,
     "LevelMessage": [ "Hi!", "This is first level - tutorial1!", "Place towers to defeat zombies.", "You will get money for killing them.", "Do not let zombies pass!", "Good luck!" ]
   },
 

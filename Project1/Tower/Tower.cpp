@@ -1,6 +1,6 @@
 #include "Tower.h"
 
-Tower::Tower(sf::Vector2f Position, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UPrice, int IncUpgradePrice)
+Tower::Tower(sf::Vector2f Position, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, int id, int price, int UPrice, int IncUpgradePrice, sf::SoundBuffer& tower_shoot) : sound(tower_shoot)
 {
 	this->Position = Position;
 
@@ -86,4 +86,23 @@ void Tower::drawhealth(sf::RenderWindow& window)
 		window.draw(back);
 		window.draw(fill);
 	}
+}
+
+void Tower::PlaySound()
+{
+	sound.play();
+}
+
+void Tower::SetVolume(float vol)
+{
+	if (vol > 100.0f)
+	{
+		vol = 100.0f;
+	}
+	if (vol < 0.0f)
+	{
+		vol = 0.0f;
+	}
+
+	sound.setVolume(vol);
 }

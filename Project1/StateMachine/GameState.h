@@ -26,7 +26,7 @@ class GameState: public StateManager
 		bool IsPlayerWin = false;
 		bool IsPlayerLose = false;
 		int Health = 10;
-		int Money = 100;
+		int Money = 0;
 
 		int price_offset = 5;
 
@@ -85,20 +85,13 @@ class GameState: public StateManager
 		//Monsters waves variables
 		struct MonsterWavesSettings
 		{
-			float MinimumMonstersInWave;  //min number of monsters in this wave
-			float PossibleAdditionalMonsters;  //MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % int(MWS.PossibleAdditionalMonsters);
-			float IncreasingPossibleNumber;  //MWS.PossibleAdditionalMonsters += MWS.IncreasingPossibleNumber;
-			float IncreasingMinimumNumber;   //MWS.MinimumMonstersInWave += MWS.IncreasingMinimumNumber;
-			int MonsterNumberInCurrentWave;  //Number of monsters in current wave to spawn (if this == 0 then a new waves starts)
-
-			//To check cooldown substract delta time from time... variable
-			float timeCooldownInWave; //time between monsters in single wave 
-			float timeBetweenWaves; //time between waves 
-			float CooldownInWave; //store cooldown in wave, so I can later timeCooldownInWave = CooldownInWave
-			float BetweenWaves; //store time between waves, so I can later timeBetweenWaves = BetweenWaves
+			float PreWaveWaiting = 0.0f;
+			float Cooldown = 0.0f;
+			float BaseCooldown = 0.0f;
+			std::vector<std::string> monsters;
 		};
-		float LevelTime;
-		MonsterWavesSettings MWS;
+		std::vector<MonsterWavesSettings> MWS;
+		int wave_number = 0;
 		std::vector<std::string> speech;
 
 		//Tower variables
@@ -138,6 +131,21 @@ class GameState: public StateManager
 
 		std::vector<Bullet> bullets;
 
+		//preview
+		struct Preview
+		{
+			bool ShowPreview = false;
+			sf::CircleShape Small;
+			sf::CircleShape Big;
+			sf::Vector2i Tile;
+		};
+		Preview preview;
+
+		//Sounds
+		sf::SoundBuffer TowerSound;
+		sf::SoundBuffer MonsterSound;
+		sf::Music Music;
+
 		//Load functions
 		void GenerateGrassTiles();
 		void LoadRoadTiles();
@@ -146,13 +154,16 @@ class GameState: public StateManager
 		void LoadMonsters();
 		void LoadTowerTextures();
 		void LoadSettings();
+		void LoadMonsterWaves();
 		void LoadGold();
 		void LoadGoldTexture();
+		void LoadSounds();
+		void SaveProgress();
 
 		void ExitFuntion();
 
 		void Input(sf::RenderWindow& window, sf::Time time);
-		void Update(sf::Time time);
+		void Update(sf::RenderWindow& window, sf::Time time);
 		void Render(sf::RenderWindow& window);
 
 		void RemoveBridge(int index);
@@ -162,6 +173,8 @@ class GameState: public StateManager
 		void SelectTowerUI();
 		void TowerUI(int towersindex);
 		void ShowMessage();
+		void CalculatePreview();
+		void UpdatePreview();
 		void CustomTextMessages(std::string UpperText, std::string LowerText, sf::Vector2f picSize);
 
 		//Towers

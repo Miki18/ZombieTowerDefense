@@ -143,14 +143,36 @@
     "zombie"
   ],
 
+  "waves": [
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 3,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 6,
+      "cooldown": 2,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 6,
+      "cooldown": 1.8,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 6,
+      "cooldown": 1.6,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 4,
+      "cooldown": 1.5,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    }
+  ],
+
   "settings": {
-    "MinimumMonstersInWave": 2,
-    "PossibleAdditionalMonsters": 1,
-    "IncreasingPossibleNumber": 0.25,
-    "IncreasingMinimumNumber": 0.5,
-    "timeCooldownInWave": 1,
-    "timeBetweenWaves": 5,
-    "LevelTime": 150,
+    "Money": 100,
     "LevelMessage": [ "Welcome to 2nd tutorial!", "Do You see that green path?", "It's monsters' shortcut!", "You can use shovel to remove it.", "Good luck!" ]
   },
 

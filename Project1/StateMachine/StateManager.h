@@ -33,6 +33,7 @@ private:
 protected:
 	const float ScreenSize[2] = { 1600, 900 };
 	const int TilesSize = 50;
+	const sf::Vector2f ButtonSize = sf::Vector2f(200, 50);
 
 	//Sprite vector
 	enum SpriteList
@@ -52,6 +53,6 @@ protected:
 public:
 	StateManager();
 	virtual void Input(sf::RenderWindow& window, sf::Time time) {};
-	virtual void Update(sf::Time time) {};
+	virtual void Update(sf::RenderWindow& window, sf::Time time) {};
 	virtual void Render(sf::RenderWindow& window) {};
 };

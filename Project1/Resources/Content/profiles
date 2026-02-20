@@ -1,9 +1,14 @@
 {
-  "profiles": [
-    {},
-    {},
-    {},
-    {},
-    {}
-  ]
+    "profiles": [
+        {
+            "Tutorial1": true,
+            "Tutorial2": true,
+            "Tutorial3": false,
+            "name": "Miki18"
+        },
+        {},
+        {},
+        {},
+        {}
+    ]
 }

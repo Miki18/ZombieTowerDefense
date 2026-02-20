@@ -90,14 +90,46 @@
     "zombie", "worm"
   ],
 
+  "waves": [
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 2.5,
+      "monsters": [ "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 2,
+      "monsters": [ "zombie", "zombie", "zombie", "worm" ]
+    },
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 2,
+      "monsters": [ "worm", "zombie", "zombie", "worm", "zombie", "worm", "zombie", "zombie", "worm", "worm" ]
+    },
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 2,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "worm", "zombie", "zombie", "zombie", "zombie", "worm", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 1.5,
+      "monsters": [ "zombie", "zombie", "zombie", "worm", "worm", "zombie", "zombie", "wom", "zombie", "zombie", "worm"]
+    },
+    {
+      "PreWaveWaiting": 5,
+      "cooldown": 1.5,
+      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+    },
+    {
+      "PreWaveWaiting": 6,
+      "cooldown": 1.2,
+      "monsters": [ "worm", "worm", "worm", "worm", "zombie", "zombie", "worm", "worm", "worm", "worm", "worm", "zombie", "worm"]
+    }
+  ],
+
   "settings": {
-    "MinimumMonstersInWave": 1,
-    "PossibleAdditionalMonsters": 1,
-    "IncreasingPossibleNumber": 0.1,
-    "IncreasingMinimumNumber": 0.5,
-    "timeCooldownInWave": 1.5,
-    "timeBetweenWaves": 5,
-    "LevelTime": 90,
+    "Money": 600,
     "LevelMessage": [ "This is last tutorial level!", "You'll find a gold resources here!", " It's good place to build a goldmine.", "It will give you money, but be careful;", "Monsters will try to destroy it!", "Good luck!" ]
   },
 

@@ -265,19 +265,26 @@ void GameState::LoadTowerTextures()
 
 void GameState::LoadSettings()
 {
-	MWS.MinimumMonstersInWave = Level["settings"]["MinimumMonstersInWave"].get<float>();
-	MWS.PossibleAdditionalMonsters = Level["settings"]["PossibleAdditionalMonsters"].get<float>() + 1;
-	MWS.timeBetweenWaves = Level["settings"]["timeBetweenWaves"].get<float>();
-	MWS.timeCooldownInWave = Level["settings"]["timeCooldownInWave"].get<float>();
-	MWS.MonsterNumberInCurrentWave = MWS.MinimumMonstersInWave + rand() % int(MWS.PossibleAdditionalMonsters);
-	MWS.IncreasingPossibleNumber = Level["settings"]["IncreasingPossibleNumber"].get<float>();
-	MWS.IncreasingMinimumNumber = Level["settings"]["IncreasingMinimumNumber"].get<float>();
-	MWS.BetweenWaves = MWS.timeBetweenWaves;
-	MWS.CooldownInWave = MWS.timeCooldownInWave;
-
-	LevelTime = Level["settings"]["LevelTime"].get<float>();
+	Money = Level["settings"]["Money"].get<int>();
 
 	speech = Level["settings"]["LevelMessage"].get<std::vector<std::string>>();
+}
+
+void GameState::LoadMonsterWaves()
+{
+	for (int i = 0; i < Level["waves"].size(); i++)
+	{
+		MonsterWavesSettings mws;
+		mws.PreWaveWaiting = Level["waves"][i]["PreWaveWaiting"].get<float>();
+		mws.Cooldown = Level["waves"][i]["cooldown"].get<float>();
+		mws.BaseCooldown = Level["waves"][i]["cooldown"].get<float>();
+		for (int j = 0; j < Level["waves"][i]["monsters"].size(); j++)
+		{
+			mws.monsters.emplace_back(Level["waves"][i]["monsters"][j].get<std::string>());
+		}
+
+		MWS.emplace_back(mws);
+	}
 }
 
 void GameState::LoadGold()
@@ -320,5 +327,58 @@ void GameState::LoadGoldTexture()
 			GoldBars[GoldBars.size()-1].setPosition(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize));
 		}
 	}
+}
+
+
+void GameState::LoadSounds()
+{
+	TowerSound.loadFromFile("Resources/Sounds/Tower.wav");
+	MonsterSound.loadFromFile("Resources/Sounds/Monster.wav");
+}
+
+void GameState::SaveProgress()
+{
+	nlohmann::json profiles;
+	std::ifstream file("Resources/Content/profiles");
+	file >> profiles;
+	file.close();
+	int profile_num = -1;
+
+	for (int i = 0; i < 5; i++)
+	{
+		if (profiles.empty() == false)
+		{
+			if (profiles["profiles"][i]["name"].get<std::string>() == StateMachine::Get().getSelectedProfile())
+			{
+				profile_num = i;
+				break;
+			}
+		}
+	}
+
+	if (profile_num == -1)
+	{
+		StateMachine::Get().setSelectedProfile("");
+		return;
+	}
+
+	if (StateMachine::Get().SelectedLevel == "tutorial1")
+	{
+		profiles["profiles"][profile_num]["Tutorial1"] = true;
+		StateMachine::Get().PassLevel(0, true);
+	}
+	else if (StateMachine::Get().SelectedLevel == "tutorial2")
+	{
+		profiles["profiles"][profile_num]["Tutorial2"] = true;
+		StateMachine::Get().PassLevel(1, true);
+	}
+	else if (StateMachine::Get().SelectedLevel == "tutorial3")
+	{
+		profiles["profiles"][profile_num]["Tutorial3"] = true;
+		StateMachine::Get().PassLevel(2, true);
+	}
+
+	std::ofstream out("Resources/Content/profiles"); 
+	out << profiles.dump(4);
 }
 //End loading functions---------------------------

@@ -32,6 +32,8 @@ class Monster
 		void virtual LowerCooldown(sf::Time time) {};
 		void virtual ChangeAnimation(bool A) {};
 		void virtual PlayAnimation(sf::Time time) {};
+		void virtual PlaySound() {};
+		void virtual SetVolume(float vol) {};
 	protected:
 		std::vector<sf::Vector2i>* startpoints = nullptr;
 		std::vector<PathPoints>* paths = nullptr;

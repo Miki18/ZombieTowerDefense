@@ -2,7 +2,7 @@
   "name": "Sniper",
 
   "hp": 70,
-  "IncreaseHp": 15,
+  "IncreaseHp": 10,
 
   "cooldown": 2.5,
   "IncreaseCooldown": -0.1,
@@ -10,10 +10,10 @@
   "dmg": 20,
   "IncreaseDmg": 5,
 
-  "radius": 100,
-  "IncreaseRadius": 100,
+  "radius": 200,
+  "IncreaseRadius": 125,
 
-  "price": 100,
+  "price": 80,
   "UpgradePrice": 50,
   "IncreaseUpgradePrice": 20,
 
