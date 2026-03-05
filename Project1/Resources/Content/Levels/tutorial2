@@ -145,28 +145,28 @@
 
   "waves": [
     {
-      "PreWaveWaiting": 5,
-      "cooldown": 3,
+      "PreWaveWaiting": 4,
+      "cooldown": 2.5,
       "monsters": [ "zombie", "zombie", "zombie", "zombie" ]
     },
     {
-      "PreWaveWaiting": 6,
+      "PreWaveWaiting": 5,
       "cooldown": 2,
       "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
     },
     {
-      "PreWaveWaiting": 6,
+      "PreWaveWaiting": 5,
       "cooldown": 1.8,
       "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
     },
     {
-      "PreWaveWaiting": 6,
-      "cooldown": 1.6,
+      "PreWaveWaiting": 5,
+      "cooldown": 1.4,
       "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
     },
     {
-      "PreWaveWaiting": 4,
-      "cooldown": 1.5,
+      "PreWaveWaiting": 2.5,
+      "cooldown": 1.0,
       "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
     }
   ],

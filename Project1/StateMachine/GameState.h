@@ -22,11 +22,14 @@ class GameState: public StateManager
 		//Road tiles - road; monsters are walking on them
 		//Path - info about path for monsters; it contains list of points and their list of possible successors
 		bool IsGamePaused = false;
+		bool AreYouSure = false;
 		bool IsMessageVisible = false;
 		bool IsPlayerWin = false;
 		bool IsPlayerLose = false;
+		bool PlayerSurr = false;
 		int Health = 10;
 		int Money = 0;
+		float LastWaveInfo = 0;
 
 		int price_offset = 5;
 
@@ -128,6 +131,7 @@ class GameState: public StateManager
 		std::vector<std::unique_ptr<TowerTypeValues>> towersvalues;
 
 		sf::Texture RuinsTex;
+		sf::Sprite RuinsSprite;
 
 		std::vector<Bullet> bullets;
 

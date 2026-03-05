@@ -47,15 +47,15 @@ void StateMachine::setSelectedProfile(std::string nick)
 
 void StateMachine::PassLevel(int index, bool Check)
 {
-	Tutorials[index] = Check;
+	Levels[index] = Check;
 }
 
 bool StateMachine::GetLevelStatus(int index)
 {
-	return Tutorials[index];
+	return Levels[index];
 }
 
-void StateMachine::VolumeSetting(ImVec2 Pos, std::string name, bool IsMusic)
+bool StateMachine::VolumeSetting(ImVec2 Pos, std::string name, bool IsMusic)
 {
 	ImGui::SetNextWindowPos(Pos);
 
@@ -78,9 +78,14 @@ void StateMachine::VolumeSetting(ImVec2 Pos, std::string name, bool IsMusic)
 
 	name = "##" + name;
 
+	bool HasMusicVolChanged = false;
+
 	if (IsMusic)
 	{
-		ImGui::SliderFloat(name.c_str(), &MusicVolume, 0.0f, 100.0f);
+		if (ImGui::SliderFloat(name.c_str(), &MusicVolume, 0.0f, 100.0f))
+		{
+			HasMusicVolChanged = true;
+		}
 	}
 	else
 	{
@@ -92,6 +97,8 @@ void StateMachine::VolumeSetting(ImVec2 Pos, std::string name, bool IsMusic)
 	ImGui::PopStyleVar(1);
 
 	ImGui::PopStyleColor(6);
+
+	return HasMusicVolChanged;
 }
 
 float StateMachine::GetVolume(bool isMusic)

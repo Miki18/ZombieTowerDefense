@@ -2,7 +2,7 @@
 #include "StateMachine.h"
 #include "LoadLevel.inl"
 
-GameState::GameState() : Music("Resources/Sounds/Carefree.mp3")
+GameState::GameState() : Music("Resources/Sounds/Carefree.mp3"), RuinsSprite(RuinsTex)
 {
 	GenerateGrassTiles();
 
@@ -31,6 +31,9 @@ GameState::GameState() : Music("Resources/Sounds/Carefree.mp3")
 
 	preview.Small.setFillColor(sf::Color(0, 0, 255, 80));
 	preview.Big.setFillColor(sf::Color(255, 255, 0, 80));
+
+	RuinsSprite.setScale(sf::Vector2f(50.0f / 64.0f, 50.0f / 64.0f));
+	RuinsSprite.setTextureRect(sf::IntRect({ 0,0 }, { 64,64 }));
 
 	CalculatePreview();
 
@@ -66,6 +69,7 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				{
 					IsGamePaused = !IsGamePaused;
 					IsMessageVisible = false;
+					AreYouSure = false;
 
 					if (IsPlayerWin)
 					{
@@ -273,6 +277,12 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 
 	ShowHealtAndMoney();
 
+	if (LastWaveInfo > 0.0f)
+	{
+		LastWaveInfo = LastWaveInfo - time.asSeconds();
+		//TODO SHOW MESSAGE - or do it somewhere else
+	}
+
 	if (IsGamePaused == true)
 	{
 		ShowMessage();
@@ -303,6 +313,12 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 	UpdateBullets(time);
 	Bullet_ObjectsCollision();
 	RemoveUnusedBullets();
+
+	if (PlayerSurr)
+	{
+		ExitFuntion();
+		return;
+	}
 
 	if (Health <= 0)
 	{
@@ -367,10 +383,8 @@ void GameState::Render(sf::RenderWindow& window)
 	{
 		if (grass_tile[i].HasRuins == true)
 		{
-			sf::Sprite sprite(RuinsTex);
-			sprite.setPosition(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize));
-			sprite.setScale(sf::Vector2f(50.0f / 64.0f, 50.0f / 64.0f));
-			window.draw(sprite);
+			RuinsSprite.setPosition(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize));
+			window.draw(RuinsSprite);
 		}
 	}
 
@@ -893,12 +907,63 @@ void GameState::ShowMessage()
 	}
 	else
 	{
-		CustomTextMessages("Game is Paused", "Press P to resume", picSize);
+		if (AreYouSure)
+		{
+			CustomTextMessages("Are you sure?", "Your progress will be lost.", picSize);
 
-		StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 150), "Sounds", 0);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
 
-		StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Music", 1);
-		Music.setVolume(StateMachine::Get().GetVolume(1));
+			ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 + 10, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200));
+			ImGui::SetNextWindowSize(ImVec2(ButtonSize.x, ButtonSize.y));
+			ImGui::Begin("YesButton", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
+			if (ImGui::Button("Yes", ImVec2(ButtonSize.x, ButtonSize.y)))
+			{
+				PlayerSurr = true;
+				IsGamePaused = false;
+			}
+			ImGui::End();
+
+			ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 + 10, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300));
+			ImGui::SetNextWindowSize(ImVec2(ButtonSize.x, ButtonSize.y));
+			ImGui::Begin("NoButton", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
+			if (ImGui::Button("No", ImVec2(ButtonSize.x, ButtonSize.y)))
+			{
+				AreYouSure = false;
+			}
+			ImGui::End();
+
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar(1);
+		}
+		else
+		{
+			CustomTextMessages("Game is Paused", "Press P to resume", picSize);
+
+			StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 150), "Sounds", 0);
+
+			if (StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Music", 1))
+			{
+				Music.setVolume(StateMachine::Get().GetVolume(1));
+			}
+
+			ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 + 10, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300));
+			ImGui::SetNextWindowSize(ImVec2(ButtonSize.x, ButtonSize.y));
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+			ImGui::Begin("ExitButton", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
+			if (ImGui::Button("Exit", ImVec2(ButtonSize.x, ButtonSize.y)))
+			{
+				AreYouSure = true;
+			}
+			ImGui::End();
+			ImGui::PopStyleColor(3);
+			ImGui::PopStyleVar(1);
+		}
 	}
 
 	ImGui::End();
@@ -929,11 +994,13 @@ void GameState::UpdatePreview()
 {
 	sf::Vector2i MousePos = sf::Mouse::getPosition();
 
-	int X = MousePos.x - (MousePos.x % TilesSize);
-	int Y = MousePos.y - (MousePos.y % TilesSize);
-
 	MousePos.x = MousePos.x - (MousePos.x % TilesSize);
 	MousePos.y = MousePos.y - (MousePos.y % TilesSize);
+
+	if (MousePos.y > (MapSize[1] - 1) * TilesSize)
+	{
+		MousePos.y -= TilesSize;
+	}
 
 	MousePos.x = MousePos.x + TilesSize / 2;
 	MousePos.y = MousePos.y + TilesSize / 2;
@@ -1178,6 +1245,10 @@ void GameState::GenerateMonsters(sf::Time time)
 			if (MWS[wave_number].monsters.size() == 0)
 			{
 				wave_number++;
+				if (wave_number == MWS.size() - 1)
+				{
+					LastWaveInfo = 5.0f;
+				}
 			}
 			else
 			{

@@ -25,8 +25,7 @@ void MonsterPassive::PlayAnimation(sf::Time time)
 		{
 			frame = 0;
 		}
-		body.setTexture(&texture);
-		body.setTextureRect(sf::IntRect({ 50 * frame,0 }, { 50,100 }));   //WARNING
+		body.setTextureRect(sf::IntRect({ 50 * frame,0 }, { 50,100 }));
 		UntilNextTex = float(1.f / 7.f);
 	}
 }

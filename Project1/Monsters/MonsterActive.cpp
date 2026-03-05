@@ -52,7 +52,7 @@ void MonsterActive::ChangeAnimation(bool A)
 {
 	if (A == true)
 	{
-		if (MonsterState == 1)
+		if (MonsterState == true)
 		{
 			MonsterState = 0;
 			frame = 0;
@@ -61,7 +61,7 @@ void MonsterActive::ChangeAnimation(bool A)
 	}
 	else
 	{
-		if (MonsterState == 0)
+		if (MonsterState == false)
 		{
 			MonsterState = 1;
 			frame = 0;
@@ -80,7 +80,6 @@ void MonsterActive::PlayAnimation(sf::Time time)
 		{
 			frame = 0;
 		}
-		body.setTexture(&texture);
 		body.setTextureRect(sf::IntRect({ 100 * frame,0 }, { 100,100 }));   //WARNING
 		UntilNextTex = float(1.f / 8.f);
 	}
