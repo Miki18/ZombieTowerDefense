@@ -15,9 +15,10 @@ class StateMachine
 	private:
 		StateManager* State = nullptr;
 		std::string selected_profile = "";
-		bool Levels[3] = { false, false, false };
+		bool Levels[6] = {};
 		float SoundVolume = 100.0f;
 		float MusicVolume = 100.0f;
+		int PlayerStat[4] = {};
 
 		StateMachine() {};
 		static StateMachine Instance;
@@ -30,10 +31,13 @@ class StateMachine
 		void ChangeState(StateManager* newState);
 		void Run(sf::RenderWindow& window);
 
-		std::string SelectedLevel = "";
+		int LevelNumber = 3;
+		int SelectedLevel = 0;
 		std::string getSelectedProfile();
 		void setSelectedProfile(std::string nick);
 		void PassLevel(int index, bool Check);
+		void PassPlayerStat(int id, int number);
+		int GetPlayerStat(int id);
 		bool GetLevelStatus(int index);
 		bool VolumeSetting(ImVec2 Pos, std::string name, bool IsMusic);
 		float GetVolume(bool isMusic);

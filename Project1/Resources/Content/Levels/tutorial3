@@ -94,42 +94,42 @@
     {
       "PreWaveWaiting": 5,
       "cooldown": 2.5,
-      "monsters": [ "zombie", "zombie", "zombie" ]
+      "monsters": [ 0, 0, 0 ]
     },
     {
       "PreWaveWaiting": 5,
       "cooldown": 2,
-      "monsters": [ "zombie", "zombie", "zombie", "worm" ]
+      "monsters": [ 0, 0, 0, 1 ]
     },
     {
       "PreWaveWaiting": 5,
       "cooldown": 2,
-      "monsters": [ "worm", "zombie", "zombie", "worm", "zombie", "worm", "zombie", "zombie", "worm", "worm" ]
+      "monsters": [ 1, 0, 0, 1, 0, 1, 0, 0, 1, 1 ]
     },
     {
       "PreWaveWaiting": 5,
       "cooldown": 2,
-      "monsters": [ "zombie", "zombie", "zombie", "zombie", "worm", "zombie", "zombie", "zombie", "zombie", "worm", "zombie", "zombie", "zombie", "zombie" ]
+      "monsters": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0 ]
     },
     {
       "PreWaveWaiting": 5,
       "cooldown": 1.5,
-      "monsters": [ "zombie", "zombie", "zombie", "worm", "worm", "zombie", "zombie", "wom", "zombie", "zombie", "worm"]
+      "monsters": [ 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1]
     },
     {
       "PreWaveWaiting": 5,
       "cooldown": 1.5,
-      "monsters": [ "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie", "zombie" ]
+      "monsters": [ 0, 0, 0, 0, 0, 0, 0, 0 ]
     },
     {
       "PreWaveWaiting": 6,
       "cooldown": 1.2,
-      "monsters": [ "worm", "worm", "worm", "worm", "zombie", "zombie", "worm", "worm", "worm", "worm", "worm", "zombie", "worm"]
+      "monsters": [ 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1]
     }
   ],
 
   "settings": {
-    "Money": 600,
+    "Money": 1250,
     "LevelMessage": [ "This is last tutorial level!", "You'll find a gold resources here!", " It's good place to build a goldmine.", "It will give you money, but be careful;", "Monsters will try to destroy it!", "Good luck!" ]
   },
 

@@ -59,12 +59,12 @@ int CannonTower::getUpgradePrice()
 
 int CannonTower::getSellPrice()
 {
-	return price/2 + (currentLevel * IncreaseUpgradePrice)/2;
+	return price/2 + ((currentLevel-1) * IncreaseUpgradePrice)/2;
 }
 
 int CannonTower::getRepairPrice()
 {
-    return int((maxhp-hp)/4);
+    return int((maxhp-hp)/2.5);
 }
 
 float CannonTower::getBulletSpeed()

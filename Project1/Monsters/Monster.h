@@ -13,7 +13,7 @@
 class Monster
 {
 	public:
-		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int Monster_ID, sf::Vector2f texSize);
+		Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int Monster_ID, sf::Vector2f texSize, std::string MonsterName);
 		~Monster() {};
 		void virtual MonsterUpdate(sf::Time time) {};
 		bool virtual IsShooter() { return false; };
@@ -34,6 +34,7 @@ class Monster
 		void virtual PlayAnimation(sf::Time time) {};
 		void virtual PlaySound() {};
 		void virtual SetVolume(float vol) {};
+		std::string GetName();
 	protected:
 		std::vector<sf::Vector2i>* startpoints = nullptr;
 		std::vector<PathPoints>* paths = nullptr;
@@ -46,6 +47,7 @@ class Monster
 		//Destination is Tile's position on map/screen (for example 0,0 or 0,50) etc. Screen/map has 1600x900 size
 		sf::Vector2f Destination;
 		sf::Vector2i DestinationTile;
+		sf::Vector2f TexSize;
 		float speed;
 		float maxhealth;
 		float health;
@@ -54,6 +56,7 @@ class Monster
 		int& PlayerHP;
 		int& PlayerMoney;
 		int ID;
+		std::string MonsterName;
 		//int dmg and radius only for active monsters
 
 		void virtual MonsterWalk(sf::Time time) {};

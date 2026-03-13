@@ -17,7 +17,9 @@ private:
 		Options,
 		Settings,
 		Credits,
-		DeleteProfile
+		Profile,
+		DeleteProfile,
+		ProfileStats
 	};
 
 	bool changeState = false;
@@ -48,11 +50,14 @@ private:
 	void OptionsScreen();
 	void SettingsScreen(sf::RenderWindow& window);
 	void CreditsScreen();
+	void ProfileScreen();
+	void ProfileStatsScreen();
 	void DeleteProfileScreen();
 
 	//UI Elements
 	bool LoadProfilesUI();
 	void NewProfileUI();
-	void ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick, bool IsActive = true, bool IsColored = false);
+	void ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick);
+	void LevelButtonUI(std::string name, bool IsActive, bool IsColored, int level);
 	void InfoWidget(std::string message);
 };

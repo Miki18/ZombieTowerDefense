@@ -53,12 +53,12 @@ int Goldmine::getUpgradePrice()
 
 int Goldmine::getSellPrice()
 {
-	return price / 2 + (currentLevel * IncreaseUpgradePrice) / 2;;
+	return price / 2 + ((currentLevel-1) * IncreaseUpgradePrice) / 2;;
 }
 
 int Goldmine::getRepairPrice()
 {
-	return ((maxhp-hp)*5);
+	return ((maxhp-hp)*4);
 }
 
 void Goldmine::GenerateGold(int* Money)

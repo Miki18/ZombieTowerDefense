@@ -1,0 +1,22 @@
+{
+  "name": "Big", 
+
+  "hp": 200,
+  "IncreaseHp": 100,
+
+  "cooldown": 1.5,
+  "IncreaseCooldown": 0.0,
+
+  "dmg": 36,
+  "IncreaseDmg": 6,
+
+  "radius": 100,
+  "IncreaseRadius": 25,
+
+  "price": 450,
+  "UpgradePrice": 200,
+  "IncreaseUpgradePrice": 100,
+
+  "bulletoffset": 25,
+  "bulletspeed": 200
+}

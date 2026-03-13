@@ -1,0 +1,22 @@
+{
+  "name": "Double",
+
+  "hp": 250,
+  "IncreaseHp": 50,
+
+  "cooldown": 1.4,
+  "IncreaseCooldown": -0.1,
+
+  "dmg": 35,
+  "IncreaseDmg": 7,
+
+  "radius": 100,
+  "IncreaseRadius": 25,
+
+  "price": 600,
+  "UpgradePrice": 200,
+  "IncreaseUpgradePrice": 75,
+
+  "bulletoffset": 25,
+  "bulletspeed": 450
+}

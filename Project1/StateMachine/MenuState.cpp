@@ -93,6 +93,12 @@ void MenuState::Update(sf::RenderWindow& window, sf::Time time)
 	case MenuState::Credits:
 		CreditsScreen();
 		break;
+	case MenuState::Profile:
+		ProfileScreen();
+		break;
+	case MenuState::ProfileStats:
+		ProfileStatsScreen();
+		break;
 	case MenuState::DeleteProfile:
 		DeleteProfileScreen();
 		break;
@@ -150,14 +156,10 @@ void MenuState::MainMenuScreen()
 			current_screen = Options;
 		});
 
-	//Change profile
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Change Profile", [this]
+	//profile
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Profile", [this]
 		{
-			std::ifstream file("Resources/Content/profiles");
-			file >> profiles;
-			file.close();
-
-			current_screen = SelectProfile;
+			current_screen = Profile;
 		});
 
 	//Exit
@@ -169,30 +171,43 @@ void MenuState::MainMenuScreen()
 	int VersionTextOffset = 25;
 	ImGui::SetNextWindowPos(ImVec2(0,ScreenSize[1] - VersionTextOffset));
 	ImGui::Begin("Version", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-	ImGui::Text("Version 1.3.1");
+	ImGui::Text("Version 1.4.0");
 	ImGui::End();
 }
 
 void MenuState::SelectLevelScreen()
 {
 	//Start
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Tutorial 1", [this]
-		{
-			StateMachine::Get().SelectedLevel = "tutorial1";
-			changeState = true;
-		}, 1, StateMachine::Get().GetLevelStatus(0));
+	ImGui::PushStyleColor(ImGuiCol_ScrollbarBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Tutorial 2", [this]
-		{
-			StateMachine::Get().SelectedLevel = "tutorial2";
-			changeState = true;
-		}, StateMachine::Get().GetLevelStatus(0), StateMachine::Get().GetLevelStatus(1));
+	ImVec2 ScrollbarSize = { ButtonSize.x + 26, ButtonSize.y * 10 };
+	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ScrollbarSize.x / 2, ScreenSize[1] / 2 - ScrollbarSize.y / 2));
+	ImGui::SetNextWindowSize(ScrollbarSize);
+	ImGui::Begin("##ScrollableBackground", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Tutorial 3", [this]
-		{
-			StateMachine::Get().SelectedLevel = "tutorial3";
-			changeState = true;
-		}, StateMachine::Get().GetLevelStatus(1), StateMachine::Get().GetLevelStatus(2));
+	LevelButtonUI("Tutorial1", 1, StateMachine::Get().GetLevelStatus(0), 0);
+
+	ImGui::Text("");
+
+	LevelButtonUI("Tutorial2", StateMachine::Get().GetLevelStatus(0), StateMachine::Get().GetLevelStatus(1), 1);
+
+	ImGui::Text("");
+
+	LevelButtonUI("Tutorial3", StateMachine::Get().GetLevelStatus(1), StateMachine::Get().GetLevelStatus(2), 2);
+	
+	for (int i = 0; i < StateMachine::Get().LevelNumber; i++)
+	{
+		ImGui::Text("");
+
+		int index = i + 3;
+		int lvlnumber = i + 1;
+		std::string name = "Level" + std::to_string(lvlnumber);
+
+		LevelButtonUI(name, StateMachine::Get().GetLevelStatus(2), StateMachine::Get().GetLevelStatus(index), index);
+	}
+
+	ImGui::End();
+	ImGui::PopStyleColor(1);
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
 		{
@@ -210,15 +225,9 @@ void MenuState::OptionsScreen()
 
 
 	//Credits
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Credits", [this]
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 150), "Credits", [this]
 		{
 			current_screen = Credits;
-		});
-
-	//Delete profile
-	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Delete Profile", [this]
-		{
-			current_screen = DeleteProfile;
 		});
 
 
@@ -258,20 +267,84 @@ void MenuState::SettingsScreen(sf::RenderWindow& window)
 
 void MenuState::CreditsScreen()
 {
-	InfoWidget("Game by Miki18");
+	InfoWidget("");
 	
-	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 - 55, ScreenSize[1] / 2 - ButtonSize.y / 2 + 50));
-	ImGui::SetNextWindowSize(ImVec2(400, 100));
+	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 - 55, ScreenSize[1] / 2 - ButtonSize.y / 2 - 30));
+	ImGui::SetNextWindowSize(ImVec2(400, 200));
 	ImGui::Begin("Links", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize |ImGuiWindowFlags_NoDecoration);
+	ImGui::Text("Game Creator: Miki18");
+	ImGui::Text("");
+	ImGui::Text("Font: Textcraft");
+	ImGui::Text("");
 	ImGui::Text("Music and Sounds:");
 	ImGui::Text("Sound FX - BUBBLE POP SOUND EFFECT - FREE");
 	ImGui::Text("SOUNDFX FREE - Cute Pop Sound Effects");
+	ImGui::Text("Sound Effects - CINEMATIC BOOM");
 	ImGui::Text("Kevin MacLeod - Carefree");
 	ImGui::End();
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
 		{
 			current_screen = Options;
+		});
+}
+
+void MenuState::ProfileScreen()
+{
+	//Credits
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Profile Stats", [this]
+		{
+			current_screen = ProfileStats;
+		});
+
+	//Change profile
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 100), "Change Profile", [this]
+		{
+			std::ifstream file("Resources/Content/profiles");
+			file >> profiles;
+			file.close();
+
+			current_screen = SelectProfile;
+		});
+
+	//profile
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 200), "Delete Profile", [this]
+		{
+			current_screen = DeleteProfile;
+		});
+
+	//MainMenu
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
+		{
+			current_screen = MainMenu;
+		});
+}
+
+void MenuState::ProfileStatsScreen()
+{
+	InfoWidget("");
+
+	ImGui::SetNextWindowPos(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2 + 30, ScreenSize[1] / 2 - ButtonSize.y / 2 - 80));
+	ImGui::SetNextWindowSize(ImVec2(400, 200));
+	ImGui::Begin("Stats", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration);
+	ImGui::Text("Zombie: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(0)).c_str());
+	ImGui::Text("Worm: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(1)).c_str());
+	ImGui::Text("Golem: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(2)).c_str());
+	ImGui::Text("Fast Zombie: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(3)).c_str());
+	ImGui::End();
+
+	//Profile
+	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "Back", [this]
+		{
+			current_screen = Profile;
 		});
 }
 
@@ -297,7 +370,7 @@ void MenuState::DeleteProfileScreen()
 
 	ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 300), "No", [this]
 		{
-			current_screen = Options;
+			current_screen = Profile;
 		});
 }
 
@@ -374,6 +447,15 @@ bool MenuState::LoadProfilesUI()
 				StateMachine::Get().PassLevel(0, profiles["profiles"][i]["Tutorial1"].get<bool>());
 				StateMachine::Get().PassLevel(1, profiles["profiles"][i]["Tutorial2"].get<bool>());
 				StateMachine::Get().PassLevel(2, profiles["profiles"][i]["Tutorial3"].get<bool>());
+				for (int j = 0; j < StateMachine::Get().LevelNumber; j++)
+				{
+					std::string Level = "Level" + std::to_string(j + 1);
+					StateMachine::Get().PassLevel(j+3, profiles["profiles"][i][Level].get<bool>());
+				}
+				StateMachine::Get().PassPlayerStat(0, profiles["profiles"][i]["Stats"]["zombie"].get<int>());
+				StateMachine::Get().PassPlayerStat(1, profiles["profiles"][i]["Stats"]["worm"].get<int>());
+				StateMachine::Get().PassPlayerStat(2, profiles["profiles"][i]["Stats"]["golem"].get<int>());
+				StateMachine::Get().PassPlayerStat(3, profiles["profiles"][i]["Stats"]["zombiefast"].get<int>());
 
 				current_screen = MainMenu;
 			}
@@ -471,6 +553,17 @@ void MenuState::NewProfileUI()
 					profiles["profiles"][i]["Tutorial1"] = false;
 					profiles["profiles"][i]["Tutorial2"] = false;
 					profiles["profiles"][i]["Tutorial3"] = false;
+					for (int j = 0; j < StateMachine::Get().LevelNumber; j++)
+					{
+						std::string Level = "Level" + std::to_string(j + 1);
+						profiles["profiles"][i][Level] = false;
+					}
+					profiles["profiles"][i]["Stats"] = {
+						{"zombie", 0},
+						{"worm", 0},
+						{"golem", 0},
+						{"zombiefast", 0}
+					};
 					std::ofstream file("Resources/Content/profiles");
 					file << profiles.dump(2);
 					file.close();
@@ -489,17 +582,39 @@ void MenuState::NewProfileUI()
 	ImGui::PopStyleColor(2);
 }
 
-void MenuState::ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick, bool IsActive, bool IsColored)
+void MenuState::ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnClick)
 {
 	ImGui::SetNextWindowPos(ImVec2(Pos.x - 8, Pos.y));
 
+	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.4, 0.290, 0.190, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.35, 0.240, 0.140, 1.0));
+
+	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.1, 0.1, 1.0));
+	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 4);
+
+	ImGui::Begin((name + "button").c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
+	if (ImGui::Button(name.c_str(), ImVec2(ButtonSize.x, ButtonSize.y)))
+	{
+		OnClick();
+	}
+
+	ImGui::End();
+
+	ImGui::PopStyleVar(1);
+
+	ImGui::PopStyleColor(4);
+}
+
+void MenuState::LevelButtonUI(std::string name, bool IsActive, bool IsColored, int level)
+{
 	if (IsActive == false)
 	{
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5, 0.475, 0.440, 1.0));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5, 0.475, 0.440, 1.0));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.5, 0.475, 0.440, 1.0));
 	}
-	else if(IsColored == true)
+	else if (IsColored == true)
 	{
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.65, 0.65, 0.0, 1.0));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.65, 0.65, 0.0, 1.0));
@@ -515,16 +630,14 @@ void MenuState::ButtonUI(ImVec2 Pos, std::string name, std::function<void()> OnC
 	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2, 0.1, 0.1, 1.0));
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 4);
 
-	ImGui::Begin((name + "button").c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize);
 	if (ImGui::Button(name.c_str(), ImVec2(ButtonSize.x, ButtonSize.y)))
 	{
 		if (IsActive)
 		{
-			OnClick();
+			StateMachine::Get().SelectedLevel = level;
+			changeState = true;
 		}
 	}
-
-	ImGui::End();
 
 	ImGui::PopStyleVar(1);
 

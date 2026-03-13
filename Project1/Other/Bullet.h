@@ -7,7 +7,7 @@
 class Bullet
 {
 	public:
-		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, bool Friendly);
+		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, float Radius, bool Friendly, bool Permanent);
 		
 		float getDmg();
 		float getRadius();
@@ -15,9 +15,13 @@ class Bullet
 		sf::Vector2f getPosition();
 		sf::Vector2f getTargetPos();
 		bool IsFriendly;
-
+		bool IsPermanent;
+		void AddMonsterID(int ID);
+		bool CheckMonsterID(int ID);
+		
 		void DrawBullet(sf::RenderWindow& window);
 		void Update(sf::Time time, sf::Vector2f Dir, sf::Vector2f TargetCurrentPos);
+		void Update(sf::Time time, sf::Vector2f TargetCurrentPos);
 
 	private:
 		sf::Vector2f TargetPos;
@@ -26,4 +30,6 @@ class Bullet
 		float radius = 0;
 		float velocity = 0;
 		float dmg;
+		std::vector<int> MonstersID;
+		sf::Vector2f SavedDir;
 };

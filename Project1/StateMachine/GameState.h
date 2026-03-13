@@ -70,6 +70,7 @@ class GameState: public StateManager
 		//Monsters
 		struct MonsterTypeValues
 		{
+			std::string name;
 			bool IsPassive;
 			sf::Texture MonsterTex;
 			float hp;
@@ -85,20 +86,20 @@ class GameState: public StateManager
 		std::vector<std::unique_ptr<Monster>> monsters;
 		std::vector<std::unique_ptr<MonsterTypeValues>> monster_types;
 		int MonsterID = 0;
+		int Stats[4] = {};
 		//Monsters waves variables
 		struct MonsterWavesSettings
 		{
 			float PreWaveWaiting = 0.0f;
 			float Cooldown = 0.0f;
 			float BaseCooldown = 0.0f;
-			std::vector<std::string> monsters;
+			std::vector<int> monsters;
 		};
 		std::vector<MonsterWavesSettings> MWS;
 		int wave_number = 0;
 		std::vector<std::string> speech;
 
 		//Tower variables
-		const int TowerTypes = 3;
 		int SelectedTower = 0;
 		int TowerID = 1;
 
@@ -145,9 +146,13 @@ class GameState: public StateManager
 		};
 		Preview preview;
 
+		sf::RectangleShape bottom_cover;
+
 		//Sounds
 		sf::SoundBuffer TowerSound;
 		sf::SoundBuffer MonsterSound;
+		sf::SoundBuffer LastWaveSound;
+		sf::Sound LastWaveS;
 		sf::Music Music;
 
 		//Load functions
@@ -162,7 +167,7 @@ class GameState: public StateManager
 		void LoadGold();
 		void LoadGoldTexture();
 		void LoadSounds();
-		void SaveProgress();
+		void SaveProgress(bool IsSuccess);
 
 		void ExitFuntion();
 
@@ -184,6 +189,8 @@ class GameState: public StateManager
 		//Towers
 		void UpdateTowers(sf::Time time);
 		void DetectEnemies(int tower_number);
+		template <typename T>
+		void PlaceTower(int ind, int Tile);
 
 		//Bullets
 		void UpdateBullets(sf::Time time);

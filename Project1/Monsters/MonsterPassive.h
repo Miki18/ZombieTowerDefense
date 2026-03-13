@@ -3,7 +3,7 @@
 class MonsterPassive: public Monster
 {
 	public:
-		MonsterPassive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize);
+		MonsterPassive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName);
 		~MonsterPassive() {};
 		bool IsShooter() override;
 

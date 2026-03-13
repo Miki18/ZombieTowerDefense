@@ -129,6 +129,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Tower\BigTower.cpp" />
+    <ClCompile Include="Tower\DoubleTower.cpp" />
     <ClCompile Include="Tower\Goldmine.cpp" />
     <ClCompile Include="imgui-SFML.cpp" />
     <ClCompile Include="Other\Bullet.cpp" />
@@ -145,6 +147,8 @@
     <ClCompile Include="Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Tower\BigTower.h" />
+    <ClInclude Include="Tower\DoubleTower.h" />
     <ClInclude Include="Tower\Goldmine.h" />
     <ClInclude Include="Other\Bullet.h" />
     <ClInclude Include="Other\GrassTileForMenu.h" />
@@ -162,7 +166,7 @@
     <ClInclude Include="Tower\Tower.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Content\Levels\tutorial1" />
+    <None Include="Resources\Content\Levels\Tutorial1" />
     <None Include="Resources\Content\Monsters\zombie" />
     <None Include="Resources\Content\profiles" />
     <None Include="Resources\Content\Towers\cannon" />

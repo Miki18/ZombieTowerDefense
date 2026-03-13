@@ -1,15 +1,20 @@
 #include "Bullet.h"
 
-Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, bool Friendly)
+Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, float Radius, bool Friendly, bool Permanent)
 {
 	TargetID = Target_ID;
 	dmg = damage;
 	TargetPos = TargetCurrentPos;
 	velocity = Speed;
 	IsFriendly = Friendly;
+	sf::Vector2f Dir = TargetCurrentPos - Position;
+	float length = Dir.length();
+	Dir.x = Dir.x / length;
+	Dir.y = Dir.y / length;
+	SavedDir = Dir;
 
 	circle.setOrigin(sf::Vector2f(3, 3));
-	circle.setRadius(5);
+	circle.setRadius(Radius);
 	circle.setOutlineThickness(1);
 	circle.setPosition(Position);
 	if (IsFriendly == true)
@@ -23,7 +28,9 @@ Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f Ta
 		circle.setFillColor(sf::Color(150, 60, 150, 255));
 	}
 
-	radius = 3;
+	IsPermanent = Permanent;
+
+	this->radius = Radius;
 }
 
 float Bullet::getDmg()
@@ -51,6 +58,23 @@ sf::Vector2f Bullet::getTargetPos()
 	return TargetPos;
 }
 
+void Bullet::AddMonsterID(int ID)
+{
+	MonstersID.push_back(ID);
+}
+
+bool Bullet::CheckMonsterID(int ID)
+{
+	if (count(MonstersID.begin(), MonstersID.end(), ID) > 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void Bullet::DrawBullet(sf::RenderWindow& window)
 {
 	window.draw(circle);
@@ -60,4 +84,9 @@ void Bullet::Update(sf::Time time, sf::Vector2f Dir, sf::Vector2f TargetCurrentP
 {
 	circle.setPosition(circle.getPosition() + Dir * velocity * time.asSeconds());
 	TargetPos = TargetCurrentPos;
+}
+
+void Bullet::Update(sf::Time time, sf::Vector2f TargetCurrentPos)
+{
+	circle.setPosition(circle.getPosition() + SavedDir * velocity * time.asSeconds());
 }

@@ -29,6 +29,7 @@ private:
 	sf::Texture UI_UpgradeTex;
 	sf::Texture UI_TitleTex;
 	sf::Texture UI_ArrowTex;
+	sf::Texture UI_LastWaveTex;
 
 protected:
 	const float ScreenSize[2] = { 1600, 900 };
@@ -45,7 +46,8 @@ protected:
 		UI_Repair,
 		UI_Upgrade,
 		UI_Title,
-		UI_Arrow
+		UI_Arrow,
+		UI_LastWave
 	};
 
 	std::vector<sf::Sprite> UI_Sprite;

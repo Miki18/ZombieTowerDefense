@@ -10,6 +10,7 @@ StateManager::StateManager()
 	UI_UpgradeTex.loadFromFile("Resources/Visuals/UI/UI_UpgradeButton.png");
 	UI_TitleTex.loadFromFile("Resources/Visuals/UI/Title.png");
 	UI_ArrowTex.loadFromFile("Resources/Visuals/UI/arrow.png");
+	UI_LastWaveTex.loadFromFile("Resources/Visuals/UI/LASTWAVE.png");
 
 	UI_Sprite.push_back(sf::Sprite(UI_HeartTex));
 	UI_Sprite.push_back(sf::Sprite(UI_MoneyTex));
@@ -19,6 +20,8 @@ StateManager::StateManager()
 	UI_Sprite.push_back(sf::Sprite(UI_UpgradeTex));
 	UI_Sprite.push_back(sf::Sprite(UI_TitleTex));
 	UI_Sprite.push_back(sf::Sprite(UI_ArrowTex));
+	UI_Sprite.push_back(sf::Sprite(UI_LastWaveTex));
 
+	UI_Sprite[SpriteList(UI_LastWave)].setPosition(sf::Vector2f(ScreenSize[0] / 2 - UI_LastWaveTex.getSize().x / 2, 0));
 	UI_Sprite[SpriteList(UI_Hammer)].setScale(sf::Vector2f(TilesSize / UI_Sprite[SpriteList(UI_Hammer)].getTexture().getSize().x, TilesSize / UI_Sprite[SpriteList(UI_Hammer)].getTexture().getSize().y));
 }

@@ -50,6 +50,16 @@ void StateMachine::PassLevel(int index, bool Check)
 	Levels[index] = Check;
 }
 
+void StateMachine::PassPlayerStat(int id, int number)
+{
+	PlayerStat[id] = number;
+}
+
+int StateMachine::GetPlayerStat(int id)
+{
+	return PlayerStat[id];
+}
+
 bool StateMachine::GetLevelStatus(int index)
 {
 	return Levels[index];

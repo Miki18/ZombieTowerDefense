@@ -1,6 +1,6 @@
 #include "MonsterPassive.h"
 
-MonsterPassive::MonsterPassive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, paths, MonsterID, texSize)
+MonsterPassive::MonsterPassive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, paths, MonsterID, texSize, MonsterName)
 {
 
 }
@@ -25,7 +25,7 @@ void MonsterPassive::PlayAnimation(sf::Time time)
 		{
 			frame = 0;
 		}
-		body.setTextureRect(sf::IntRect({ 50 * frame,0 }, { 50,100 }));
+		body.setTextureRect(sf::IntRect({ int(TexSize.x) * 2 * frame, 0 }, { int(TexSize.x) * 2 , int(TexSize.y) * 2 }));
 		UntilNextTex = float(1.f / 7.f);
 	}
 }
@@ -57,6 +57,8 @@ void MonsterPassive::MonsterWalk(sf::Time time)
 	{
 		if (Position.x > Destination.x)
 		{
+			//printf("Here");
+			body.setScale(sf::Vector2f(-1, 1));
 			Position.x = Position.x - speed * time.asSeconds();
 			if (Position.x < Destination.x)
 			{
@@ -66,6 +68,8 @@ void MonsterPassive::MonsterWalk(sf::Time time)
 		}
 		else
 		{
+			//printf("Here");
+			body.setScale(sf::Vector2f(1, 1));
 			Position.x = Position.x + speed * time.asSeconds();
 			if (Position.x > Destination.x)
 			{

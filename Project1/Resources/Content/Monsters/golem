@@ -1,0 +1,7 @@
+{
+  "type": "passive",
+  "hp": 1000,
+  "speed": 25,
+  "price": 60,
+  "Size":  [50,50]
+}

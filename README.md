@@ -1,8 +1,11 @@
 # ZombieTowerDefense
 
-Current version: 1.3.0
+Current version: 1.4.0
 
 # About the Game
+
+==WARNING==
+Outdated info
 
 Simple tower defense game. Player has to place towers (and upgrades them) to defeat zombies.<br>
 It was made with cpp using sfml and ImGui. All textures was made in blender.<br>

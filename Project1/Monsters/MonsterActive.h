@@ -3,7 +3,7 @@
 class MonsterActive : public Monster
 {
 	public:
-		MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, sf::SoundBuffer& Monster_sound);
+		MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, sf::SoundBuffer& Monster_sound);
 		~MonsterActive() {};
 		bool IsShooter() override;
 		void ResetCooldown(float cooldown);
@@ -20,7 +20,7 @@ class MonsterActive : public Monster
 		void PlaySound();
 		void SetVolume(float vol) override;
 	private:
-		float UntilNextTex = float(1.f / 7.f);   //because we have 7 frames per second
+		float UntilNextTex = float(1.f / 8.f);   //because we have 7 frames per second
 		int frame = 0;
 		sf::Texture Attack_texture;
 		float range;

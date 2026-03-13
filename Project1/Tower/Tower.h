@@ -63,6 +63,8 @@ class Tower
 		virtual void UpdateTower(sf::Time time) {};
 		virtual void GenerateGold(int* Money) {};
 		virtual bool CanShoot() { return false; };
+		virtual bool HasPermanentBullet() { return false; };
+		virtual float BulletRadius() { return 5.0f; };
 		virtual void TakeDmg(int Damage);
 		virtual sf::Vector2f getBulletStartingPosition(sf::Vector2f Dir) { return sf::Vector2f(0, 0); };
 		virtual sf::Vector2f getPosition();

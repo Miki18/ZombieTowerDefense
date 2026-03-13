@@ -58,7 +58,7 @@ int SniperTower::getUpgradePrice()
 
 int SniperTower::getSellPrice()
 {
-	return price / 4 + (currentLevel * IncreaseUpgradePrice) / 3;
+	return price / 4 + ((currentLevel-1) * IncreaseUpgradePrice) / 3;
 }
 
 int SniperTower::getRepairPrice()

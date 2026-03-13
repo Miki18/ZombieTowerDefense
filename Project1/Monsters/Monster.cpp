@@ -1,6 +1,6 @@
 #include "Monster.h"
 
-Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& path, int Monster_ID, sf::Vector2f texSize): PlayerHP(P_HP), PlayerMoney(P_Money)
+Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& path, int Monster_ID, sf::Vector2f texSize, std::string MonsterName): PlayerHP(P_HP), PlayerMoney(P_Money)
 {
 	startpoints = &starts;
 	paths = &path;
@@ -12,6 +12,8 @@ Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSiz
 	texture = tex;
 	ID = Monster_ID;
 	this->price = price;
+	this->TexSize = texSize;
+	this->MonsterName = MonsterName;
 
 	int startPos;
 	if (starts.size() > 1)
@@ -29,7 +31,7 @@ Monster::Monster(sf::Texture& tex, float hp, float speed, int price, int TileSiz
 	ChooseDestination();
 
 	body.setTexture(&texture);
-	body.setTextureRect(sf::IntRect({ 0,0 }, { int(texSize.x), int(texSize.y) }));
+	body.setTextureRect(sf::IntRect({ 0,0 }, { int(texSize.x) * 2, int(texSize.y) * 2 }));
 	body.setPosition(Position);
 	body.setSize(texSize);
 	body.setOrigin(sf::Vector2f(texSize.x/2,texSize.y/2));
@@ -105,4 +107,9 @@ void Monster::ChooseDestination()
 int Monster::GetID()
 {
 	return ID;
+}
+
+std::string Monster::GetName()
+{
+	return MonsterName;
 }

@@ -71,9 +71,19 @@ void GameState::LoadLevelData()
 		RoadTextures.push_back(sf::Texture(road_source_paths[i]));
 	}
 
-	std::string lvl = StateMachine::Get().SelectedLevel;
+	int lvl = StateMachine::Get().SelectedLevel;
+	std::string LevelName = "";
 
-	std::ifstream file("Resources/Content/Levels/" + lvl);
+	if (lvl < 3)
+	{
+		LevelName = "Tutorial" + std::to_string(lvl+1);
+	}
+	else
+	{
+		LevelName = "Level" + std::to_string(lvl - 2);
+	}
+
+	std::ifstream file("Resources/Content/Levels/" + LevelName);
 	file >> Level;
 	file.close();
 
@@ -137,6 +147,7 @@ void GameState::LoadMonsters()
 		file >> monstervalues;
 		file.close();
 
+		nextmonster.name = monster.get<std::string>();
 		nextmonster.hp = monstervalues["hp"].get<float>();
 		nextmonster.Speed = monstervalues["speed"].get<float>();
 		nextmonster.IsPassive = monstervalues["type"].get<std::string>() == "passive";
@@ -261,6 +272,70 @@ void GameState::LoadTowerTextures()
 	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
 
 	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
+	//Double
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Double/Double_top.png");
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Double/Double_base.png");
+
+	file.open("Resources/Content/Towers/double");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
+	//Big
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Big/Big_top.png");
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Big/Big_base.png");
+
+	file.open("Resources/Content/Towers/big");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
 }
 
 void GameState::LoadSettings()
@@ -280,7 +355,7 @@ void GameState::LoadMonsterWaves()
 		mws.BaseCooldown = Level["waves"][i]["cooldown"].get<float>();
 		for (int j = 0; j < Level["waves"][i]["monsters"].size(); j++)
 		{
-			mws.monsters.emplace_back(Level["waves"][i]["monsters"][j].get<std::string>());
+			mws.monsters.emplace_back(Level["waves"][i]["monsters"][j].get<int>());
 		}
 
 		MWS.emplace_back(mws);
@@ -334,9 +409,10 @@ void GameState::LoadSounds()
 {
 	TowerSound.loadFromFile("Resources/Sounds/Tower.wav");
 	MonsterSound.loadFromFile("Resources/Sounds/Monster.wav");
+	LastWaveSound.loadFromFile("Resources/Sounds/Last.wav");
 }
 
-void GameState::SaveProgress()
+void GameState::SaveProgress(bool IsSuccess)
 {
 	nlohmann::json profiles;
 	std::ifstream file("Resources/Content/profiles");
@@ -362,21 +438,36 @@ void GameState::SaveProgress()
 		return;
 	}
 
-	if (StateMachine::Get().SelectedLevel == "tutorial1")
+	if (IsSuccess)
 	{
-		profiles["profiles"][profile_num]["Tutorial1"] = true;
-		StateMachine::Get().PassLevel(0, true);
+		int Lvlnum = StateMachine::Get().SelectedLevel;
+
+		std::string LevelName = "";
+
+		if (Lvlnum < 3)
+		{
+			LevelName = "Tutorial" + std::to_string(Lvlnum);
+		}
+		else
+		{
+			LevelName = "Level" + std::to_string(Lvlnum - 2);
+		}
+
+		profiles["profiles"][profile_num][LevelName] = true;
+		StateMachine::Get().PassLevel(Lvlnum, true);
 	}
-	else if (StateMachine::Get().SelectedLevel == "tutorial2")
-	{
-		profiles["profiles"][profile_num]["Tutorial2"] = true;
-		StateMachine::Get().PassLevel(1, true);
-	}
-	else if (StateMachine::Get().SelectedLevel == "tutorial3")
-	{
-		profiles["profiles"][profile_num]["Tutorial3"] = true;
-		StateMachine::Get().PassLevel(2, true);
-	}
+
+	StateMachine::Get().PassPlayerStat(0, StateMachine::Get().GetPlayerStat(0) + Stats[0]);
+	profiles["profiles"][profile_num]["Stats"]["zombie"] = StateMachine::Get().GetPlayerStat(0);
+
+	StateMachine::Get().PassPlayerStat(1, StateMachine::Get().GetPlayerStat(1) + Stats[1]);
+	profiles["profiles"][profile_num]["Stats"]["worm"] = StateMachine::Get().GetPlayerStat(1);
+
+	StateMachine::Get().PassPlayerStat(2, StateMachine::Get().GetPlayerStat(2) + Stats[2]);
+	profiles["profiles"][profile_num]["Stats"]["golem"] = StateMachine::Get().GetPlayerStat(2);
+
+	StateMachine::Get().PassPlayerStat(3, StateMachine::Get().GetPlayerStat(3) + Stats[3]);
+	profiles["profiles"][profile_num]["Stats"]["zombiefast"] = StateMachine::Get().GetPlayerStat(3);
 
 	std::ofstream out("Resources/Content/profiles"); 
 	out << profiles.dump(4);

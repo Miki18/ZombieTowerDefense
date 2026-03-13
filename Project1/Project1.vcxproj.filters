@@ -78,6 +78,12 @@
     <ClCompile Include="Tower\Goldmine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tower\DoubleTower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tower\BigTower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Monsters\Monster.h">
@@ -125,10 +131,16 @@
     <ClInclude Include="Tower\Goldmine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Tower\DoubleTower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tower\BigTower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Content\profiles" />
-    <None Include="Resources\Content\Levels\tutorial1" />
+    <None Include="Resources\Content\Levels\Tutorial1" />
     <None Include="Resources\Content\Monsters\zombie" />
     <None Include="Resources\Content\Towers\cannon" />
     <None Include="StateMachine\LoadLevel.inl">
