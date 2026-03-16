@@ -1,16 +1,14 @@
 #pragma once
 #include "Tower.h"
-class DoubleTower :	public Tower
+class LaserTower : public Tower
 {
 	private:
 		sf::Sprite base;
 		sf::Sprite top;
-		sf::CircleShape Dot;
-		sf::CircleShape SmallDot;
-		bool IsFist;
+		sf::RectangleShape Mark;
 
 	public:
-		DoubleTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice, sf::SoundBuffer& tower_shoot);
+		LaserTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice, sf::SoundBuffer& tower_shoot);
 
 		void Upgrade() override;
 		int getUpgradePrice() override;

@@ -112,6 +112,11 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 					SelectedTower = 4;
 					CalculatePreview();
 				}
+				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num6)
+				{
+					SelectedTower = 5;
+					CalculatePreview();
+				}
 				else if (keyPressed->scancode == sf::Keyboard::Scancode::Tab)
 				{
 					SelectedTower = -1;
@@ -198,9 +203,9 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 				{
 					PlaceTower<SniperTower>(1, i);
 				}
-				else if (SelectedTower == 2 and Money >= towersvalues[2]->price and grass_tile[i].HasGold == true)
+				else if (SelectedTower == 2 and Money >= towersvalues[2]->price)
 				{
-					PlaceTower<Goldmine>(2, i);
+					PlaceTower<LaserTower>(2, i);
 				}
 				else if (SelectedTower == 3 and Money >= towersvalues[3]->price)
 				{
@@ -209,6 +214,10 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 				else if (SelectedTower == 4 and Money >= towersvalues[4]->price)
 				{
 					PlaceTower<BigTower>(4, i);
+				}
+				else if (SelectedTower == 5 and Money >= towersvalues[5]->price and grass_tile[i].HasGold)
+				{
+					PlaceTower<Goldmine>(5, i);
 				}
 			}
 			else if (grass_tile[i].TowerID == 0 and grass_tile[i].HasRuins == true)
@@ -328,13 +337,8 @@ void GameState::Render(sf::RenderWindow& window)
 		window.draw(RedArrows[i]);
 	}
 
-	window.draw(bottom_cover);
-
-	ImGui::SFML::Render(window);
-
 	if (!IsGamePaused)
 	{
-
 		if (tower_options.IsVisible == true)
 		{
 			window.draw(tower_options.circle);
@@ -346,6 +350,23 @@ void GameState::Render(sf::RenderWindow& window)
 			window.draw(preview.Small);
 		}
 
+		for (int i = 0; i < monsters.size(); i++)
+		{
+			monsters[i]->DrawMonster(window);
+		}
+
+		for (int i = 0; i < monsters.size(); i++)
+		{
+			monsters[i]->DrawHealth(window);
+		}
+	}
+
+	window.draw(bottom_cover);
+
+	ImGui::SFML::Render(window);
+
+	if (!IsGamePaused)
+	{
 		for (int i = 0; i < GoldBars.size(); i++)
 		{
 			window.draw(GoldBars[i]);
@@ -358,16 +379,6 @@ void GameState::Render(sf::RenderWindow& window)
 				RuinsSprite.setPosition(sf::Vector2f(grass_tile[i].Position.x * TilesSize, grass_tile[i].Position.y * TilesSize));
 				window.draw(RuinsSprite);
 			}
-		}
-
-		for (int i = 0; i < monsters.size(); i++)
-		{
-			monsters[i]->DrawMonster(window);
-		}
-
-		for (int i = 0; i < monsters.size(); i++)
-		{
-			monsters[i]->DrawHealth(window);
 		}
 
 		for (int i = 0; i < towers.size(); i++)
@@ -1223,7 +1234,7 @@ void GameState::RemoveUnusedBullets()
 			}
 		}
 
-		if (B_iter->getPosition().x < -1 * B_iter->getRadius() or B_iter->getPosition().y < -1 * B_iter->getRadius() or B_iter->getPosition().x > B_iter->getRadius() + ScreenSize[0] or B_iter->getPosition().y > ScreenSize[1] - TilesSize + B_iter->getRadius())
+		if (B_iter->getPosition().x < -1 * B_iter->getRadius() or B_iter->getPosition().y < -1 * B_iter->getRadius() or B_iter->getPosition().x > B_iter->getRadius() + ScreenSize[0] or B_iter->getPosition().y > ScreenSize[1] - TilesSize)
 		{
 			B_iter = bullets.erase(B_iter);
 			continue;

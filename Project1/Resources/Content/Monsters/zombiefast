@@ -1,6 +1,6 @@
 {
   "type": "passive",
-  "hp": 60,
+  "hp": 40,
   "speed": 222,
   "price": 20,
   "Size":  [50,50]

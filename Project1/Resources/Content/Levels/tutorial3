@@ -129,7 +129,7 @@
   ],
 
   "settings": {
-    "Money": 1250,
+    "Money": 12500,
     "LevelMessage": [ "This is last tutorial level!", "You'll find a gold resources here!", " It's good place to build a goldmine.", "It will give you money, but be careful;", "Monsters will try to destroy it!", "Good luck!" ]
   },
 

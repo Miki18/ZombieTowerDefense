@@ -1,9 +1,23 @@
 {
-  "profiles": [
-    {},
-    {},
-    {},
-    {},
-    {}
-  ]
+    "profiles": [
+        {
+            "Level1": false,
+            "Level2": true,
+            "Level3": true,
+            "Stats": {
+                "golem": 58,
+                "worm": 182,
+                "zombie": 422,
+                "zombiefast": 167
+            },
+            "Tutorial1": true,
+            "Tutorial2": true,
+            "Tutorial3": true,
+            "name": "Miki18"
+        },
+        {},
+        {},
+        {},
+        {}
+    ]
 }

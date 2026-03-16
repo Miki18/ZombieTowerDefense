@@ -8,12 +8,12 @@
   "IncreaseCooldown": -0.1,
 
   "dmg": 35,
-  "IncreaseDmg": 7,
+  "IncreaseDmg": 8,
 
   "radius": 100,
   "IncreaseRadius": 25,
 
-  "price": 600,
+  "price": 650,
   "UpgradePrice": 200,
   "IncreaseUpgradePrice": 75,
 

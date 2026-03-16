@@ -7,6 +7,7 @@
 #include "../Tower/CannonTower.h"
 #include "../Tower/SniperTower.h"
 #include "../Tower/Goldmine.h"
+#include "../Tower/LaserTower.h"
 #include "../Monsters/Monster.h"
 #include "../Monsters/MonsterActive.h"
 #include "../Monsters/MonsterPassive.h"

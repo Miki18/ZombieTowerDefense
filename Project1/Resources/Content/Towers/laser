@@ -1,0 +1,22 @@
+{
+  "name": "Laser", 
+
+  "hp": 150,
+  "IncreaseHp": 40,
+
+  "cooldown": 1.0,
+  "IncreaseCooldown": -0.125,
+
+  "dmg": 20,
+  "IncreaseDmg": 5,
+
+  "radius": 110,
+  "IncreaseRadius": 15,
+
+  "price": 250,
+  "UpgradePrice": 50,
+  "IncreaseUpgradePrice": 30,
+
+  "bulletoffset": 25,
+  "bulletspeed": 900
+}

@@ -159,7 +159,7 @@
     {
       "PreWaveWaiting": 3.0,
       "cooldown": 2.0,
-      "monsters": [ 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0]
+      "monsters": [ 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0 ]
     },
     {
       "PreWaveWaiting": 2.0,
@@ -174,12 +174,12 @@
     {
       "PreWaveWaiting": 2.0,
       "cooldown": 1.4,
-      "monsters": [ 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0 ]
+      "monsters": [ 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 0 ]
     },
     {
       "PreWaveWaiting": 2.0,
       "cooldown": 1.2,
-      "monsters": [ 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0 ]
+      "monsters": [ 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 ]
     },
     {
       "PreWaveWaiting": 2.0,

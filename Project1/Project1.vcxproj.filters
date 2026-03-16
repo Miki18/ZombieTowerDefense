@@ -84,6 +84,9 @@
     <ClCompile Include="Tower\BigTower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tower\LaserTower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Monsters\Monster.h">
@@ -135,6 +138,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tower\BigTower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tower\LaserTower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

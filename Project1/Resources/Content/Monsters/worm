@@ -1,6 +1,6 @@
 {
   "type": "active",
-  "hp": 80,
+  "hp": 90,
   "speed": 30,
   "price": 20,
   "Size": [ 50, 50 ],

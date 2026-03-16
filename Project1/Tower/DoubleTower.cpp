@@ -2,6 +2,7 @@
 
 DoubleTower::DoubleTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown, float IncCooldown, float dmg, float IncDmg, float radius, float IncRadius, float bulletoffset, float bulletspeed, sf::Texture* tex1, sf::Texture* tex2, int id, int price, int UPrice, int IncUPrice, sf::SoundBuffer& tower_shoot) : Tower(Pos, hp, IncHp, cooldown, IncCooldown, dmg, IncDmg, radius, IncRadius, bulletoffset, bulletspeed, id, price, UPrice, IncUPrice, tower_shoot), base(*tex1), top(*tex2)
 {
+	IsFist = true;
 	float scale = 50.f / float(tex2->getSize().x);   //texture is square; x = y
 	top.setScale(sf::Vector2f(scale, scale));
 	base.setScale(sf::Vector2f(scale, scale));
@@ -16,6 +17,11 @@ DoubleTower::DoubleTower(sf::Vector2f Pos, float hp, float IncHp, float cooldown
 	Dot.setOrigin(sf::Vector2f(Dot.getRadius(), Dot.getRadius()));
 	Dot.setPosition(Position);
 	Dot.setFillColor(sf::Color::Black);
+
+	SmallDot.setRadius(2.f);
+	SmallDot.setOrigin(sf::Vector2f(SmallDot.getRadius(), SmallDot.getRadius()));
+	SmallDot.setPosition(Position);
+	SmallDot.setFillColor(sf::Color(255, 100, 0, 255));
 }
 
 void DoubleTower::Upgrade()
@@ -51,9 +57,6 @@ void DoubleTower::Upgrade()
 
 	case 4:
 		currentLevel++;
-		Dot.setRadius(8.f);
-		Dot.setOrigin(sf::Vector2f(Dot.getRadius(), Dot.getRadius()));
-		Dot.setPosition(Position);
 		break;
 	}
 }
@@ -111,7 +114,7 @@ void DoubleTower::UpdateTower(sf::Time time)
 	}
 	else
 	{
-		IsFist = false;
+		IsFist = true;
 	}
 }
 
@@ -148,5 +151,9 @@ void DoubleTower::draw(sf::RenderWindow& window)
 	if (currentLevel != 1)
 	{
 		window.draw(Dot);
+	}
+	if (currentLevel == 5)
+	{
+		window.draw(SmallDot);
 	}
 }

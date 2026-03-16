@@ -241,11 +241,11 @@ void GameState::LoadTowerTextures()
 
 	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
 
-	//Goldmine
-	towertype.top.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_top.png");
-	towertype.base.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_down.png");
+	//Laser
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Laser/laser_base.png");
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Laser/laser_top.png");
 
-	file.open("Resources/Content/Towers/goldmine");
+	file.open("Resources/Content/Towers/laser");
 	file >> readedtower;
 
 	file.close();
@@ -310,6 +310,38 @@ void GameState::LoadTowerTextures()
 	towertype.base.loadFromFile("Resources/Visuals/Towers/Big/Big_base.png");
 
 	file.open("Resources/Content/Towers/big");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
+	//Goldmine
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_top.png");
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_down.png");
+
+	file.open("Resources/Content/Towers/goldmine");
 	file >> readedtower;
 
 	file.close();

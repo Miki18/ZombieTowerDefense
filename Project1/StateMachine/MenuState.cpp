@@ -171,7 +171,7 @@ void MenuState::MainMenuScreen()
 	int VersionTextOffset = 25;
 	ImGui::SetNextWindowPos(ImVec2(0,ScreenSize[1] - VersionTextOffset));
 	ImGui::Begin("Version", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-	ImGui::Text("Version 1.4.0");
+	ImGui::Text("Version 1.4.1");
 	ImGui::End();
 }
 

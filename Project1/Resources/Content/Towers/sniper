@@ -4,10 +4,10 @@
   "hp": 70,
   "IncreaseHp": 10,
 
-  "cooldown": 2.5,
+  "cooldown": 2.4,
   "IncreaseCooldown": -0.1,
 
-  "dmg": 20,
+  "dmg": 15,
   "IncreaseDmg": 5,
 
   "radius": 200,

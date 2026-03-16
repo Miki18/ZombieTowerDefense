@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Tower\LaserTower.cpp" />
     <ClCompile Include="Tower\BigTower.cpp" />
     <ClCompile Include="Tower\DoubleTower.cpp" />
     <ClCompile Include="Tower\Goldmine.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="Tower\Tower.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Tower\LaserTower.h" />
     <ClInclude Include="Tower\BigTower.h" />
     <ClInclude Include="Tower\DoubleTower.h" />
     <ClInclude Include="Tower\Goldmine.h" />
