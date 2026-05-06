@@ -16,15 +16,15 @@
 
 int main()
 {
-	//create render window
-	sf::RenderWindow window(sf::VideoMode({ 1600, 900 }), "Game", sf::State::Fullscreen);
-
-	//Init ImGui and SFML
-	ImGui::SFML::Init(window);
-
 	//Antialliasing
 	sf::ContextSettings settings;
 	settings.antiAliasingLevel = 8;
+
+	//create render window
+	sf::RenderWindow window(sf::VideoMode({ 1600, 900 }), "Game", sf::State::Fullscreen, settings);
+
+	//Init ImGui and SFML
+	ImGui::SFML::Init(window);
 
 	//create state machine and set state to MenuState
 	StateMachine& machine = StateMachine::Get();

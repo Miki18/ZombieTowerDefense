@@ -26,7 +26,7 @@ void GameState::LoadRoadTiles()
 			RoadField.shape.setSize(sf::Vector2f(TilesSize, TilesSize));
 
 			//In JSON file road are marked as 0, 1, 2, etc.
-			// Since game read road type and sort it alphabeticaly, it is possible to easily convert road type -> id in RoadTextures vector
+			//Since game read road type and sort it alphabeticaly, it is possible to easily convert road type -> id in RoadTextures vector
 			if (RoadField.IsBridge == 1)
 			{
 				RoadField.shape.setTexture(&BridgeTex);
@@ -163,6 +163,7 @@ void GameState::LoadMonsters()
 			nextmonster.range = monstervalues["Range"].get<float>();
 			nextmonster.bulletoffset.x = monstervalues["BulletSpawn"][0].get<float>();
 			nextmonster.bulletoffset.y = monstervalues["BulletSpawn"][1].get<float>();
+			nextmonster.bulletspeed = monstervalues["BulletSpeed"].get<float>();
 			nextmonster.Dmg = monstervalues["Dmg"].get<int>();
 		}
 
@@ -337,11 +338,75 @@ void GameState::LoadTowerTextures()
 
 	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
 
+	//Mortar	
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Mortar/Mortar_top.png");
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Mortar/Mortar_base.png");
+
+	file.open("Resources/Content/Towers/mortar");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
 	//Goldmine
 	towertype.top.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_top.png");
 	towertype.base.loadFromFile("Resources/Visuals/Towers/Goldmine/GoldMine_down.png");
 
 	file.open("Resources/Content/Towers/goldmine");
+	file >> readedtower;
+
+	file.close();
+
+	towertype.name = readedtower["name"].get<std::string>();
+
+	towertype.hp = readedtower["hp"].get<float>();
+	towertype.IncreaseHp = readedtower["IncreaseHp"].get<float>();
+
+	towertype.cooldown = readedtower["cooldown"].get<float>();
+	towertype.IncreaseCooldown = readedtower["IncreaseCooldown"].get<float>();
+
+	towertype.dmg = readedtower["dmg"].get<float>();
+	towertype.IncreaseDmg = readedtower["IncreaseDmg"].get<float>();
+
+	towertype.price = readedtower["price"].get<int>();
+	towertype.UpgradePrice = readedtower["UpgradePrice"].get<int>();
+	towertype.IncreaseUpgradePrice = readedtower["IncreaseUpgradePrice"].get<int>();
+
+	towertype.radius = readedtower["radius"].get<float>();
+	towertype.IncreaseRadius = readedtower["IncreaseRadius"].get<float>();
+
+	towertype.bulletoffset = readedtower["bulletoffset"].get<float>();
+	towertype.bulletspeed = readedtower["bulletspeed"].get<float>();
+
+	towersvalues.emplace_back(std::make_unique<TowerTypeValues>(towertype));
+
+	//Ultimate
+	towertype.top.loadFromFile("Resources/Visuals/Towers/Ultimate/Ultimate_top.png");
+	towertype.base.loadFromFile("Resources/Visuals/Towers/Ultimate/Ultimate_base.png");
+
+	file.open("Resources/Content/Towers/ultimate");
 	file >> readedtower;
 
 	file.close();
@@ -478,7 +543,7 @@ void GameState::SaveProgress(bool IsSuccess)
 
 		if (Lvlnum < 3)
 		{
-			LevelName = "Tutorial" + std::to_string(Lvlnum);
+			LevelName = "Tutorial" + std::to_string(Lvlnum + 1);
 		}
 		else
 		{
@@ -500,6 +565,15 @@ void GameState::SaveProgress(bool IsSuccess)
 
 	StateMachine::Get().PassPlayerStat(3, StateMachine::Get().GetPlayerStat(3) + Stats[3]);
 	profiles["profiles"][profile_num]["Stats"]["zombiefast"] = StateMachine::Get().GetPlayerStat(3);
+
+	StateMachine::Get().PassPlayerStat(4, StateMachine::Get().GetPlayerStat(4) + Stats[4]);
+	profiles["profiles"][profile_num]["Stats"]["ghost"] = StateMachine::Get().GetPlayerStat(4);
+
+	StateMachine::Get().PassPlayerStat(5, StateMachine::Get().GetPlayerStat(5) + Stats[5]);
+	profiles["profiles"][profile_num]["Stats"]["umibozu"] = StateMachine::Get().GetPlayerStat(5);
+
+	StateMachine::Get().PassPlayerStat(6, StateMachine::Get().GetPlayerStat(6) + Stats[6]);
+	profiles["profiles"][profile_num]["Stats"]["shadow"] = StateMachine::Get().GetPlayerStat(6);
 
 	std::ofstream out("Resources/Content/profiles"); 
 	out << profiles.dump(4);

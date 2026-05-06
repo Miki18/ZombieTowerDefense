@@ -56,14 +56,14 @@
   },
 
   "monsters": [
-    "zombie"
+    "golem"
   ],
 
   "waves": [
     {
       "PreWaveWaiting": 5,
       "cooldown": 2.5,
-      "monsters": [ 0, 0, 0 ]
+      "monsters": [ 0, 0, 0, 0, 0, 0, 0 ]
     },
     {
       "PreWaveWaiting": 10,

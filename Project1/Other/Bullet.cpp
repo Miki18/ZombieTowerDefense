@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, float Radius, bool Friendly, bool Permanent)
+Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, float Radius, bool Friendly, bool Permanent, bool Explosive)
 {
 	TargetID = Target_ID;
 	dmg = damage;
@@ -29,6 +29,7 @@ Bullet::Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f Ta
 	}
 
 	IsPermanent = Permanent;
+	IsExplosive = Explosive;
 
 	this->radius = Radius;
 }

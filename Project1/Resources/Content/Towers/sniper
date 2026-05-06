@@ -7,7 +7,7 @@
   "cooldown": 2.4,
   "IncreaseCooldown": -0.1,
 
-  "dmg": 15,
+  "dmg": 10,
   "IncreaseDmg": 5,
 
   "radius": 200,
@@ -15,7 +15,7 @@
 
   "price": 80,
   "UpgradePrice": 50,
-  "IncreaseUpgradePrice": 20,
+  "IncreaseUpgradePrice": 25,
 
   "bulletoffset": 25,
   "bulletspeed": 1000

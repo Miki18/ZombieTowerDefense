@@ -118,15 +118,15 @@ void MenuState::Render(sf::RenderWindow& window)
 	{
 		changeMode = false;
 		window.close();
-		if (IsFullscreen)
+		if (StateMachine::Get().IsFullscreen)
 		{
 			window.create(sf::VideoMode({ 1600, 900 }), "Game", sf::Style::None, sf::State::Windowed);
-			IsFullscreen = false;
+			StateMachine::Get().IsFullscreen = false;
 		}
 		else
 		{
 			window.create(sf::VideoMode({ 1600, 900 }), "Game", sf::Style::None, sf::State::Fullscreen);
-			IsFullscreen = true;
+			StateMachine::Get().IsFullscreen = true;
 		}
 	}
 
@@ -171,7 +171,7 @@ void MenuState::MainMenuScreen()
 	int VersionTextOffset = 25;
 	ImGui::SetNextWindowPos(ImVec2(0,ScreenSize[1] - VersionTextOffset));
 	ImGui::Begin("Version", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
-	ImGui::Text("Version 1.4.1a");
+	ImGui::Text("Version 1.5.0");
 	ImGui::End();
 }
 
@@ -240,7 +240,7 @@ void MenuState::OptionsScreen()
 
 void MenuState::SettingsScreen(sf::RenderWindow& window)
 {
-	if (IsFullscreen)
+	if (StateMachine::Get().IsFullscreen)
 	{
 		ButtonUI(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2), "Window Mode", [this]
 			{
@@ -339,6 +339,15 @@ void MenuState::ProfileStatsScreen()
 	ImGui::Text("Fast Zombie: ");
 	ImGui::SameLine();
 	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(3)).c_str());
+	ImGui::Text("Ghost: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(4)).c_str());
+	ImGui::Text("Umi-bozu: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(5)).c_str());
+	ImGui::Text("Shadow: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(StateMachine::Get().GetPlayerStat(6)).c_str());
 	ImGui::End();
 
 	//Profile
@@ -456,6 +465,9 @@ bool MenuState::LoadProfilesUI()
 				StateMachine::Get().PassPlayerStat(1, profiles["profiles"][i]["Stats"]["worm"].get<int>());
 				StateMachine::Get().PassPlayerStat(2, profiles["profiles"][i]["Stats"]["golem"].get<int>());
 				StateMachine::Get().PassPlayerStat(3, profiles["profiles"][i]["Stats"]["zombiefast"].get<int>());
+				StateMachine::Get().PassPlayerStat(4, profiles["profiles"][i]["Stats"]["ghost"].get<int>());
+				StateMachine::Get().PassPlayerStat(5, profiles["profiles"][i]["Stats"]["umibozu"].get<int>());
+				StateMachine::Get().PassPlayerStat(6, profiles["profiles"][i]["Stats"]["shadow"].get<int>());
 
 				current_screen = MainMenu;
 			}
@@ -562,7 +574,10 @@ void MenuState::NewProfileUI()
 						{"zombie", 0},
 						{"worm", 0},
 						{"golem", 0},
-						{"zombiefast", 0}
+						{"zombiefast", 0},
+						{"ghost", 0},
+						{"umibozu", 0},
+						{"shadow", 0}
 					};
 					std::ofstream file("Resources/Content/profiles");
 					file << profiles.dump(2);

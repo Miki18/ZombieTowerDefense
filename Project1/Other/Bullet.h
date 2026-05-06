@@ -7,7 +7,7 @@
 class Bullet
 {
 	public:
-		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, float Radius, bool Friendly, bool Permanent);
+		Bullet(sf::Vector2f Position, float damage, float Speed, sf::Vector2f TargetCurrentPos, int Target_ID, float Radius, bool Friendly, bool Permanent, bool Explosive);
 		
 		float getDmg();
 		float getRadius();
@@ -16,6 +16,7 @@ class Bullet
 		sf::Vector2f getTargetPos();
 		bool IsFriendly;
 		bool IsPermanent;
+		bool IsExplosive;
 		void AddMonsterID(int ID);
 		bool CheckMonsterID(int ID);
 		

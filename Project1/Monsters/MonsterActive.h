@@ -3,7 +3,7 @@
 class MonsterActive : public Monster
 {
 	public:
-		MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, sf::SoundBuffer& Monster_sound);
+		MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, float bulletspeed, sf::SoundBuffer& Monster_sound);
 		~MonsterActive() {};
 		bool IsShooter() override;
 		void ResetCooldown(float cooldown);
@@ -11,6 +11,7 @@ class MonsterActive : public Monster
 		float GetCooldown();
 		int GetDmg();
 		sf::Vector2f getBulletStartPosition();
+		float getBulletSpeed();
 		sf::Sound sounds;
 
 		void MonsterUpdate(sf::Time time);
@@ -26,6 +27,7 @@ class MonsterActive : public Monster
 		float range;
 		sf::Vector2f Bulletspawn;
 		int Dmg;
+		float BulletSpeed;
 		float Cooldown = 0.5f;
 		bool MonsterState;
 		void MonsterWalk(sf::Time time);

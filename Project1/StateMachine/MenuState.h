@@ -24,7 +24,6 @@ private:
 
 	bool changeState = false;
 	bool changeMode = false;
-	bool IsFullscreen = true;
 
 	nlohmann::json profiles;
 	enum Screens current_screen;

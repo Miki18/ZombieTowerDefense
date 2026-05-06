@@ -1,0 +1,22 @@
+{
+  "name": "Mortar", 
+
+  "hp": 300,
+  "IncreaseHp": 200,
+
+  "cooldown": 1.75,
+  "IncreaseCooldown": 0.0,
+
+  "dmg": 64,
+  "IncreaseDmg": 16,
+
+  "radius": 100,
+  "IncreaseRadius": 20,
+
+  "price": 1300,
+  "UpgradePrice": 500,
+  "IncreaseUpgradePrice": 300,
+
+  "bulletoffset": 25,
+  "bulletspeed": 600
+}

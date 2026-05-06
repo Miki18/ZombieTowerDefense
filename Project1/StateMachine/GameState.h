@@ -8,6 +8,10 @@
 #include "../Tower/SniperTower.h"
 #include "../Tower/Goldmine.h"
 #include "../Tower/LaserTower.h"
+#include "../Tower/DoubleTower.h"
+#include "../Tower/BigTower.h"
+#include "../Tower/MortarTower.h"
+#include "../Tower/Ultimate.h"
 #include "../Monsters/Monster.h"
 #include "../Monsters/MonsterActive.h"
 #include "../Monsters/MonsterPassive.h"
@@ -47,6 +51,10 @@ class GameState: public StateManager
 			bool IsVisible = false;
 			int SelectedTowerID = 0;
 			sf::CircleShape circle;
+			int dmg = 0;
+			int health = 0;
+			int radius = 0;
+			float cooldown = 0;
 		};
 		TowerOptions tower_options;
 
@@ -81,13 +89,14 @@ class GameState: public StateManager
 			sf::Texture MonsterTexAttack;
 			float range;
 			sf::Vector2f bulletoffset;
+			float bulletspeed;
 			int Dmg;
 		};
 
 		std::vector<std::unique_ptr<Monster>> monsters;
 		std::vector<std::unique_ptr<MonsterTypeValues>> monster_types;
 		int MonsterID = 0;
-		int Stats[4] = {};
+		int Stats[7] = {};
 		//Monsters waves variables
 		struct MonsterWavesSettings
 		{
@@ -195,7 +204,8 @@ class GameState: public StateManager
 
 		//Bullets
 		void UpdateBullets(sf::Time time);
-		void Bullet_ObjectsCollision();
+		void Bullet_TowersCollision();
+		void Bullet_MonstersCollision();
 		void RemoveUnusedBullets();
 
 		//Monster

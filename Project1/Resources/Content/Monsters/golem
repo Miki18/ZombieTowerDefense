@@ -2,6 +2,6 @@
   "type": "passive",
   "hp": 1000,
   "speed": 25,
-  "price": 60,
+  "price": 110,
   "Size":  [50,50]
 }

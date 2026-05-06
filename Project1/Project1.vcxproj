@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Tower\MortarTower.cpp" />
     <ClCompile Include="Tower\LaserTower.cpp" />
     <ClCompile Include="Tower\BigTower.cpp" />
     <ClCompile Include="Tower\DoubleTower.cpp" />
@@ -146,8 +147,10 @@
     <ClCompile Include="StateMachine\StateMachine.cpp" />
     <ClCompile Include="StateMachine\StateManager.cpp" />
     <ClCompile Include="Tower\Tower.cpp" />
+    <ClCompile Include="Tower\Ultimate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Tower\MortarTower.h" />
     <ClInclude Include="Tower\LaserTower.h" />
     <ClInclude Include="Tower\BigTower.h" />
     <ClInclude Include="Tower\DoubleTower.h" />
@@ -166,6 +169,7 @@
     <ClInclude Include="Monsters\PathPoint.h" />
     <ClInclude Include="Other\GrassTile.h" />
     <ClInclude Include="Tower\Tower.h" />
+    <ClInclude Include="Tower\Ultimate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Content\Levels\Tutorial1" />

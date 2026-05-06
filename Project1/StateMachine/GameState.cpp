@@ -1,8 +1,6 @@
 #include "GameState.h"
 #include "StateMachine.h"
 #include "LoadLevel.inl"
-#include "../Tower/DoubleTower.h"
-#include "../Tower/BigTower.h"
 
 GameState::GameState() : Music("Resources/Sounds/Carefree.mp3"), RuinsSprite(RuinsTex), LastWaveS(LastWaveSound)
 {
@@ -72,7 +70,7 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 		{
 			if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
 			{
-				if (keyPressed->scancode == sf::Keyboard::Scancode::P)
+				if (keyPressed->scancode == sf::Keyboard::Scancode::P or keyPressed->scancode == sf::Keyboard::Scancode::Escape)
 				{
 					IsGamePaused = !IsGamePaused;
 					IsMessageVisible = false;
@@ -115,6 +113,16 @@ void GameState::Input(sf::RenderWindow& window, sf::Time time)
 				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num6)
 				{
 					SelectedTower = 5;
+					CalculatePreview();
+				}
+				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num7)
+				{
+					SelectedTower = 6;
+					CalculatePreview();
+				}
+				else if (keyPressed->scancode == sf::Keyboard::Scancode::Num8)
+				{
+					SelectedTower = 7;
 					CalculatePreview();
 				}
 				else if (keyPressed->scancode == sf::Keyboard::Scancode::Tab)
@@ -181,14 +189,30 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 		if (grass_tile[i].IsDarker)
 		{
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.25f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.60f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.75f));
+			if (IsGamePaused == false)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.60f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.75f));
+			}
+			else
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.25f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.25f));
+			}
 		}
 		else
 		{
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.1f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.45f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.75f));
+			if (IsGamePaused == false)
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.45f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.75f));
+			}
+			else
+			{
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.0f, 0.0f, 0.1f));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.0f, 0.0f, 0.1f));
+			}
 		}
 
 		if (ImGui::Button(("##" + name).c_str(), ImVec2(TilesSize, TilesSize)) and IsGamePaused == false)
@@ -215,9 +239,17 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 				{
 					PlaceTower<BigTower>(4, i);
 				}
-				else if (SelectedTower == 5 and Money >= towersvalues[5]->price and grass_tile[i].HasGold)
+				else if (SelectedTower == 5 and Money >= towersvalues[5]->price)
 				{
-					PlaceTower<Goldmine>(5, i);
+					PlaceTower<MortarTower>(5, i);
+				}
+				else if (SelectedTower == 6 and Money >= towersvalues[6]->price and grass_tile[i].HasGold)
+				{
+					PlaceTower<Goldmine>(6, i);
+				}
+				else if (SelectedTower == 7 and Money >= towersvalues[6]->price)
+				{
+					PlaceTower<Ultimate>(7, i);
 				}
 			}
 			else if (grass_tile[i].TowerID == 0 and grass_tile[i].HasRuins == true)
@@ -276,6 +308,10 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 		{
 			if (towers[i]->getID() == tower_options.SelectedTowerID)
 			{
+				tower_options.dmg = towers[i]->getDmg();
+				tower_options.health = towers[i]->gethp();
+				tower_options.radius = towers[i]->getRadius();
+				tower_options.cooldown = towers[i]->getBaseCooldown();
 				TowerUI(i);
 				break;
 			}
@@ -292,7 +328,8 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 	UpdateMonsters(time);
 
 	UpdateBullets(time);
-	Bullet_ObjectsCollision();
+	Bullet_TowersCollision();
+	Bullet_MonstersCollision();
 	RemoveUnusedBullets();
 
 	if (PlayerSurr)
@@ -304,6 +341,7 @@ void GameState::Update(sf::RenderWindow& window, sf::Time time)
 
 	if (Health <= 0)
 	{
+		Music.stop();
 		SaveProgress(false);
 		IsPlayerLose = true;
 		IsGamePaused = true;
@@ -463,9 +501,19 @@ void GameState::RemoveBridge(int index)
 				RoadTiles[i].shape.setTexture(&RoadTextures[8]);
 			}
 
-			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[2]) //left top down
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[1]) //left top down
 			{
 				RoadTiles[i].shape.setTexture(&RoadTextures[10]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[6])
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[14]);
+			}
+
+			else if (RoadTiles[i].shape.getTexture() == &RoadTextures[2])
+			{
+				RoadTiles[i].shape.setTexture(&RoadTextures[13]);
 			}
 		}
 		if (RoadTiles[i].shape.getPosition() == sf::Vector2f(Pos.x, Pos.y + TilesSize))
@@ -606,7 +654,6 @@ void GameState::ShowHealtAndMoney()
 	}
 
 	ImGui::PopStyleColor(4);
-
 	ImGui::PopStyleVar(2);
 }
 
@@ -854,6 +901,24 @@ void GameState::TowerUI(int towersindex)
 
 	ImGui::PopStyleVar(4);
 	ImGui::PopStyleColor(10);
+
+	ImGui::SetNextWindowPos(ImVec2(7 * TilesSize, ScreenSize[1] - TilesSize));
+	ImGui::Begin("Stats", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar);
+	ImGui::Text("Damage: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(tower_options.dmg).c_str());
+	ImGui::SameLine();
+	ImGui::Text("Health: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(tower_options.health).c_str());
+	ImGui::Text("Range: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(tower_options.radius).c_str());
+	ImGui::SameLine();
+	ImGui::Text("Cooldown: ");
+	ImGui::SameLine();
+	ImGui::Text(std::to_string(tower_options.cooldown).c_str());
+	ImGui::End();
 }
 
 void GameState::ShowMessage()
@@ -880,19 +945,19 @@ void GameState::ShowMessage()
 			ImGui::Text(speech[i].c_str());
 		}
 
-		ImVec2 T_size = ImGui::CalcTextSize("Press P to start");
+		ImVec2 T_size = ImGui::CalcTextSize("Press P or Esc to start");
 		ImVec2 cursorPos = ImVec2(ScreenSize[0] / 2 - picSize.x / 2, ScreenSize[1] / 2 - picSize.y / 2 + 20);
 		cursorPos = ImVec2(cursorPos.x + picSize.x / 2 - T_size.x / 2, cursorPos.y + T_size.y * 9 + 5 * 9);
 		ImGui::SetCursorScreenPos(cursorPos);
-		ImGui::Text("Press P to start");;
+		ImGui::Text("Press P or Esc to start");;
 	}
 	else if(IsPlayerWin)
 	{
-		CustomTextMessages("Congrats! You win!", "Press P to continue", picSize);
+		CustomTextMessages("Congrats! You win!", "Press P or Esc to continue", picSize);
 	}
 	else if(IsPlayerLose)
 	{
-		CustomTextMessages("You lose!", "Press P to continue", picSize);
+		CustomTextMessages("You lose!", "Press P or Esc to continue", picSize);
 	}
 	else
 	{
@@ -929,7 +994,7 @@ void GameState::ShowMessage()
 		}
 		else
 		{
-			CustomTextMessages("Game is Paused", "Press P to resume", picSize);
+			CustomTextMessages("Game is Paused", "Press P or Esc to resume", picSize);
 
 			StateMachine::Get().VolumeSetting(ImVec2(ScreenSize[0] / 2 - ButtonSize.x / 2, ScreenSize[1] / 2 - ButtonSize.y / 2 + 150), "Sounds", 0);
 
@@ -1025,7 +1090,7 @@ void GameState::DetectEnemies(int tower_number)
 			//Can shoot also check tower's cooldown
 			if (towers[tower_number]->CanShoot())
 			{
-				bullets.emplace_back(towers[tower_number]->getBulletStartingPosition(Dir), towers[tower_number]->getDmg(), towers[tower_number]->getBulletSpeed(), monsters[j]->getPosition(), monsters[j]->GetID(), towers[tower_number]->BulletRadius(), true, towers[tower_number]->HasPermanentBullet());
+				bullets.emplace_back(towers[tower_number]->getBulletStartingPosition(Dir), towers[tower_number]->getDmg(), towers[tower_number]->getBulletSpeed(), monsters[j]->getPosition(), monsters[j]->GetID(), towers[tower_number]->BulletRadius(), true, towers[tower_number]->HasPermanentBullet(), towers[tower_number]->HasExplosiveBullet());
 				towers[tower_number]->SetVolume(StateMachine::Get().GetVolume(0));
 				towers[tower_number]->PlaySound();
 			}
@@ -1118,7 +1183,7 @@ void GameState::UpdateBullets(sf::Time time)
 	}
 }
 
-void GameState::Bullet_ObjectsCollision()
+void GameState::Bullet_TowersCollision()
 {
 	std::vector<Bullet>::iterator B_iter = bullets.begin();
 	std::vector<std::unique_ptr<Monster>>::iterator M_iter = monsters.begin();
@@ -1128,56 +1193,7 @@ void GameState::Bullet_ObjectsCollision()
 	{
 		bool hit = false;
 
-		if (B_iter->IsFriendly == true)
-		{
-			for (M_iter = monsters.begin(); M_iter != monsters.end();)
-			{
-				if (B_iter->getRadius() >= ((*M_iter)->getPosition() - B_iter->getPosition()).length())
-				{
-					if (B_iter->IsPermanent)
-					{
-						if (B_iter->CheckMonsterID((*M_iter)->GetID()) == false)
-						{
-							(*M_iter)->TakeDamage(B_iter->getDmg());
-							B_iter->AddMonsterID((*M_iter)->GetID());
-						}
-					}
-					else
-					{
-						hit = true;
-						(*M_iter)->TakeDamage(B_iter->getDmg());
-						B_iter = bullets.erase(B_iter);
-					}
-
-					if ((*M_iter)->IsDead == true)
-					{
-						std::string Name = (*M_iter)->GetName();
-
-						if (Name == "zombie")
-						{
-							Stats[0] = Stats[0] + 1;
-						}
-						else if (Name == "worm")
-						{
-							Stats[1] = Stats[1] + 1;
-						}
-						else if (Name == "golem")
-						{
-							Stats[2] = Stats[2] + 1;
-						}
-						else if (Name == "zombiefast")
-						{
-							Stats[3] = Stats[3] + 1;
-						}
-
-						monsters.erase(M_iter);
-					}
-					break;
-				}
-				M_iter++;
-			}
-		}
-		else
+		if (B_iter->IsFriendly == false)
 		{
 			for (T_iter = towers.begin(); T_iter != towers.end();)
 			{
@@ -1186,7 +1202,7 @@ void GameState::Bullet_ObjectsCollision()
 					hit = true;
 					(*T_iter)->TakeDmg(int(B_iter->getDmg()));
 					B_iter = bullets.erase(B_iter);
-					if ((*T_iter)->gethp() < 0)
+					if ((*T_iter)->gethp() <= 0)
 					{
 
 						for (int i = 0; i < grass_tile.size(); i++)
@@ -1214,6 +1230,96 @@ void GameState::Bullet_ObjectsCollision()
 		if (hit == false)
 		{
 			B_iter++;
+		}
+	}
+}
+
+void GameState::Bullet_MonstersCollision()
+{
+	for (int i = 0; i < bullets.size(); i++)
+	{
+		bool del_bullet = false;
+
+		if (bullets[i].IsFriendly == true)
+		{
+			for (int j = 0; j < monsters.size(); j++)
+			{
+				if (bullets[i].getRadius() >= (monsters[j]->getPosition() - bullets[i].getPosition()).length())
+				{
+					if (bullets[i].IsPermanent)
+					{
+						if (bullets[i].CheckMonsterID(monsters[j]->GetID()) == false)
+						{
+							monsters[j]->TakeDamage(bullets[i].getDmg());
+							bullets[i].AddMonsterID(monsters[j]->GetID());
+						}
+					}
+					else
+					{
+						if (monsters[j]->IsDead == false)
+						{
+							del_bullet = true;
+							monsters[j]->TakeDamage(bullets[i].getDmg());
+							
+							if (bullets[i].IsExplosive)
+							{
+								for (int k = 0; k < monsters.size(); k++)
+								{
+									if (100 >= (monsters[j]->getPosition() - monsters[k]->getPosition()).length() and j != k)
+									{
+										monsters[k]->TakeDamage(bullets[i].getDmg() / 4);
+									}
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (del_bullet == true)
+		{
+			bullets.erase(bullets.begin() + i);
+			i--;
+		}
+	}
+
+	for (int i = 0; i < monsters.size(); i++)
+	{
+		if (monsters[i]->IsDead == true)
+		{
+			std::string Name = monsters[i]->GetName();
+
+			if (Name == "zombie")
+			{
+				Stats[0] = Stats[0] + 1;
+			}
+			else if (Name == "worm")
+			{
+				Stats[1] = Stats[1] + 1;
+			}
+			else if (Name == "golem")
+			{
+				Stats[2] = Stats[2] + 1;
+			}
+			else if (Name == "zombiefast")
+			{
+				Stats[3] = Stats[3] + 1;
+			}
+			else if (Name == "ghost")
+			{
+				Stats[4] = Stats[4] + 1;
+			}
+			else if (Name == "umibozu")
+			{
+				Stats[5] = Stats[5] + 1;
+			}
+			else if (Name == "shadow")
+			{
+				Stats[6] = Stats[6] + 1;
+			}
+
+			monsters.erase(monsters.begin() + i);
 		}
 	}
 }
@@ -1298,7 +1404,7 @@ void GameState::GenerateMonsters(sf::Time time)
 			}
 			else
 			{
-				monsters.emplace_back(std::make_unique<MonsterActive>(monster_types[MWS[wave_number].monsters[0]]->MonsterTex, monster_types[MWS[wave_number].monsters[0]]->hp, monster_types[MWS[wave_number].monsters[0]]->Speed, monster_types[MWS[wave_number].monsters[0]]->price, TilesSize, Health, Money, paths_startpoints, paths, MonsterID, monster_types[MWS[wave_number].monsters[0]]->texSize, monster_types[MWS[wave_number].monsters[0]]->name, monster_types[MWS[wave_number].monsters[0]]->MonsterTexAttack, monster_types[MWS[wave_number].monsters[0]]->range, monster_types[MWS[wave_number].monsters[0]]->bulletoffset, monster_types[MWS[wave_number].monsters[0]]->Dmg, MonsterSound));
+				monsters.emplace_back(std::make_unique<MonsterActive>(monster_types[MWS[wave_number].monsters[0]]->MonsterTex, monster_types[MWS[wave_number].monsters[0]]->hp, monster_types[MWS[wave_number].monsters[0]]->Speed, monster_types[MWS[wave_number].monsters[0]]->price, TilesSize, Health, Money, paths_startpoints, paths, MonsterID, monster_types[MWS[wave_number].monsters[0]]->texSize, monster_types[MWS[wave_number].monsters[0]]->name, monster_types[MWS[wave_number].monsters[0]]->MonsterTexAttack, monster_types[MWS[wave_number].monsters[0]]->range, monster_types[MWS[wave_number].monsters[0]]->bulletoffset, monster_types[MWS[wave_number].monsters[0]]->Dmg, monster_types[MWS[wave_number].monsters[0]]->bulletspeed, MonsterSound));
 				MonsterID++;
 			}
 
@@ -1337,7 +1443,7 @@ bool GameState::MonsterShoot(int monster_index)
 		{
 			if (monsters[monster_index]->GetCooldown() <= 0.0f)
 			{
-				bullets.emplace_back(monsters[monster_index]->getBulletStartPosition(), monsters[monster_index]->GetDmg(), 150, towers[i]->getPosition(), towers[i]->getID(), 5, false, false);
+				bullets.emplace_back(monsters[monster_index]->getBulletStartPosition(), monsters[monster_index]->GetDmg(), monsters[monster_index]->getBulletSpeed(), towers[i]->getPosition(), towers[i]->getID(), 5, false, false, false);
 				monsters[monster_index]->ResetCooldown(1.0f);
 				monsters[monster_index]->SetVolume(StateMachine::Get().GetVolume(0));
 				monsters[monster_index]->PlaySound();

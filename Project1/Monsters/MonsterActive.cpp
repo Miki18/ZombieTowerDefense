@@ -1,11 +1,13 @@
 #include "MonsterActive.h"
 
-MonsterActive::MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, sf::SoundBuffer& Monster_sound) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, paths, MonsterID, texSize, MonsterName), sounds(Monster_sound)
+MonsterActive::MonsterActive(sf::Texture tex, float hp, float speed, int price, int TileSize, int& P_HP, int& P_Money, std::vector<sf::Vector2i>& starts, std::vector<PathPoints>& paths, int MonsterID, sf::Vector2f texSize, std::string MonsterName, sf::Texture tex2, float Range, sf::Vector2f BulletPos, int Damage, float bulletspeed, sf::SoundBuffer& Monster_sound) : Monster(tex, hp, speed, price, TileSize, P_HP, P_Money, starts, paths, MonsterID, texSize, MonsterName), sounds(Monster_sound)
 {
 	this->Attack_texture = tex2;
 	this->range = Range;
 	this->Bulletspawn = BulletPos;
 	this->Dmg = Damage;
+	this->BulletSpeed = bulletspeed;
+	MonsterState = true;
 }
 
 bool MonsterActive::IsShooter()
@@ -36,6 +38,11 @@ int MonsterActive::GetDmg()
 sf::Vector2f MonsterActive::getBulletStartPosition()
 {
 	return sf::Vector2f(getPosition() - Bulletspawn);
+}
+
+float MonsterActive::getBulletSpeed()
+{
+	return BulletSpeed;
 }
 
 void MonsterActive::MonsterUpdate(sf::Time time)

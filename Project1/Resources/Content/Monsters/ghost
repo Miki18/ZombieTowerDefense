@@ -1,0 +1,11 @@
+{
+  "type": "active",
+  "hp": 450,
+  "speed": 40,
+  "price": 100,
+  "Size": [ 25, 50 ],
+  "Range": 100,
+  "BulletSpawn": [ -10, 17 ],
+  "BulletSpeed": 150,
+  "Dmg":  60
+}

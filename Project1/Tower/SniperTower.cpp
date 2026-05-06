@@ -63,7 +63,7 @@ int SniperTower::getSellPrice()
 
 int SniperTower::getRepairPrice()
 {
-	return int((maxhp-hp)/2);
+	return int(maxhp-hp);
 }
 
 float SniperTower::getBulletSpeed()

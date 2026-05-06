@@ -70,7 +70,7 @@ int BigTower::getUpgradePrice()
 
 int BigTower::getSellPrice()
 {
-	return price / 3 + ((currentLevel - 1) * IncreaseUpgradePrice) / 4;
+	return price / 5 + ((currentLevel - 1) * IncreaseUpgradePrice) / 4;
 }
 
 int BigTower::getRepairPrice()

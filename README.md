@@ -1,7 +1,9 @@
 # About the Game
 
 __Monster Tower Defense__ is a simple tower defense game. Player's goal is to defeat monsters by placing and upgrading towers.<br>
-_The game is still in development - current version: 1.4.1a._
+_The game is still in development - current version: 1.5.0._
+
+WARNING: Description is outdated!
 
 ## Game contains
   - 6 levels

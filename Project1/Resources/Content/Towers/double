@@ -11,11 +11,11 @@
   "IncreaseDmg": 8,
 
   "radius": 100,
-  "IncreaseRadius": 25,
+  "IncreaseRadius": 30,
 
-  "price": 650,
+  "price": 500,
   "UpgradePrice": 200,
-  "IncreaseUpgradePrice": 75,
+  "IncreaseUpgradePrice": 65,
 
   "bulletoffset": 25,
   "bulletspeed": 450

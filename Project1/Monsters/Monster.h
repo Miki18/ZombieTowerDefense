@@ -25,6 +25,7 @@ class Monster
 		void TakeDamage(float dmg);
 		sf::Vector2f getPosition();
 		sf::Vector2f virtual getBulletStartPosition() {return sf::Vector2f(0,0); };
+		float virtual getBulletSpeed() { return 0.0f; };
 		int GetID();
 		int virtual GetDmg() { return 0; };
 		float virtual GetRange() { return 0.0f; };
